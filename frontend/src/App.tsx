@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 import { theme } from '@/theme';
 import { router } from '@/lib/router';
+import { useAuthStore } from '@/stores/authStore';
 
 // Import Mantine styles
 import '@mantine/core/styles.css';
@@ -20,6 +22,13 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const initialize = useAuthStore((state) => state.initialize);
+
+  useEffect(() => {
+    // Initialize auth store on app startup
+    initialize();
+  }, [initialize]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme}>

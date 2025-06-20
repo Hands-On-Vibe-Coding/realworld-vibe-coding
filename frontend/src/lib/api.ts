@@ -11,19 +11,46 @@ import type {
   ProfileResponseWrapper,
   TagsResponse,
 } from '@/types';
+import { notifications } from '@mantine/notifications';
 
 export class ApiClient {
   private baseURL = '/api';
   private token: string | null = null;
+  private onTokenExpired?: () => void;
 
   setToken(token: string | null) {
     this.token = token;
+  }
+
+  setTokenExpiredCallback(callback: () => void) {
+    this.onTokenExpired = callback;
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime;
+    } catch {
+      return true;
+    }
   }
 
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    // Check token expiration before making request
+    if (this.token && this.isTokenExpired(this.token)) {
+      notifications.show({
+        title: 'Session Expired',
+        message: 'Your session has expired. Please log in again.',
+        color: 'red',
+      });
+      this.onTokenExpired?.();
+      throw new Error('Token expired');
+    }
+
     const url = `${this.baseURL}${endpoint}`;
     
     const headers: Record<string, string> = {
@@ -43,14 +70,45 @@ export class ApiClient {
       headers,
     };
 
-    const response = await fetch(url, config);
+    try {
+      const response = await fetch(url, config);
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP ${response.status}`);
+      // Handle 401 Unauthorized (token expired or invalid)
+      if (response.status === 401 && this.token) {
+        notifications.show({
+          title: 'Authentication Failed',
+          message: 'Your session is invalid. Please log in again.',
+          color: 'red',
+        });
+        this.onTokenExpired?.();
+        throw new Error('Authentication failed');
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        // Show user-friendly error notifications
+        notifications.show({
+          title: 'Request Failed',
+          message: errorData.error || errorData.message || `HTTP ${response.status}`,
+          color: 'red',
+        });
+        
+        throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      // Only show notification if it's a network error (not already handled above)
+      if (error instanceof TypeError) {
+        notifications.show({
+          title: 'Network Error',
+          message: 'Unable to connect to the server. Please check your connection.',
+          color: 'red',
+        });
+      }
+      throw error;
     }
-
-    return response.json();
   }
 
   // Auth endpoints
