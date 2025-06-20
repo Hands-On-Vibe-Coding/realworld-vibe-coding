@@ -10,13 +10,22 @@ When asked to plan a project, follow these steps:
 
 1. **Read Design Documents**: First, read [docs/pre-prd.md](mdc:docs/pre-prd.md) and [docs/prd.md](mdc:docs/prd.md) to understand requirements
 2. **Create Implementation Plan**: Write implementation plan with 10-20 tasks in `plan.md` file, including task dependencies
-3. **Create GitHub Issues**: Create GitHub issues for each task with detailed descriptions, labels, and milestones
+3. **Create Task Files**: Create individual task files in `docs/tasks/` directory for each task
 
-## GitHub Issue Creation Process
-Use the `gh` command to create issues with the following structure:
+## Task Management Process
+Use the `docs/tasks/` directory to manage tasks with individual markdown files:
 
-```bash
-gh issue create --title "TASK-{number}: {Title}" --body "$(cat <<'EOF'
+### Task File Structure
+Create task files with the naming convention: `docs/tasks/TASK-{number}-{slug}.md`
+
+```markdown
+# TASK-{number}: {Title}
+
+**Status**: `pending` | `in-progress` | `completed` | `blocked`
+**Priority**: `high` | `medium` | `low`
+**Estimated Time**: {time estimate}
+**Sprint**: Sprint 1, Sprint 2, etc.
+
 ## Description
 Brief description of the task
 
@@ -26,6 +35,7 @@ Context and background information needed
 ## Acceptance Criteria
 - [ ] Specific criteria 1
 - [ ] Specific criteria 2
+- [ ] Specific criteria 3
 
 ## Technical Details
 ### Code Examples
@@ -34,29 +44,46 @@ Context and background information needed
 ```
 
 ## Dependencies
-- #{issue-number}: {dependency description}
+- TASK-{number}: {dependency description}
+- TASK-{number}: {dependency description}
 
-## Estimated Time
-{time estimate}
-EOF
-)" --label "enhancement,task" --milestone "Sprint 1"
+## Notes
+- Implementation notes
+- Progress updates
+- Decisions made
+
+## Definition of Done
+- [ ] Feature implemented
+- [ ] Tests written and passing
+- [ ] Documentation updated
+- [ ] Code reviewed
 ```
 
-## GitHub Issue Management
-- **Labels**: Use consistent labels like `enhancement`, `bug`, `task`, `frontend`, `backend`, `documentation`
-- **Milestones**: Group issues into development phases (Sprint 1, Sprint 2, etc.)
-- **Dependencies**: Reference other issues using `#{issue-number}` format
-- **Assignees**: Assign issues when implementation begins
-- **Projects**: Use GitHub Projects for kanban-style tracking
+## Task Directory Structure
+```
+docs/tasks/
+├── index.md                    # Task overview and status board
+├── TASK-001-user-auth.md      # Individual task files
+├── TASK-002-article-crud.md
+└── sprints/
+    ├── sprint-1.md           # Sprint planning documents
+    └── sprint-2.md
+```
 
-## Guidelines for Issue Creation
+## Task Status Management
+- **pending**: Task not yet started
+- **in-progress**: Currently being worked on
+- **completed**: Task finished and verified
+- **blocked**: Task cannot proceed due to dependencies
+
+## Guidelines for Task Creation
 - Use descriptive titles with task numbering: `TASK-{number}: {Title}`
-- Include comprehensive background and context in issue descriptions
+- Include comprehensive background and context
 - Use markdown code blocks with language specification
 - Common languages: go, javascript, typescript, bash, sql, yaml
-- Add appropriate labels for categorization and filtering
-- Link related issues and dependencies
+- Link related tasks using task numbers
 - Include acceptance criteria as checkboxes for progress tracking
+- Update status and notes as work progresses
 
 ## Development Commands
 Use development commands defined in [CLAUDE.md](mdc:CLAUDE.md):
