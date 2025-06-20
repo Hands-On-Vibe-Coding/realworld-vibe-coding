@@ -168,12 +168,12 @@ The backend implements the complete [RealWorld API specification](https://realwo
 
 ## Development Methodology
 
-This project follows "바이브코딩" (Vibe Coding) principles:
+This project follows "Vibe Coding" principles:
 
-1. **빠른 프로토타이핑** (Rapid Prototyping): Core functionality first
-2. **반복적 개선** (Iterative Improvement): Gradual feature enhancement
-3. **실시간 피드백** (Real-time Feedback): Continuous testing during development
-4. **문서화** (Documentation): Real-time documentation alongside code
+1. **Rapid Prototyping** : Core functionality first
+2. **Iterative Improvement** : Gradual feature enhancement
+3. **Real-time Feedback** : Continuous testing during development
+4. **Documentation** : Real-time documentation alongside code
 
 ## Testing
 

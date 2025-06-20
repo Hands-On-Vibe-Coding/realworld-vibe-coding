@@ -1,108 +1,108 @@
-# RealWorld 바이브코딩 구현 - PRD (Product Requirements Document)
+# RealWorld Vibe Coding Implementation - PRD (Product Requirements Document)
 
-## 1. 프로젝트 개요
+## 1. Project Overview
 
-### 1.1 프로젝트 목표
-RealWorld 애플리케이션을 바이브코딩 방식으로 구현하여 완전한 풀스택 애플리케이션 구축
+### 1.1 Project Objectives
+Implement a RealWorld application using Vibe Coding methodology to build a complete full-stack application
 
-### 1.2 프로젝트 범위
-- **Frontend**: React + Vite 기반 SPA
-- **Backend**: Go + 표준 net/http 기반 REST API
-- **Database**: SQLite (개발용) + PostgreSQL (운영용)
-- **인증**: JWT 기반 사용자 인증
-- **배포**: AWS ECS + Fargate를 통한 컨테이너 배포
+### 1.2 Project Scope
+- **Frontend**: React + Vite-based SPA
+- **Backend**: Go + standard net/http-based REST API
+- **Database**: SQLite (development) + PostgreSQL (production)
+- **Authentication**: JWT-based user authentication
+- **Deployment**: Container deployment via AWS ECS + Fargate
 
-### 1.3 성공 지표
-- RealWorld API 스펙 100% 준수
-- 테스트 커버리지 80% 이상
-- 초기 로딩 시간 3초 이하
-- 모바일 반응형 지원
+### 1.3 Success Metrics
+- 100% compliance with RealWorld API specification
+- 80%+ test coverage
+- Initial loading time under 3 seconds
+- Mobile responsive design support
 
-## 2. 기능 요구사항
+## 2. Functional Requirements
 
-### 2.1 사용자 관리 및 인증
-#### 2.1.1 회원가입
-- **기능**: 이메일, 사용자명, 비밀번호 기반 회원가입
-- **검증**: 이메일 중복 확인, 사용자명 중복 확인
-- **보안**: JWT 토큰 발행
+### 2.1 User Management and Authentication
+#### 2.1.1 User Registration
+- **Function**: Email, username, password-based registration
+- **Validation**: Email duplication check, username duplication check
+- **Security**: JWT token issuance
 
-#### 2.1.2 로그인
-- **기능**: 이메일/사용자명과 비밀번호를 통한 로그인
-- **검증**: 입력값 검증
-- **보안**: JWT 토큰 발행
+#### 2.1.2 User Login
+- **Function**: Login via email/username and password
+- **Validation**: Input value validation
+- **Security**: JWT token issuance
 
-#### 2.1.3 프로필 관리
-- **조회**: 다른 사용자 프로필 정보 조회
-- **정보**: 이메일, 사용자명, 프로필, 바이오, 이미지 정보
-- **팔로우**: 다른 사용자 팔로우/언팔로우
+#### 2.1.3 Profile Management
+- **Retrieval**: View other users' profile information
+- **Information**: Email, username, profile, bio, image information
+- **Follow**: Follow/unfollow other users
 
-### 2.2 게시글 관리
-#### 2.2.1 게시글 CRUD
-- **작성**: 제목, 설명, 본문, 태그를 포함한 게시글 작성
-- **조회**: 개별 게시글 상세 조회
-- **정보**: 게시글 작성 정보 (작성자)
-- **수정**: 게시글 수정 (작성자)
+### 2.2 Article Management
+#### 2.2.1 Article CRUD
+- **Creation**: Create articles with title, description, body, and tags
+- **Retrieval**: View individual article details
+- **Information**: Article creation information (author)
+- **Editing**: Edit articles (author only)
 
-#### 2.2.2 게시글 목록
-- **글로벌 피드**: 모든 게시글 목록 (최신순)
-- **개인 피드**: 팔로우한 사용자의 게시글 목록
-- **태그 필터**: 특정 태그로 필터링된 게시글 목록
-- **페이지네이션**: 20개씩 페이지 단위로 조회
+#### 2.2.2 Article Lists
+- **Global Feed**: All articles list (newest first)
+- **Personal Feed**: Articles from followed users
+- **Tag Filter**: Articles filtered by specific tags
+- **Pagination**: 20 articles per page
 
-#### 2.2.3 게시글 상호작용
-- **좋아요**: 게시글 좋아요/취소
-- **좋아요 수**: 게시글별 좋아요 개수 표시
+#### 2.2.3 Article Interactions
+- **Favorites**: Favorite/unfavorite articles
+- **Favorite Count**: Display favorite count per article
 
-### 2.3 댓글 시스템
-#### 2.3.1 댓글 CRUD
-- **작성**: 게시글에 댓글 작성
-- **조회**: 게시글의 댓글 목록 조회
-- **삭제**: 댓글 삭제 (작성자)
+### 2.3 Comment System
+#### 2.3.1 Comment CRUD
+- **Creation**: Create comments on articles
+- **Retrieval**: View article comment lists
+- **Deletion**: Delete comments (author only)
 
-### 2.4 태그 시스템
-- **태그 목록**: 자주 사용된 태그의 목록
-- **태그 필터**: 태그별 게시글 필터링
+### 2.4 Tag System
+- **Tag List**: List of frequently used tags
+- **Tag Filter**: Filter articles by tags
 
-## 3. 기술 스택 및 아키텍처
+## 3. Technology Stack and Architecture
 
-### 3.1 Frontend 기술 스택
+### 3.1 Frontend Technology Stack
 ```
 - Framework: React with Vite
 - Language: TypeScript
 - Router: Tanstack Router
-- State Management: Tanstack Query (서버 상태), Zustand (클라이언트 상태)
+- State Management: Tanstack Query (server state), Zustand (client state)
 - UI Library: Mantine UI
 - Form Handling: Mantine Form + Zod validation
 - Styling: Mantine's CSS-in-JS + Custom CSS
-- Icons: Tabler Icons (Mantine 기본 아이콘 세트)
+- Icons: Tabler Icons (Mantine default icon set)
 - Notifications: Mantine Notifications
 - Testing: Vitest + React Testing Library
 ```
 
-### 3.2 Backend 기술 스택
+### 3.2 Backend Technology Stack
 ```
 - Language: Go 1.21+
-- HTTP Server: 표준 net/http
-- Database: SQLite (개발용), PostgreSQL (운영용)
-- Database Access: 순수 SQL (ORM 지양)
+- HTTP Server: Standard net/http
+- Database: SQLite (development), PostgreSQL (production)
+- Database Access: Pure SQL (avoiding ORM)
 - Authentication: JWT
-- Validation: Go 표준 validation
-- Testing: Go 표준 테스트 + testify
+- Validation: Go standard validation
+- Testing: Go standard testing + testify
 ```
 
-### 3.3 개발 환경
+### 3.3 Development Environment
 ```
-- 프로젝트 관리: Makefile
-- 컨테이너: Docker
+- Project Management: Makefile
+- Containerization: Docker
 - CI/CD: GitHub Actions
-- 배포: AWS ECS + Fargate
-- 인프라: AWS CDK (TypeScript)
-- 모니터링: CloudWatch + X-Ray
+- Deployment: AWS ECS + Fargate
+- Infrastructure: AWS CDK (TypeScript)
+- Monitoring: CloudWatch + X-Ray
 ```
 
-## 4. API 설계
+## 4. API Design
 
-### 4.1 사용자 API
+### 4.1 User API
 ```
 POST /api/users/login
 POST /api/users
@@ -110,14 +110,14 @@ GET /api/user
 PUT /api/user
 ```
 
-### 4.2 프로필 API
+### 4.2 Profile API
 ```
 GET /api/profiles/:username
 POST /api/profiles/:username/follow
 DELETE /api/profiles/:username/follow
 ```
 
-### 4.3 게시글 API
+### 4.3 Article API
 ```
 GET /api/articles
 GET /api/articles/feed
@@ -129,21 +129,21 @@ POST /api/articles/:slug/favorite
 DELETE /api/articles/:slug/favorite
 ```
 
-### 4.4 댓글 API
+### 4.4 Comment API
 ```
 GET /api/articles/:slug/comments
 POST /api/articles/:slug/comments
 DELETE /api/articles/:slug/comments/:id
 ```
 
-### 4.5 태그 API
+### 4.5 Tag API
 ```
 GET /api/tags
 ```
 
-## 5. 데이터베이스 설계
+## 5. Database Design
 
-### 5.1 사용자 테이블 (users)
+### 5.1 Users Table (users)
 ```sql
 id (Primary Key)
 email (Unique)
@@ -155,7 +155,7 @@ created_at
 updated_at
 ```
 
-### 5.2 게시글 테이블 (articles)
+### 5.2 Articles Table (articles)
 ```sql
 id (Primary Key)
 slug (Unique)
@@ -167,33 +167,33 @@ created_at
 updated_at
 ```
 
-### 5.3 태그 테이블 (tags)
+### 5.3 Tags Table (tags)
 ```sql
 id (Primary Key)
 name (Unique)
 ```
 
-### 5.4 게시글-태그 관계 테이블 (article_tags)
+### 5.4 Article-Tag Relationship Table (article_tags)
 ```sql
 article_id (Foreign Key -> articles.id)
 tag_id (Foreign Key -> tags.id)
 ```
 
-### 5.5 팔로우 관계 테이블 (follows)
+### 5.5 Follow Relationship Table (follows)
 ```sql
 follower_id (Foreign Key -> users.id)
 followed_id (Foreign Key -> users.id)
 created_at
 ```
 
-### 5.6 좋아요 테이블 (favorites)
+### 5.6 Favorites Table (favorites)
 ```sql
 user_id (Foreign Key -> users.id)
 article_id (Foreign Key -> articles.id)
 created_at
 ```
 
-### 5.7 댓글 테이블 (comments)
+### 5.7 Comments Table (comments)
 ```sql
 id (Primary Key)
 body
@@ -203,57 +203,57 @@ created_at
 updated_at
 ```
 
-## 6. 프론트엔드 설계
+## 6. Frontend Design
 
-### 6.1 페이지 구조
+### 6.1 Page Structure
 ```
-/ (홈페이지 - 글로벌 피드)
-/login (로그인)
-/register (회원가입)
-/settings (설정)
-/profile/:username (프로필)
-/editor (게시글 작성)
-/editor/:slug (게시글 수정)
-/article/:slug (게시글 상세)
+/ (Home - Global Feed)
+/login (Login)
+/register (Register)
+/settings (Settings)
+/profile/:username (Profile)
+/editor (Article Creation)
+/editor/:slug (Article Edit)
+/article/:slug (Article Detail)
 ```
 
-### 6.2 컴포넌트 구조
+### 6.2 Component Structure
 ```
 components/
 ├── Layout/
-│   ├── Header.tsx (Mantine Header, Navbar 사용)
-│   ├── Footer.tsx (Mantine Footer 사용)
-│   └── AppShell.tsx (Mantine AppShell 사용)
+│   ├── Header.tsx (Using Mantine Header, Navbar)
+│   ├── Footer.tsx (Using Mantine Footer)
+│   └── AppShell.tsx (Using Mantine AppShell)
 ├── Article/
-│   ├── ArticleList.tsx (Mantine Grid, Card 사용)
-│   ├── ArticlePreview.tsx (Mantine Card, Badge 사용)
-│   ├── ArticleDetail.tsx (Mantine Container, TypographyStylesProvider)
-│   └── ArticleForm.tsx (Mantine Form, TextInput, Textarea)
+│   ├── ArticleList.tsx (Using Mantine Grid, Card)
+│   ├── ArticlePreview.tsx (Using Mantine Card, Badge)
+│   ├── ArticleDetail.tsx (Using Mantine Container, TypographyStylesProvider)
+│   └── ArticleForm.tsx (Using Mantine Form, TextInput, Textarea)
 ├── Comment/
-│   ├── CommentList.tsx (Mantine Stack 사용)
-│   ├── CommentForm.tsx (Mantine Form, Textarea, Button)
-│   └── CommentItem.tsx (Mantine Paper, Avatar, Text)
+│   ├── CommentList.tsx (Using Mantine Stack)
+│   ├── CommentForm.tsx (Using Mantine Form, Textarea, Button)
+│   └── CommentItem.tsx (Using Mantine Paper, Avatar, Text)
 ├── Profile/
-│   ├── ProfileInfo.tsx (Mantine Avatar, Text, Group)
-│   └── FollowButton.tsx (Mantine Button, ActionIcon)
+│   ├── ProfileInfo.tsx (Using Mantine Avatar, Text, Group)
+│   └── FollowButton.tsx (Using Mantine Button, ActionIcon)
 ├── Common/
-│   ├── Loading.tsx (Mantine Loader, LoadingOverlay)
-│   ├── ErrorBoundary.tsx (Mantine Alert, Notification)
-│   ├── Pagination.tsx (Mantine Pagination)
-│   └── TagsList.tsx (Mantine Badge, Group)
+│   ├── Loading.tsx (Using Mantine Loader, LoadingOverlay)
+│   ├── ErrorBoundary.tsx (Using Mantine Alert, Notification)
+│   ├── Pagination.tsx (Using Mantine Pagination)
+│   └── TagsList.tsx (Using Mantine Badge, Group)
 └── forms/
-    ├── LoginForm.tsx (Mantine Form, PasswordInput)
-    ├── RegisterForm.tsx (Mantine Form, TextInput)
-    └── SettingsForm.tsx (Mantine Form, FileInput)
+    ├── LoginForm.tsx (Using Mantine Form, PasswordInput)
+    ├── RegisterForm.tsx (Using Mantine Form, TextInput)
+    └── SettingsForm.tsx (Using Mantine Form, FileInput)
 ```
 
-### 6.3 UI 테마 및 스타일링 (Mantine)
+### 6.3 UI Theme and Styling (Mantine)
 ```typescript
 // theme/index.ts
 import { MantineProvider, createTheme } from '@mantine/core';
 
 const theme = createTheme({
-  primaryColor: 'green', // RealWorld 브랜드 컬러
+  primaryColor: 'green', // RealWorld brand color
   colors: {
     brand: [
       '#f0f9ff', '#e0f2fe', '#bae6fd', '#7dd3fc',
@@ -278,14 +278,14 @@ const theme = createTheme({
   }
 });
 
-// App.tsx에서 MantineProvider 적용
+// Apply MantineProvider in App.tsx
 <MantineProvider theme={theme}>
   <Notifications />
   <Router />
 </MantineProvider>
 ```
 
-### 6.4 상태 관리 (Zustand + TanStack Query)
+### 6.4 State Management (Zustand + TanStack Query)
 ```typescript
 // stores/authStore.ts
 interface AuthState {
@@ -296,7 +296,7 @@ interface AuthState {
   updateUser: (user: User) => void
 }
 
-// Mantine Notifications와 연동
+// Integration with Mantine Notifications
 import { notifications } from '@mantine/notifications';
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -305,25 +305,25 @@ const useAuthStore = create<AuthState>((set) => ({
   login: (user, token) => {
     set({ user, token });
     notifications.show({
-      title: '로그인 성공',
-      message: `환영합니다, ${user.username}님!`,
+      title: 'Login Successful',
+      message: `Welcome, ${user.username}!`,
       color: 'green'
     });
   },
   logout: () => {
     set({ user: null, token: null });
     notifications.show({
-      title: '로그아웃',
-      message: '안전하게 로그아웃되었습니다.',
+      title: 'Logout',
+      message: 'You have been safely logged out.',
       color: 'blue'
     });
   }
 }));
 ```
 
-## 7. 백엔드 설계
+## 7. Backend Design
 
-### 7.1 프로젝트 구조
+### 7.1 Project Structure
 ```
 backend/
 ├── cmd/
@@ -344,7 +344,7 @@ backend/
 └── Makefile
 ```
 
-### 7.2 핸들러 구조
+### 7.2 Handler Structure
 ```go
 // internal/handler/user.go
 type UserHandler struct {
@@ -357,43 +357,43 @@ func (h *UserHandler) GetCurrentUser(w http.ResponseWriter, r *http.Request) err
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) error
 ```
 
-### 7.3 미들웨어
+### 7.3 Middleware
 ```go
-// JWT 인증 미들웨어
+// JWT Authentication Middleware
 func JWTMiddleware() http.Handler
 
-// CORS 미들웨어
+// CORS Middleware
 func CORSMiddleware() http.Handler
 
-// 로깅 미들웨어
+// Logging Middleware
 func LoggingMiddleware() http.Handler
 ```
 
-## 8. 개발 프로세스
+## 8. Development Process
 
-### 8.1 개발 단계
-1. **Phase 1 (2주)**: 기본 CRUD 및 인증 구현
-2. **Phase 2 (1주)**: 고급 기능 (팔로우, 좋아요) 구현
-3. **Phase 3 (1주)**: UI/UX 개선 및 최적화
-4. **Phase 4 (1주)**: 테스트 작성 및 배포
+### 8.1 Development Phases
+1. **Phase 1**: Basic CRUD and authentication implementation
+2. **Phase 2**: Advanced features (follow, favorites) implementation
+3. **Phase 3**: UI/UX improvements and optimization
+4. **Phase 4**: Test writing and deployment
 
-### 8.2 바이브코딩 적용
-- **빠른 프로토타이핑**: MVP 기능 우선 구현
-- **반복적 개선**: 기능별 점진적 완성도 향상
-- **실시간 피드백**: TDD 적용 및 실시간 테스트
-- **문서화**: 코드와 함께 API 문서 작성 병행
+### 8.2 Vibe Coding Application
+- **Rapid Prototyping**: MVP functionality implementation first
+- **Iterative Improvement**: Gradual enhancement of feature completeness
+- **Real-time Feedback**: TDD application and real-time testing
+- **Documentation**: Concurrent API documentation with code development
 
-### 8.3 품질 관리
-- **코드 리뷰**: 모든 PR에 대한 코드 리뷰
-- **자동 테스트**: CI/CD 파이프라인에서 자동 테스트 실행
-- **성능 모니터링**: 배포 후 및 개발 중 성능 모니터링
+### 8.3 Quality Management
+- **Code Review**: Code review for all PRs
+- **Automated Testing**: Automated test execution in CI/CD pipeline
+- **Performance Monitoring**: Performance monitoring during development and after deployment
 
-## 9. 배포 및 운영
+## 9. Deployment and Operations
 
-### 9.1 배포 환경
-- **개발 환경**: 로컬 Docker 환경
-- **스테이징 환경**: AWS ECS 테스트 환경
-- **프로덕션 환경**: AWS ECS 운영 환경
+### 9.1 Deployment Environments
+- **Development Environment**: Local Docker environment
+- **Staging Environment**: AWS ECS test environment
+- **Production Environment**: AWS ECS production environment
 
 ### 9.2 CI/CD 파이프라인
 ```yaml
@@ -406,37 +406,37 @@ jobs:
   test:
     - Run backend tests
     - Run frontend tests
-    - Docker 이미지 빌드
+    - Build Docker images
   deploy:
-    - ECR에 이미지 푸시
-    - ECS 서비스 업데이트
+    - Push images to ECR
+    - Update ECS service
 ```
 
-### 9.3 모니터링
-- **서버 모니터링**: CloudWatch를 통한 서버 모니터링
-- **앱 성능**: 애플리케이션 성능 로깅 및 추적
-- **사용 통계**: 배포 후, 사용량, 개발 통계
+### 9.3 Monitoring
+- **Server Monitoring**: Server monitoring via CloudWatch
+- **Application Performance**: Application performance logging and tracking
+- **Usage Statistics**: Post-deployment usage and development statistics
 
-## 10. 검증 기준
+## 10. Validation Criteria
 
-### 10.1 기능적 검증 기준
-- [ ] 모든 RealWorld API 스펙의 구현
-- [ ] 프론트엔드 모든 페이지 구현
-- [ ] 사용자 시나리오 테스트 통과
-- [ ] 모바일 반응형 정상 동작
+### 10.1 Functional Validation Criteria
+- [ ] Implementation of all RealWorld API specifications
+- [ ] Implementation of all frontend pages
+- [ ] User scenario testing passed
+- [ ] Mobile responsive design working properly
 
-### 10.2 기술적 검증 기준
-- [ ] 백엔드 테스트 커버리지 80% 이상
-- [ ] 프론트엔드 테스트 커버리지 80% 이상
-- [ ] 성능 요구사항 달성 (로딩 시간 3초 이하)
-- [ ] 접근성 AA 등급 달성
+### 10.2 Technical Validation Criteria
+- [ ] Backend test coverage 80% or higher
+- [ ] Frontend test coverage 80% or higher
+- [ ] Performance requirements achieved (loading time under 3 seconds)
+- [ ] Accessibility AA grade achieved
 
-### 10.3 운영 검증 기준
-- [ ] CI/CD 파이프라인 구축
-- [ ] 프로덕션 환경 배포
-- [ ] 모니터링 시스템 구축
-- [ ] 문서화 완료 (API 문서, 사용자 가이드)
+### 10.3 Operational Validation Criteria
+- [ ] CI/CD pipeline setup
+- [ ] Production environment deployment
+- [ ] Monitoring system setup
+- [ ] Documentation completion (API documentation, user guide)
 
 ---
 
-*이 PRD는 RealWorld 바이브코딩 구현 프로젝트의 상세 요구사항을 정의합니다.*
+*This PRD defines the detailed requirements for the RealWorld Vibe Coding implementation project.*

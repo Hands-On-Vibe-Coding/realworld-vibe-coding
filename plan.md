@@ -1,228 +1,208 @@
-# RealWorld 바이브코딩 구현 계획
+# RealWorld Vibe Coding Implementation Plan
 
-## 프로젝트 개요
-RealWorld 애플리케이션을 바이브코딩 방식으로 구현하는 전체 구현 계획입니다.
+## Project Overview
+Complete implementation plan for building a RealWorld application using Vibe Coding methodology.
 - **Frontend**: React + Vite + TypeScript + Mantine UI
 - **Backend**: Go + SQLite/PostgreSQL + JWT
-- **배포**: AWS ECS + Fargate
+- **Deployment**: AWS ECS + Fargate
 
-## 개발 단계별 계획
+## Development Phase Plan
 
-### Phase 1: 기본 인프라 및 프로젝트 설정 (1주)
+### Phase 1: Basic Infrastructure and Project Setup (1 week)
 
-#### TASK-01: 백엔드 프로젝트 구조 설정
-- **설명**: Go 기반 백엔드 프로젝트 구조 생성
-- **의존성**: 없음
-- **산출물**: backend/ 디렉토리 구조, go.mod, Makefile
-- **예상 시간**: 4시간
+#### TASK-01: Backend Project Structure Setup
+- **Description**: Create Go-based backend project structure
+- **Dependencies**: None
+- **Deliverables**: backend/ directory structure, go.mod, Makefile
 
-#### TASK-02: 프론트엔드 프로젝트 구조 설정  
-- **설명**: React + Vite + TypeScript 프로젝트 완성 및 Mantine UI 설정
-- **의존성**: 없음
-- **산출물**: frontend/ 디렉토리 완전 구성, package.json, vite.config.ts
-- **예상 시간**: 4시간
+#### TASK-02: Frontend Project Structure Setup  
+- **Description**: Complete React + Vite + TypeScript project setup with Mantine UI configuration
+- **Dependencies**: None
+- **Deliverables**: Complete frontend/ directory configuration, package.json, vite.config.ts
 
-#### TASK-03: 데이터베이스 스키마 및 마이그레이션
-- **설명**: SQLite 기반 데이터베이스 스키마 설계 및 마이그레이션 스크립트
-- **의존성**: TASK-01
-- **산출물**: migrations/ 디렉토리, 테이블 생성 스크립트
-- **예상 시간**: 6시간
+#### TASK-03: Database Schema and Migration
+- **Description**: SQLite-based database schema design and migration scripts
+- **Dependencies**: TASK-01
+- **Deliverables**: migrations/ directory, table creation scripts
 
-#### TASK-04: Docker 개발 환경 구축
-- **설명**: Docker Compose를 이용한 통합 개발 환경
-- **의존성**: TASK-01, TASK-02
-- **산출물**: docker-compose.yml, Dockerfile (frontend/backend)
-- **예상 시간**: 4시간
+#### TASK-04: Docker Development Environment Setup
+- **Description**: Integrated development environment using Docker Compose
+- **Dependencies**: TASK-01, TASK-02
+- **Deliverables**: docker-compose.yml, Dockerfile (frontend/backend)
 
-### Phase 2: 사용자 인증 시스템 (1주)
+### Phase 2: User Authentication System (1 week)
 
-#### TASK-05: JWT 인증 미들웨어 구현
-- **설명**: Go JWT 토큰 생성/검증 미들웨어
-- **의존성**: TASK-01, TASK-03
-- **산출물**: internal/middleware/jwt.go, internal/utils/jwt.go
-- **예상 시간**: 6시간
+#### TASK-05: JWT Authentication Middleware Implementation
+- **Description**: Go JWT token generation/verification middleware
+- **Dependencies**: TASK-01, TASK-03
+- **Deliverables**: internal/middleware/jwt.go, internal/utils/jwt.go
 
-#### TASK-06: 사용자 회원가입 API
-- **설명**: 사용자 등록 REST API 엔드포인트
-- **의존성**: TASK-05
-- **산출물**: internal/handler/user.go (Register), internal/service/user.go
-- **예상 시간**: 8시간
+#### TASK-06: User Registration API
+- **Description**: User registration REST API endpoint
+- **Dependencies**: TASK-05
+- **Deliverables**: internal/handler/user.go (Register), internal/service/user.go
 
-#### TASK-07: 사용자 로그인 API
-- **설명**: 사용자 로그인 REST API 엔드포인트
-- **의존성**: TASK-06
-- **산출물**: internal/handler/user.go (Login), JWT 토큰 발행
-- **예상 시간**: 6시간
+#### TASK-07: User Login API
+- **Description**: User login REST API endpoint
+- **Dependencies**: TASK-06
+- **Deliverables**: internal/handler/user.go (Login), JWT token issuance
 
-#### TASK-08: 프론트엔드 인증 상태 관리
-- **설명**: Zustand 기반 인증 스토어 및 API 클라이언트
-- **의존성**: TASK-02
-- **산출물**: src/stores/authStore.ts, src/lib/api.ts
-- **예상 시간**: 6시간
+#### TASK-08: Frontend Authentication State Management
+- **Description**: Zustand-based authentication store and API client
+- **Dependencies**: TASK-02
+- **Deliverables**: src/stores/authStore.ts, src/lib/api.ts
 
-#### TASK-09: 로그인/회원가입 페이지 구현
-- **설명**: Mantine Form을 이용한 로그인/회원가입 UI
-- **의존성**: TASK-08
-- **산출물**: src/pages/Login.tsx, src/pages/Register.tsx
-- **예상 시간**: 8시간
+#### TASK-09: Login/Registration Page Implementation
+- **Description**: Login/registration UI using Mantine Form
+- **Dependencies**: TASK-08
+- **Deliverables**: src/pages/Login.tsx, src/pages/Register.tsx
 
-### Phase 3: 게시글 관리 시스템 (1.5주)
+### Phase 3: Article Management System (1.5 weeks)
 
-#### TASK-10: 게시글 CRUD API
-- **설명**: 게시글 생성/조회/수정/삭제 REST API
-- **의존성**: TASK-05
-- **산출물**: internal/handler/article.go, internal/service/article.go
-- **예상 시간**: 12시간
+#### TASK-10: Article CRUD API
+- **Description**: Article create/read/update/delete REST API
+- **Dependencies**: TASK-05
+- **Deliverables**: internal/handler/article.go, internal/service/article.go
 
-#### TASK-11: 게시글 목록 조회 API (페이지네이션)
-- **설명**: 게시글 목록 조회 및 페이지네이션 구현
-- **의존성**: TASK-10
-- **산출물**: 게시글 목록 API, 페이지네이션 로직
-- **예상 시간**: 8시간
+#### TASK-11: Article List API (Pagination)
+- **Description**: Article list retrieval and pagination implementation
+- **Dependencies**: TASK-10
+- **Deliverables**: Article list API, pagination logic
 
-#### TASK-12: 태그 시스템 API
-- **설명**: 태그 관리 및 태그별 게시글 필터링
-- **의존성**: TASK-10
-- **산출물**: internal/handler/tag.go, 태그 관련 테이블
-- **예상 시간**: 6시간
+#### TASK-12: Tag System API
+- **Description**: Tag management and tag-based article filtering
+- **Dependencies**: TASK-10
+- **Deliverables**: internal/handler/tag.go, tag-related tables
 
-#### TASK-13: 프론트엔드 게시글 상태 관리
-- **설명**: TanStack Query를 이용한 게시글 데이터 관리
-- **의존성**: TASK-08
-- **산출물**: src/hooks/useArticles.ts, 게시글 관련 쿼리
-- **예상 시간**: 6시간
+#### TASK-13: Frontend Article State Management
+- **Description**: Article data management using TanStack Query
+- **Dependencies**: TASK-08
+- **Deliverables**: src/hooks/useArticles.ts, article-related queries
 
-#### TASK-14: 게시글 목록 페이지 구현
-- **설명**: Mantine Card를 이용한 게시글 목록 UI
-- **의존성**: TASK-13
-- **산출물**: src/pages/Home.tsx, src/components/Article/ArticleList.tsx
-- **예상 시간**: 10시간
+#### TASK-14: Article List Page Implementation
+- **Description**: Article list UI using Mantine Card
+- **Dependencies**: TASK-13
+- **Deliverables**: src/pages/Home.tsx, src/components/Article/ArticleList.tsx
 
-#### TASK-15: 게시글 상세 페이지 구현
-- **설명**: 게시글 상세 보기 및 수정 UI
-- **의존성**: TASK-14
-- **산출물**: src/pages/Article.tsx, src/components/Article/ArticleDetail.tsx
-- **예상 시간**: 8시간
+#### TASK-15: Article Detail Page Implementation
+- **Description**: Article detail view and edit UI
+- **Dependencies**: TASK-14
+- **Deliverables**: src/pages/Article.tsx, src/components/Article/ArticleDetail.tsx
 
-#### TASK-16: 게시글 작성/수정 페이지 구현
-- **설명**: Mantine Form을 이용한 게시글 에디터
-- **의존성**: TASK-13
-- **산출물**: src/pages/Editor.tsx, src/components/Article/ArticleForm.tsx
-- **예상 시간**: 10시간
+#### TASK-16: Article Create/Edit Page Implementation
+- **Description**: Article editor using Mantine Form
+- **Dependencies**: TASK-13
+- **Deliverables**: src/pages/Editor.tsx, src/components/Article/ArticleForm.tsx
 
-### Phase 4: 고급 기능 구현 (1주)
+### Phase 4: Advanced Features Implementation (1 week)
 
-#### TASK-17: 댓글 시스템 API
-- **설명**: 댓글 생성/조회/삭제 REST API
-- **의존성**: TASK-10
-- **산출물**: internal/handler/comment.go, internal/service/comment.go
-- **예상 시간**: 8시간
+#### TASK-17: Comment System API
+- **Description**: Comment create/read/delete REST API
+- **Dependencies**: TASK-10
+- **Deliverables**: internal/handler/comment.go, internal/service/comment.go
 
-#### TASK-18: 사용자 프로필 및 팔로우 API
-- **설명**: 사용자 프로필 조회 및 팔로우/언팔로우 API
-- **의존성**: TASK-05
-- **산출물**: internal/handler/profile.go, 팔로우 관계 테이블
-- **예상 시간**: 10시간
+#### TASK-18: User Profile and Follow API
+- **Description**: User profile retrieval and follow/unfollow API
+- **Dependencies**: TASK-05
+- **Deliverables**: internal/handler/profile.go, follow relationship table
 
-#### TASK-19: 게시글 좋아요 API
-- **설명**: 게시글 좋아요/취소 API
-- **의존성**: TASK-10
-- **산출물**: 좋아요 관련 API, favorites 테이블
-- **예상 시간**: 6시간
+#### TASK-19: Article Favorite API
+- **Description**: Article favorite/unfavorite API
+- **Dependencies**: TASK-10
+- **Deliverables**: Favorite-related API, favorites table
 
-#### TASK-20: 댓글 시스템 프론트엔드 구현
-- **설명**: 댓글 목록/작성 UI 구현
-- **의존성**: TASK-15, TASK-17
-- **산출물**: src/components/Comment/, 댓글 관련 컴포넌트
-- **예상 시간**: 8시간
+#### TASK-20: Comment System Frontend Implementation
+- **Description**: Comment list/creation UI implementation
+- **Dependencies**: TASK-15, TASK-17
+- **Deliverables**: src/components/Comment/, comment-related components
 
-#### TASK-21: 사용자 프로필 페이지 구현
-- **설명**: 프로필 조회 및 팔로우 버튼 UI
-- **의존성**: TASK-08, TASK-18
-- **산출물**: src/pages/Profile.tsx, src/components/Profile/
-- **예상 시간**: 8시간
+#### TASK-21: User Profile Page Implementation
+- **Description**: Profile view and follow button UI
+- **Dependencies**: TASK-08, TASK-18
+- **Deliverables**: src/pages/Profile.tsx, src/components/Profile/
+- **Estimated Time**: 8 hours
 
-#### TASK-22: 개인 피드 구현
-- **설명**: 팔로우한 사용자의 게시글 피드
-- **의존성**: TASK-18, TASK-14
-- **산출물**: 개인 피드 API 및 UI
-- **예상 시간**: 6시간
+#### TASK-22: Personal Feed Implementation
+- **Description**: Article feed from followed users
+- **Dependencies**: TASK-18, TASK-14
+- **Deliverables**: Personal feed API and UI
+- **Estimated Time**: 6 hours
 
-### Phase 5: 테스트 및 품질 개선 (1주)
+### Phase 5: Testing and Quality Improvement (1 week)
 
-#### TASK-23: 백엔드 유닛 테스트 구현
-- **설명**: Go 표준 테스트 도구를 이용한 테스트 커버리지 80% 달성
-- **의존성**: TASK-01~TASK-22
-- **산출물**: *_test.go 파일들, 테스트 커버리지 리포트
-- **예상 시간**: 12시간
+#### TASK-23: Backend Unit Test Implementation
+- **Description**: Achieve 80% test coverage using Go standard testing tools
+- **Dependencies**: TASK-01~TASK-22
+- **Deliverables**: *_test.go files, test coverage report
+- **Estimated Time**: 12 hours
 
-#### TASK-24: 프론트엔드 테스트 구현
-- **설명**: Vitest + React Testing Library를 이용한 컴포넌트 테스트
-- **의존성**: TASK-02~TASK-22
-- **산출물**: *.test.tsx 파일들, 테스트 커버리지 리포트
-- **예상 시간**: 12시간
+#### TASK-24: Frontend Test Implementation
+- **Description**: Component testing using Vitest + React Testing Library
+- **Dependencies**: TASK-02~TASK-22
+- **Deliverables**: *.test.tsx files, test coverage report
+- **Estimated Time**: 12 hours
 
-#### TASK-25: E2E 테스트 구현
-- **설명**: Playwright를 이용한 전체 사용자 플로우 테스트
-- **의존성**: TASK-23, TASK-24
-- **산출물**: e2e/ 테스트 디렉토리, CI/CD 통합
-- **예상 시간**: 8시간
+#### TASK-25: E2E Test Implementation
+- **Description**: Complete user flow testing using Playwright
+- **Dependencies**: TASK-23, TASK-24
+- **Deliverables**: e2e/ test directory, CI/CD integration
+- **Estimated Time**: 8 hours
 
-### Phase 6: 배포 및 운영 (1주)
+### Phase 6: Deployment and Operations (1 week)
 
-#### TASK-26: GitHub Actions CI/CD 파이프라인
-- **설명**: 자동화된 테스트 및 배포 파이프라인
-- **의존성**: TASK-25
-- **산출물**: .github/workflows/, Docker 이미지 자동화
-- **예상 시간**: 8시간
+#### TASK-26: GitHub Actions CI/CD Pipeline
+- **Description**: Automated test and deployment pipeline
+- **Dependencies**: TASK-25
+- **Deliverables**: .github/workflows/, Docker image automation
+- **Estimated Time**: 8 hours
 
-#### TASK-27: AWS ECS 인프라 구축
-- **설명**: AWS CDK를 이용한 인프라 코드
-- **의존성**: TASK-04
-- **산출물**: infrastructure/ 디렉토리, CDK 스택
-- **예상 시간**: 12시간
+#### TASK-27: AWS ECS Infrastructure Setup
+- **Description**: Infrastructure as code using AWS CDK
+- **Dependencies**: TASK-04
+- **Deliverables**: infrastructure/ directory, CDK stack
+- **Estimated Time**: 12 hours
 
-#### TASK-28: 프로덕션 배포 및 모니터링
-- **설명**: 실제 운영 환경 배포 및 모니터링 설정
-- **의존성**: TASK-26, TASK-27
-- **산출물**: 운영 환경 배포, CloudWatch 대시보드
-- **예상 시간**: 6시간
+#### TASK-28: Production Deployment and Monitoring
+- **Description**: Production environment deployment and monitoring setup
+- **Dependencies**: TASK-26, TASK-27
+- **Deliverables**: Production deployment, CloudWatch dashboard
+- **Estimated Time**: 6 hours
 
-## 마일스톤 요약
+## Milestone Summary
 
-### Sprint 1 (2주): 기본 인프라 + 인증
+### Sprint 1 (2 weeks): Basic Infrastructure + Authentication
 - TASK-01 ~ TASK-09
-- **목표**: 사용자 회원가입/로그인 완성
+- **Goal**: Complete user registration/login functionality
 
-### Sprint 2 (1.5주): 게시글 시스템
+### Sprint 2 (1.5 weeks): Article System
 - TASK-10 ~ TASK-16  
-- **목표**: 게시글 CRUD 완성
+- **Goal**: Complete article CRUD functionality
 
-### Sprint 3 (1주): 고급 기능
+### Sprint 3 (1 week): Advanced Features
 - TASK-17 ~ TASK-22
-- **목표**: 댓글, 프로필, 좋아요 기능 완성
+- **Goal**: Complete comment, profile, and favorite features
 
-### Sprint 4 (1주): 품질 개선
+### Sprint 4 (1 week): Quality Improvement
 - TASK-23 ~ TASK-25
-- **목표**: 테스트 커버리지 80% 달성
+- **Goal**: Achieve 80% test coverage
 
-### Sprint 5 (1주): 배포 준비
+### Sprint 5 (1 week): Deployment Preparation
 - TASK-26 ~ TASK-28
-- **목표**: 프로덕션 배포 완료
+- **Goal**: Complete production deployment
 
-## 성공 기준
-- [ ] RealWorld API 스펙 100% 준수
-- [ ] 테스트 커버리지 80% 이상 (Frontend + Backend)
-- [ ] 초기 로딩 시간 3초 이하
-- [ ] 모바일 반응형 지원
-- [ ] 접근성 AA 등급 달성
-- [ ] 프로덕션 환경 안정적 운영
+## Success Criteria
+- [ ] 100% compliance with RealWorld API specification
+- [ ] 80%+ test coverage (Frontend + Backend)
+- [ ] Initial loading time under 3 seconds
+- [ ] Mobile responsive design support
+- [ ] AA accessibility compliance
+- [ ] Stable production environment operation
 
-## 리스크 관리
-1. **기술적 복잡성**: 단순한 아키텍처 우선 적용
-2. **일정 지연**: 핵심 기능 우선 순위 유지
-3. **품질 이슈**: TDD 방식으로 개발 진행
-4. **배포 복잡성**: Docker 기반 단순화
+## Risk Management
+1. **Technical Complexity**: Apply simple architecture first
+2. **Schedule Delays**: Maintain core feature prioritization
+3. **Quality Issues**: Proceed with TDD approach
+4. **Deployment Complexity**: Simplify with Docker-based approach
 
 ---
-*이 계획은 바이브코딩 방식에 따라 빠른 프로토타이핑과 반복적 개선을 통해 진행됩니다.*
+*This plan follows Vibe Coding methodology through rapid prototyping and iterative improvement.*
