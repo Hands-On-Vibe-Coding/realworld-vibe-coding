@@ -19,16 +19,22 @@ func SetupRoutes(db *sql.DB) http.Handler {
 	articleRepo := repository.NewArticleRepository(db)
 	tagRepo := repository.NewTagRepository(db)
 	favoriteRepo := repository.NewFavoriteRepository(db)
+	commentRepo := repository.NewCommentRepository(db)
+	profileRepo := repository.NewProfileRepository(db)
 
 	// Initialize services
 	userService := service.NewUserService(userRepo)
 	articleService := service.NewArticleService(articleRepo, tagRepo, favoriteRepo, userRepo)
+	commentService := service.NewCommentService(commentRepo)
+	profileService := service.NewProfileService(profileRepo)
 
 	// Initialize handlers
 	userHandler := NewUserHandler(userService)
 	articleHandler := NewArticleHandler(articleService)
 	favoriteHandler := NewFavoriteHandler(articleService)
 	tagHandler := NewTagHandler(tagRepo)
+	commentHandler := NewCommentHandler(commentService)
+	profileHandler := NewProfileHandler(profileService)
 
 	// Health check endpoint
 	mux.HandleFunc("/health", HealthHandler)
@@ -81,6 +87,24 @@ func SetupRoutes(db *sql.DB) http.Handler {
 			default:
 				http.Error(w, `{"error": "Method not allowed"}`, http.StatusMethodNotAllowed)
 			}
+		} else if len(parts) == 2 && parts[0] != "" && parts[1] == "comments" {
+			// /api/articles/:slug/comments
+			switch r.Method {
+			case http.MethodGet:
+				middleware.OptionalAuthMiddleware(http.HandlerFunc(commentHandler.GetComments)).ServeHTTP(w, r)
+			case http.MethodPost:
+				middleware.AuthMiddleware(http.HandlerFunc(commentHandler.CreateComment)).ServeHTTP(w, r)
+			default:
+				http.Error(w, `{"error": "Method not allowed"}`, http.StatusMethodNotAllowed)
+			}
+		} else if len(parts) == 3 && parts[0] != "" && parts[1] == "comments" && parts[2] != "" {
+			// /api/articles/:slug/comments/:id
+			switch r.Method {
+			case http.MethodDelete:
+				middleware.AuthMiddleware(http.HandlerFunc(commentHandler.DeleteComment)).ServeHTTP(w, r)
+			default:
+				http.Error(w, `{"error": "Method not allowed"}`, http.StatusMethodNotAllowed)
+			}
 		} else {
 			http.Error(w, `{"error": "Not found"}`, http.StatusNotFound)
 		}
@@ -97,6 +121,34 @@ func SetupRoutes(db *sql.DB) http.Handler {
 			http.Error(w, `{"error": "Method not allowed"}`, http.StatusMethodNotAllowed)
 		}
 	})))
+
+	// Profile routes
+	mux.HandleFunc("/api/profiles/", func(w http.ResponseWriter, r *http.Request) {
+		path := strings.TrimPrefix(r.URL.Path, "/api/profiles/")
+		parts := strings.Split(path, "/")
+		
+		if len(parts) == 1 && parts[0] != "" {
+			// /api/profiles/:username
+			switch r.Method {
+			case http.MethodGet:
+				middleware.OptionalAuthMiddleware(http.HandlerFunc(profileHandler.GetProfile)).ServeHTTP(w, r)
+			default:
+				http.Error(w, `{"error": "Method not allowed"}`, http.StatusMethodNotAllowed)
+			}
+		} else if len(parts) == 2 && parts[0] != "" && parts[1] == "follow" {
+			// /api/profiles/:username/follow
+			switch r.Method {
+			case http.MethodPost:
+				middleware.AuthMiddleware(http.HandlerFunc(profileHandler.FollowUser)).ServeHTTP(w, r)
+			case http.MethodDelete:
+				middleware.AuthMiddleware(http.HandlerFunc(profileHandler.UnfollowUser)).ServeHTTP(w, r)
+			default:
+				http.Error(w, `{"error": "Method not allowed"}`, http.StatusMethodNotAllowed)
+			}
+		} else {
+			http.Error(w, `{"error": "Not found"}`, http.StatusNotFound)
+		}
+	})
 
 	// Catch-all for unimplemented API routes
 	mux.HandleFunc("/api/", func(w http.ResponseWriter, r *http.Request) {

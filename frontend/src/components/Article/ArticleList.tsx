@@ -1,4 +1,4 @@
-import React from 'react';
+import { Stack, Loader, Center, Text, Alert } from '@mantine/core';
 import type { Article } from '../../types/api';
 import { ArticlePreview } from './ArticlePreview';
 
@@ -11,33 +11,36 @@ interface ArticleListProps {
 export function ArticleList({ articles, isLoading, error }: ArticleListProps) {
   if (isLoading) {
     return (
-      <div className="flex justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+      <Center py="xl">
+        <Loader size="md" />
+      </Center>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-600">Error: {error}</p>
-      </div>
+      <Alert color="red" title="Error">
+        {error}
+      </Alert>
     );
   }
 
   if (articles.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">No articles yet.</p>
-      </div>
+      <Center py="xl">
+        <Text c="dimmed">No articles yet.</Text>
+      </Center>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <Stack gap="md">
       {articles.map((article) => (
-        <ArticlePreview key={article.slug} article={article} />
+        <ArticlePreview 
+          key={article.slug} 
+          article={article}
+        />
       ))}
-    </div>
+    </Stack>
   );
 }

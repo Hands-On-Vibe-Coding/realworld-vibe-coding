@@ -1,14 +1,31 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Card, Title, TextInput, Textarea, Button, Stack, Alert, Group } from '@mantine/core';
 import { useCreateArticle } from '../../hooks/useArticles';
 
 const articleSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string().min(1, 'Description is required'),
-  body: z.string().min(1, 'Body is required'),
-  tagList: z.string().optional(),
+  title: z.string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be less than 100 characters'),
+  description: z.string()
+    .min(1, 'Description is required')
+    .max(200, 'Description must be less than 200 characters'),
+  body: z.string()
+    .min(10, 'Article body must be at least 10 characters')
+    .max(10000, 'Article body must be less than 10,000 characters'),
+  tagList: z.string()
+    .optional()
+    .refine((tags) => {
+      if (!tags) return true;
+      const tagArray = tags.split(',').map(tag => tag.trim());
+      return tagArray.length <= 10;
+    }, 'Maximum 10 tags allowed')
+    .refine((tags) => {
+      if (!tags) return true;
+      const tagArray = tags.split(',').map(tag => tag.trim());
+      return tagArray.every(tag => tag.length <= 20);
+    }, 'Each tag must be less than 20 characters'),
 });
 
 type ArticleFormData = z.infer<typeof articleSchema>;
@@ -50,74 +67,91 @@ export function ArticleForm({ onSuccess }: ArticleFormProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">Write Article</h2>
+    <Card withBorder shadow="sm" padding="xl" maw={800} mx="auto" role="main">
+      <Title order={2} ta="center" mb="xl" id="article-form-title">Write Article</Title>
       
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <input
+      <form onSubmit={handleSubmit(onSubmit)} aria-labelledby="article-form-title">
+        <Stack gap="lg">
+          <TextInput
             {...register('title')}
-            type="text"
-            placeholder="Article Title"
-            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+            label="Article Title"
+            placeholder="Enter a compelling title for your article"
+            size="lg"
+            error={errors.title?.message}
+            required
+            maxLength={100}
+            aria-describedby={errors.title ? 'title-error' : 'title-hint'}
+            data-autofocus
+            description="Keep it concise and engaging (max 100 characters)"
           />
-          {errors.title && (
-            <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-          )}
-        </div>
 
-        <div>
-          <input
+          <TextInput
             {...register('description')}
-            type="text"
-            placeholder="What's this article about?"
-            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            label="Description"
+            placeholder="What's this article about? (brief summary)"
+            error={errors.description?.message}
+            required
+            maxLength={200}
+            aria-describedby={errors.description ? 'description-error' : 'description-hint'}
+            description="A short description that appears in article previews (max 200 characters)"
           />
-          {errors.description && (
-            <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-          )}
-        </div>
 
-        <div>
-          <textarea
+          <Textarea
             {...register('body')}
-            placeholder="Write your article (in markdown)"
-            rows={12}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical"
+            label="Article Content"
+            placeholder="Write your article content here (Markdown supported)"
+            minRows={12}
+            autosize
+            error={errors.body?.message}
+            required
+            maxLength={10000}
+            aria-describedby={errors.body ? 'body-error' : 'body-hint'}
+            description="Write your full article content. Markdown formatting is supported (10-10,000 characters)"
           />
-          {errors.body && (
-            <p className="mt-1 text-sm text-red-600">{errors.body.message}</p>
-          )}
-        </div>
 
-        <div>
-          <input
-            {...register('tagList')}
-            type="text"
-            placeholder="Enter tags (comma separated)"
-            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <p className="mt-1 text-sm text-gray-500">
-            Separate tags with commas (e.g., "react, javascript, web development")
-          </p>
-        </div>
-
-        {createMutation.error && (
-          <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {createMutation.error.message}
+          <div>
+            <TextInput
+              {...register('tagList')}
+              label="Tags (Optional)"
+              placeholder="react, javascript, web development"
+              error={errors.tagList?.message}
+              aria-describedby={errors.tagList ? 'tags-error' : 'tags-hint'}
+              description="Add up to 10 tags to help readers find your article. Separate with commas (max 20 characters per tag)"
+            />
           </div>
-        )}
 
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={createMutation.isPending}
-            className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {createMutation.isPending ? 'Publishing...' : 'Publish Article'}
-          </button>
-        </div>
+          {createMutation.error && (
+            <Alert 
+              color="red" 
+              title="Publication Error"
+              role="alert"
+              aria-live="polite"
+            >
+              {createMutation.error.message}
+            </Alert>
+          )}
+
+          <Group justify="flex-end" gap="md">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => reset()}
+              disabled={createMutation.isPending}
+            >
+              Clear Form
+            </Button>
+            <Button
+              type="submit"
+              loading={createMutation.isPending}
+              color="green"
+              size="md"
+              aria-describedby={createMutation.error ? 'publish-error' : undefined}
+            >
+              {createMutation.isPending ? 'Publishing...' : 'Publish Article'}
+            </Button>
+          </Group>
+        </Stack>
       </form>
-    </div>
+    </Card>
   );
 }

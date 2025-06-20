@@ -8,6 +8,10 @@ import type {
   CreateArticleRequest,
   UpdateArticleRequest,
   TagsResponse,
+  CommentsResponse,
+  CommentResponse,
+  CreateCommentRequest,
+  ProfileResponse,
 } from '../types/api';
 
 const API_BASE_URL = 'http://localhost:8081/api';
@@ -180,6 +184,41 @@ class ApiClient {
 
   async getTags(): Promise<TagsResponse> {
     return this.request<TagsResponse>('/tags');
+  }
+
+  // Comment endpoints
+  async getComments(slug: string): Promise<CommentsResponse> {
+    return this.request<CommentsResponse>(`/articles/${slug}/comments`);
+  }
+
+  async createComment(slug: string, data: CreateCommentRequest): Promise<CommentResponse> {
+    return this.request<CommentResponse>(`/articles/${slug}/comments`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteComment(slug: string, id: number): Promise<void> {
+    await this.request(`/articles/${slug}/comments/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Profile endpoints
+  async getProfile(username: string): Promise<ProfileResponse> {
+    return this.request<ProfileResponse>(`/profiles/${username}`);
+  }
+
+  async followUser(username: string): Promise<ProfileResponse> {
+    return this.request<ProfileResponse>(`/profiles/${username}/follow`, {
+      method: 'POST',
+    });
+  }
+
+  async unfollowUser(username: string): Promise<ProfileResponse> {
+    return this.request<ProfileResponse>(`/profiles/${username}/follow`, {
+      method: 'DELETE',
+    });
   }
 }
 

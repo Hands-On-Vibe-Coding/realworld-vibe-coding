@@ -82,6 +82,16 @@ export interface CommentsResponse {
   comments: Comment[];
 }
 
+export interface CommentResponse {
+  comment: Comment;
+}
+
+export interface CreateCommentRequest {
+  comment: {
+    body: string;
+  };
+}
+
 export interface TagsResponse {
   tags: string[];
 }

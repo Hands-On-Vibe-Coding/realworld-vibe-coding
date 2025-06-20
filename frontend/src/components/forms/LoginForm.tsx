@@ -1,7 +1,7 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { TextInput, PasswordInput, Button, Card, Title, Stack, Alert } from '@mantine/core';
 import { useAuth } from '../../hooks/useAuth';
 
 const loginSchema = z.object({
@@ -32,48 +32,52 @@ export function LoginForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
+    <Card withBorder shadow="sm" padding="lg" role="main">
+      <Title order={2} ta="center" mb="lg" id="login-title">Sign In</Title>
       
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <input
+      <form onSubmit={handleSubmit(onSubmit)} aria-labelledby="login-title">
+        <Stack>
+          <TextInput
             {...register('email')}
             type="email"
-            placeholder="Email"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            label="Email"
+            placeholder="Enter your email address"
+            error={errors.email?.message}
+            required
+            aria-describedby={errors.email ? 'email-error' : undefined}
+            data-autofocus
           />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
 
-        <div>
-          <input
+          <PasswordInput
             {...register('password')}
-            type="password"
-            placeholder="Password"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            label="Password"
+            placeholder="Enter your password"
+            error={errors.password?.message}
+            required
+            aria-describedby={errors.password ? 'password-error' : undefined}
           />
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+
+          {loginError && (
+            <Alert 
+              color="red" 
+              title="Login Error"
+              role="alert"
+              aria-live="polite"
+            >
+              {loginError.message}
+            </Alert>
           )}
-        </div>
 
-        {loginError && (
-          <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {loginError.message}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={isLoggingIn}
-          className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoggingIn ? 'Signing in...' : 'Sign in'}
-        </button>
+          <Button
+            type="submit"
+            loading={isLoggingIn}
+            fullWidth
+            aria-describedby={loginError ? 'login-error' : undefined}
+          >
+            {isLoggingIn ? 'Signing in...' : 'Sign in'}
+          </Button>
+        </Stack>
       </form>
-    </div>
+    </Card>
   );
 }

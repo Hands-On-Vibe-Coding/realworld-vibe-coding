@@ -1,4 +1,4 @@
-import React from 'react';
+import { Card, Title, Group, Badge, Skeleton, Alert, Text } from '@mantine/core';
 import { useTags } from '../../hooks/useArticles';
 
 interface TagsListProps {
@@ -11,45 +11,50 @@ export function TagsList({ onTagClick, selectedTag }: TagsListProps) {
 
   if (isLoading) {
     return (
-      <div className="animate-pulse">
-        <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
-        <div className="flex flex-wrap gap-1">
+      <Card withBorder padding="md">
+        <Skeleton height={16} width={100} mb="sm" />
+        <Group gap="xs">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-6 bg-gray-200 rounded w-16"></div>
+            <Skeleton key={i} height={24} width={60} radius="xl" />
           ))}
-        </div>
-      </div>
+        </Group>
+      </Card>
     );
   }
 
   if (error) {
-    return <div className="text-red-600 text-sm">Failed to load tags</div>;
+    return (
+      <Alert color="red">
+        Failed to load tags
+      </Alert>
+    );
   }
 
   const tags = tagsResponse?.tags || [];
 
   if (tags.length === 0) {
-    return <div className="text-gray-500 text-sm">No tags yet</div>;
+    return (
+      <Card withBorder padding="md">
+        <Text size="sm" c="dimmed">No tags yet</Text>
+      </Card>
+    );
   }
 
   return (
-    <div>
-      <h3 className="text-sm font-medium text-gray-900 mb-2">Popular Tags</h3>
-      <div className="flex flex-wrap gap-1">
+    <Card withBorder padding="md">
+      <Title order={4} size="sm" mb="sm">Popular Tags</Title>
+      <Group gap="xs">
         {tags.map((tag) => (
-          <button
+          <Badge
             key={tag}
+            variant={selectedTag === tag ? 'filled' : 'light'}
+            style={{ cursor: 'pointer' }}
             onClick={() => onTagClick?.(tag)}
-            className={`px-2 py-1 text-xs rounded-full transition-colors ${
-              selectedTag === tag
-                ? 'bg-blue-100 text-blue-800 border border-blue-300'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
           >
             {tag}
-          </button>
+          </Badge>
         ))}
-      </div>
-    </div>
+      </Group>
+    </Card>
   );
 }

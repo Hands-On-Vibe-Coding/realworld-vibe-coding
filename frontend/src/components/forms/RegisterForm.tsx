@@ -1,7 +1,7 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { TextInput, PasswordInput, Button, Card, Title, Stack, Alert } from '@mantine/core';
 import { useAuth } from '../../hooks/useAuth';
 
 const registerSchema = z.object({
@@ -34,60 +34,63 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
+    <Card withBorder shadow="sm" padding="lg" role="main">
+      <Title order={2} ta="center" mb="lg" id="register-title">Sign Up</Title>
       
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <input
+      <form onSubmit={handleSubmit(onSubmit)} aria-labelledby="register-title">
+        <Stack>
+          <TextInput
             {...register('username')}
-            type="text"
-            placeholder="Username"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            label="Username"
+            placeholder="Choose a username"
+            error={errors.username?.message}
+            required
+            aria-describedby={errors.username ? 'username-error' : undefined}
+            data-autofocus
           />
-          {errors.username && (
-            <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
-          )}
-        </div>
 
-        <div>
-          <input
+          <TextInput
             {...register('email')}
             type="email"
-            placeholder="Email"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            label="Email"
+            placeholder="Enter your email address"
+            error={errors.email?.message}
+            required
+            aria-describedby={errors.email ? 'email-error' : undefined}
           />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
 
-        <div>
-          <input
+          <PasswordInput
             {...register('password')}
-            type="password"
-            placeholder="Password"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            label="Password"
+            placeholder="Create a password (minimum 6 characters)"
+            error={errors.password?.message}
+            required
+            aria-describedby={errors.password ? 'password-error' : 'password-hint'}
+            description="Password must be at least 6 characters long"
           />
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+
+          {registerError && (
+            <Alert 
+              color="red" 
+              title="Registration Error"
+              role="alert"
+              aria-live="polite"
+            >
+              {registerError.message}
+            </Alert>
           )}
-        </div>
 
-        {registerError && (
-          <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {registerError.message}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={isRegistering}
-          className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isRegistering ? 'Signing up...' : 'Sign up'}
-        </button>
+          <Button
+            type="submit"
+            loading={isRegistering}
+            color="green"
+            fullWidth
+            aria-describedby={registerError ? 'register-error' : undefined}
+          >
+            {isRegistering ? 'Creating account...' : 'Sign up'}
+          </Button>
+        </Stack>
       </form>
-    </div>
+    </Card>
   );
 }

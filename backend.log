@@ -1,0 +1,14 @@
+🚀 RealWorld Backend Server Starting...
+2025/06/20 17:59:41 🔄 Running 6 migrations...
+2025/06/20 17:59:41 ✅ Migration completed: 001_create_users.sql
+2025/06/20 17:59:41 ✅ Migration completed: 002_create_articles.sql
+2025/06/20 17:59:41 ✅ Migration completed: 003_create_tags.sql
+2025/06/20 17:59:41 ✅ Migration completed: 004_create_follows.sql
+2025/06/20 17:59:41 ✅ Migration completed: 005_create_favorites.sql
+2025/06/20 17:59:41 ✅ Migration completed: 006_create_comments.sql
+2025/06/20 17:59:41 ✅ Database initialized successfully
+Server running on http://localhost:8081
+Health check: http://localhost:8081/health
+API base URL: http://localhost:8081/api/
+2025/06/20 17:59:41 Server failed to start:listen tcp :8081: bind: address already in use
+exit status 1
