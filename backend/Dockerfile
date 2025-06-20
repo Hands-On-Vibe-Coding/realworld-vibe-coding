@@ -1,8 +1,13 @@
-# Build stage
-FROM golang:1.21-alpine AS builder
+# Build stage  
+FROM golang:1.23-bullseye AS builder
 
 # Install build dependencies
-RUN apk add --no-cache git gcc musl-dev sqlite-dev
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    sqlite3 \
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -17,13 +22,17 @@ RUN go mod download
 COPY . .
 
 # Build the application with optimizations
-RUN CGO_ENABLED=1 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o realworld-backend ./cmd/server
+RUN CGO_ENABLED=1 go build -ldflags="-w -s" -o realworld-backend ./cmd/server
 
 # Runtime stage
-FROM alpine:latest
+FROM debian:bullseye-slim
 
 # Install runtime dependencies
-RUN apk --no-cache add ca-certificates sqlite
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    sqlite3 \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create app directory
 WORKDIR /root/
