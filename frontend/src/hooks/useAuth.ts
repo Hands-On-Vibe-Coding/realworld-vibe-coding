@@ -1,3 +1,4 @@
+import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
@@ -95,6 +96,3 @@ export function useAuth() {
     isUpdating: updateUserMutation.isPending,
   };
 }
-
-// Export React for the useEffect hook
-import React from 'react';
