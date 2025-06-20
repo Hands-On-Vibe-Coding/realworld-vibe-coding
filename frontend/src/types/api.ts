@@ -85,3 +85,21 @@ export interface CommentsResponse {
 export interface TagsResponse {
   tags: string[];
 }
+
+export interface CreateArticleRequest {
+  article: {
+    title: string;
+    description: string;
+    body: string;
+    tagList?: string[];
+  };
+}
+
+export interface UpdateArticleRequest {
+  article: {
+    title?: string;
+    description?: string;
+    body?: string;
+    tagList?: string[];
+  };
+}

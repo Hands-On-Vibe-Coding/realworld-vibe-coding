@@ -3,6 +3,11 @@ import type {
   RegisterRequest,
   LoginRequest,
   UpdateUserRequest,
+  ArticlesResponse,
+  ArticleResponse,
+  CreateArticleRequest,
+  UpdateArticleRequest,
+  TagsResponse,
 } from '../types/api';
 
 const API_BASE_URL = 'http://localhost:8081/api';
@@ -103,6 +108,78 @@ class ApiClient {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  // Article endpoints
+  async getArticles(params?: {
+    tag?: string;
+    author?: string;
+    favorited?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<ArticlesResponse> {
+    const searchParams = new URLSearchParams();
+    if (params?.tag) searchParams.append('tag', params.tag);
+    if (params?.author) searchParams.append('author', params.author);
+    if (params?.favorited) searchParams.append('favorited', params.favorited);
+    if (params?.limit) searchParams.append('limit', params.limit.toString());
+    if (params?.offset) searchParams.append('offset', params.offset.toString());
+
+    const queryString = searchParams.toString();
+    const url = queryString ? `/articles?${queryString}` : '/articles';
+    
+    return this.request<ArticlesResponse>(url);
+  }
+
+  async getFeed(params?: { limit?: number; offset?: number }): Promise<ArticlesResponse> {
+    const searchParams = new URLSearchParams();
+    if (params?.limit) searchParams.append('limit', params.limit.toString());
+    if (params?.offset) searchParams.append('offset', params.offset.toString());
+
+    const queryString = searchParams.toString();
+    const url = queryString ? `/articles/feed?${queryString}` : '/articles/feed';
+    
+    return this.request<ArticlesResponse>(url);
+  }
+
+  async getArticle(slug: string): Promise<ArticleResponse> {
+    return this.request<ArticleResponse>(`/articles/${slug}`);
+  }
+
+  async createArticle(data: CreateArticleRequest): Promise<ArticleResponse> {
+    return this.request<ArticleResponse>('/articles', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateArticle(slug: string, data: UpdateArticleRequest): Promise<ArticleResponse> {
+    return this.request<ArticleResponse>(`/articles/${slug}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteArticle(slug: string): Promise<void> {
+    await this.request(`/articles/${slug}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async favoriteArticle(slug: string): Promise<ArticleResponse> {
+    return this.request<ArticleResponse>(`/articles/${slug}/favorite`, {
+      method: 'POST',
+    });
+  }
+
+  async unfavoriteArticle(slug: string): Promise<ArticleResponse> {
+    return this.request<ArticleResponse>(`/articles/${slug}/favorite`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getTags(): Promise<TagsResponse> {
+    return this.request<TagsResponse>('/tags');
   }
 }
 

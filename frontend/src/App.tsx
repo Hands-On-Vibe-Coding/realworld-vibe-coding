@@ -4,10 +4,21 @@ import { queryClient } from './lib/queryClient';
 import { useAuth } from './hooks/useAuth';
 import { LoginForm } from './components/forms/LoginForm';
 import { RegisterForm } from './components/forms/RegisterForm';
+import { ArticleForm } from './components/forms/ArticleForm';
+import { ArticleList } from './components/Article/ArticleList';
+import { TagsList } from './components/Common/TagsList';
+import { useArticles } from './hooks/useArticles';
 import './App.css';
 
 function AuthenticatedApp() {
   const { user, logout } = useAuth();
+  const [currentView, setCurrentView] = useState<'home' | 'create'>('home');
+  const [selectedTag, setSelectedTag] = useState<string>('');
+  
+  const { data: articlesResponse, isLoading, error } = useArticles({
+    tag: selectedTag || undefined,
+    limit: 10,
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -16,7 +27,27 @@ function AuthenticatedApp() {
           <div className="flex justify-between h-16 items-center">
             <h1 className="text-xl font-semibold">RealWorld</h1>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-700">Welcome, {user?.username}!</span>
+              <button
+                onClick={() => setCurrentView('home')}
+                className={`px-3 py-2 text-sm rounded ${
+                  currentView === 'home'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Home
+              </button>
+              <button
+                onClick={() => setCurrentView('create')}
+                className={`px-3 py-2 text-sm rounded ${
+                  currentView === 'create'
+                    ? 'bg-green-100 text-green-800'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                New Article
+              </button>
+              <span className="text-gray-700">{user?.username}</span>
               <button
                 onClick={logout}
                 className="px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700"
@@ -30,19 +61,44 @@ function AuthenticatedApp() {
       
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                🎉 Authentication Successful!
-              </h2>
-              <p className="text-gray-600">
-                You are now logged in as <strong>{user?.username}</strong>
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Email: {user?.email}
-              </p>
+          {currentView === 'create' ? (
+            <ArticleForm onSuccess={() => setCurrentView('home')} />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <div className="lg:col-span-3">
+                <div className="mb-6">
+                  {selectedTag && (
+                    <div className="mb-4">
+                      <span className="text-sm text-gray-600">Showing articles tagged: </span>
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium">
+                        {selectedTag}
+                      </span>
+                      <button
+                        onClick={() => setSelectedTag('')}
+                        className="ml-2 text-sm text-blue-600 hover:underline"
+                      >
+                        Clear filter
+                      </button>
+                    </div>
+                  )}
+                  <ArticleList
+                    articles={articlesResponse?.articles || []}
+                    isLoading={isLoading}
+                    error={error?.message}
+                  />
+                </div>
+              </div>
+              
+              <div className="lg:col-span-1">
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <TagsList
+                    onTagClick={setSelectedTag}
+                    selectedTag={selectedTag}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>
