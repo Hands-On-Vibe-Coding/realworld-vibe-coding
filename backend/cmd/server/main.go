@@ -20,7 +20,7 @@ func main() {
 	defer db.Close()
 	
 	// Setup routes with middleware
-	router := handler.SetupRoutes()
+	router := handler.SetupRoutes(db.DB)
 	
 	port := ":8081"
 	fmt.Printf("Server running on http://localhost%s\n", port)
