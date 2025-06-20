@@ -82,6 +82,29 @@ export interface CreateArticleRequest {
   };
 }
 
+export interface UpdateArticleRequest {
+  article: {
+    title?: string;
+    description?: string;
+    body?: string;
+    tagList?: string[];
+  };
+}
+
+// Article query parameters
+export interface ArticleParams {
+  limit?: number;
+  offset?: number;
+  tag?: string;
+  author?: string;
+  favorited?: string;
+}
+
+export interface FeedParams {
+  limit?: number;
+  offset?: number;
+}
+
 export interface CreateCommentRequest {
   comment: {
     body: string;

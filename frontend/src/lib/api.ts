@@ -5,6 +5,9 @@ import type {
   ArticlesResponse,
   ArticleResponseWrapper,
   CreateArticleRequest,
+  UpdateArticleRequest,
+  ArticleParams,
+  FeedParams,
   CommentsResponse,
   CreateCommentRequest,
   CommentResponseWrapper,
@@ -131,13 +134,7 @@ export class ApiClient {
   }
 
   // Articles endpoints
-  async getArticles(params?: {
-    limit?: number;
-    offset?: number;
-    tag?: string;
-    author?: string;
-    favorited?: string;
-  }): Promise<ArticlesResponse> {
+  async getArticles(params?: ArticleParams): Promise<ArticlesResponse> {
     const searchParams = new URLSearchParams();
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     if (params?.offset) searchParams.set('offset', params.offset.toString());
@@ -149,10 +146,7 @@ export class ApiClient {
     return this.request(`/articles${query ? `?${query}` : ''}`);
   }
 
-  async getFeed(params?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<ArticlesResponse> {
+  async getFeed(params?: FeedParams): Promise<ArticlesResponse> {
     const searchParams = new URLSearchParams();
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     if (params?.offset) searchParams.set('offset', params.offset.toString());
@@ -169,6 +163,19 @@ export class ApiClient {
     return this.request('/articles', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  async updateArticle(slug: string, data: UpdateArticleRequest): Promise<ArticleResponseWrapper> {
+    return this.request(`/articles/${slug}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteArticle(slug: string): Promise<void> {
+    return this.request(`/articles/${slug}`, {
+      method: 'DELETE',
     });
   }
 
