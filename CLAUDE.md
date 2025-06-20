@@ -226,6 +226,38 @@ EOF
 - Link related issues and dependencies
 - Include acceptance criteria as checkboxes for progress tracking
 
+### Task Implementation Workflow
+When implementing features, follow this strict workflow:
+
+1. **Check GitHub Issues**: Use `gh issue list --state open` to find the lowest-numbered open issue
+2. **One Task at a Time**: Implement only one task at a time, never work on multiple tasks simultaneously
+3. **Follow Acceptance Criteria**: Each task has specific acceptance criteria that must be completed
+4. **Progress Documentation**: When implementation is complete, add a comment to the GitHub issue documenting completion
+5. **Close Issue**: Close the issue only after all acceptance criteria are verified and documented
+
+#### Task Selection Process
+```bash
+# Find the next task to work on
+gh issue list --state open --sort created --limit 1
+
+# Assign yourself to the issue
+gh issue edit {issue-number} --add-assignee @me
+
+# After completion, document progress
+gh issue comment {issue-number} --body "Implementation completed. All acceptance criteria verified."
+
+# Close the issue
+gh issue close {issue-number}
+```
+
+#### Implementation Documentation
+- Each completed task must have a GitHub issue comment documenting:
+  - What was implemented
+  - How acceptance criteria were met
+  - Any deviations from the original plan
+  - Testing results
+  - Screenshots or demos (if applicable)
+
 ### Cursor Rules Integration
 The project includes cursor rules for automated project planning that should be followed when creating implementation plans or task breakdowns.
 
