@@ -1,12 +1,14 @@
-# RealWorld Application - 바이브코딩 Implementation
+# RealWorld Application - Vibe Coding Implementation
 
-> A full-stack RealWorld application built with Go backend and React frontend using "바이브코딩" (Vibe Coding) methodology.
+> A full-stack RealWorld application built with Go backend and React frontend using Vibe Coding methodology.
 
 ## Overview
 
 This project implements the [RealWorld](https://github.com/gothinkster/realworld) application specification - a Medium.com clone that demonstrates real-world usage of modern web technologies. Built with a focus on rapid prototyping, iterative improvement, and real-time documentation.
 
 ## Tech Stack
+
+This project is built using the recommended technology stack from Armin Ronacher's blog post ["Agentic Coding Recommendations"](https://lucumr.pocoo.org/2025/6/12/agentic-coding/), which emphasizes simplicity, reliability, and AI-friendly development patterns.
 
 ### Backend
 - **Language**: Go 1.21+ 
