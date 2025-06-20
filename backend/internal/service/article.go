@@ -12,13 +12,15 @@ import (
 type ArticleService struct {
 	articleRepo *repository.ArticleRepository
 	userRepo    *repository.UserRepository
+	tagService  *TagService
 }
 
 // NewArticleService creates a new article service
-func NewArticleService(articleRepo *repository.ArticleRepository, userRepo *repository.UserRepository) *ArticleService {
+func NewArticleService(articleRepo *repository.ArticleRepository, userRepo *repository.UserRepository, tagService *TagService) *ArticleService {
 	return &ArticleService{
 		articleRepo: articleRepo,
 		userRepo:    userRepo,
+		tagService:  tagService,
 	}
 }
 
@@ -54,9 +56,9 @@ func (s *ArticleService) CreateArticle(req model.CreateArticleRequest, authorID 
 
 	// Set tags if provided
 	if len(req.Article.TagList) > 0 {
-		err = s.articleRepo.SetArticleTags(article.ID, req.Article.TagList)
+		err = s.tagService.CreateTagsForArticle(article.ID, req.Article.TagList)
 		if err != nil {
-			return nil, fmt.Errorf("failed to set article tags: %w", err)
+			return nil, fmt.Errorf("failed to create article tags: %w", err)
 		}
 	}
 
@@ -121,7 +123,7 @@ func (s *ArticleService) UpdateArticle(slug string, req model.UpdateArticleReque
 
 	// Update tags if provided
 	if req.Article.TagList != nil {
-		err = s.articleRepo.SetArticleTags(updatedArticle.ID, req.Article.TagList)
+		err = s.tagService.UpdateTagsForArticle(updatedArticle.ID, req.Article.TagList)
 		if err != nil {
 			return nil, fmt.Errorf("failed to update article tags: %w", err)
 		}
@@ -234,7 +236,7 @@ func (s *ArticleService) buildArticleResponse(article *model.Article, currentUse
 	}
 
 	// Get article tags
-	tags, err := s.articleRepo.GetArticleTags(article.ID)
+	tags, err := s.tagService.GetTagsForArticle(article.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get article tags: %w", err)
 	}

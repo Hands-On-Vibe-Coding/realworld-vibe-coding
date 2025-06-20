@@ -49,15 +49,18 @@ func main() {
 	// Initialize repositories
 	userRepo := repository.NewUserRepository(database.DB)
 	articleRepo := repository.NewArticleRepository(database.DB)
+	tagRepo := repository.NewTagRepository(database.DB)
 
 	// Initialize services
 	userService := service.NewUserService(userRepo)
-	articleService := service.NewArticleService(articleRepo, userRepo)
+	tagService := service.NewTagService(tagRepo)
+	articleService := service.NewArticleService(articleRepo, userRepo, tagService)
 
 	// Initialize handlers
 	authHandler := handler.NewAuthHandler(cfg.JWTSecret)
 	userHandler := handler.NewUserHandler(userService, cfg.JWTSecret)
 	articleHandler := handler.NewArticleHandler(articleService)
+	tagHandler := handler.NewTagHandler(tagService)
 
 	// Create JWT middleware
 	jwtMiddleware := middleware.JWTMiddleware(cfg.JWTSecret)
@@ -101,6 +104,9 @@ func main() {
 	articlePublic.Use(optionalJwtMiddleware)
 	articlePublic.HandleFunc("", articleHandler.GetArticles).Methods("GET")
 	articlePublic.HandleFunc("/{slug}", articleHandler.GetArticle).Methods("GET")
+
+	// Tag endpoints (public)
+	api.HandleFunc("/tags", tagHandler.GetTags).Methods("GET")
 
 	// Protected auth test endpoints (require authentication)
 	protected := api.PathPrefix("/auth").Subrouter()
