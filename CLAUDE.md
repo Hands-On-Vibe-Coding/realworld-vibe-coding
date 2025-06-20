@@ -159,6 +159,18 @@ The backend implements the complete RealWorld API specification:
 
 ## Development Guidelines
 
+### Frontend Development Workflow
+When working on frontend development, use Playwright MCP to verify implementation status:
+
+1. **Visual Verification**: Use `mcp__mcp-playwright__playwright_navigate` to visit the frontend development server (http://localhost:5173)
+2. **Screenshot Documentation**: Take screenshots with `mcp__mcp-playwright__playwright_screenshot` to document current implementation state
+3. **Functionality Testing**: Use Playwright MCP tools to interact with UI elements and verify user flows:
+   - `mcp__mcp-playwright__playwright_click` for button/link interactions
+   - `mcp__mcp-playwright__playwright_fill` for form input testing
+   - `mcp__mcp-playwright__playwright_evaluate` for JavaScript execution and state inspection
+4. **Implementation Status Check**: Before implementing new features, always check current frontend state with Playwright MCP to understand what's already built
+5. **Progress Validation**: After implementing features, use Playwright MCP to verify the implementation works as expected
+
 ### Project Planning Workflow
 When asked to plan a project, follow these steps:
 
