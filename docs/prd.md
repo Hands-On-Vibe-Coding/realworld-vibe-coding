@@ -71,8 +71,11 @@ RealWorld 애플리케이션을 바이브코딩 방식으로 구현하여 완전
 - Language: TypeScript
 - Router: Tanstack Router
 - State Management: Tanstack Query (서버 상태), Zustand (클라이언트 상태)
-- Styling: Tailwind CSS
-- Form Handling: React Hook Form + Zod
+- UI Library: Mantine UI
+- Form Handling: Mantine Form + Zod validation
+- Styling: Mantine's CSS-in-JS + Custom CSS
+- Icons: Tabler Icons (Mantine 기본 아이콘 세트)
+- Notifications: Mantine Notifications
 - Testing: Vitest + React Testing Library
 ```
 
@@ -217,30 +220,72 @@ updated_at
 ### 6.2 컴포넌트 구조
 ```
 components/
-├── ui/ (기본 UI 컴포넌트)
 ├── Layout/
-│   ├── Header.tsx
-│   ├── Footer.tsx
-│   └── Layout.tsx
+│   ├── Header.tsx (Mantine Header, Navbar 사용)
+│   ├── Footer.tsx (Mantine Footer 사용)
+│   └── AppShell.tsx (Mantine AppShell 사용)
 ├── Article/
-│   ├── ArticleList.tsx
-│   ├── ArticlePreview.tsx
-│   ├── ArticleDetail.tsx
-│   └── ArticleForm.tsx
+│   ├── ArticleList.tsx (Mantine Grid, Card 사용)
+│   ├── ArticlePreview.tsx (Mantine Card, Badge 사용)
+│   ├── ArticleDetail.tsx (Mantine Container, TypographyStylesProvider)
+│   └── ArticleForm.tsx (Mantine Form, TextInput, Textarea)
 ├── Comment/
-│   ├── CommentList.tsx
-│   ├── CommentForm.tsx
-│   └── CommentItem.tsx
+│   ├── CommentList.tsx (Mantine Stack 사용)
+│   ├── CommentForm.tsx (Mantine Form, Textarea, Button)
+│   └── CommentItem.tsx (Mantine Paper, Avatar, Text)
 ├── Profile/
-│   ├── ProfileInfo.tsx
-│   └── FollowButton.tsx
-└── Common/
-    ├── Loading.tsx
-    ├── ErrorBoundary.tsx
-    └── Pagination.tsx
+│   ├── ProfileInfo.tsx (Mantine Avatar, Text, Group)
+│   └── FollowButton.tsx (Mantine Button, ActionIcon)
+├── Common/
+│   ├── Loading.tsx (Mantine Loader, LoadingOverlay)
+│   ├── ErrorBoundary.tsx (Mantine Alert, Notification)
+│   ├── Pagination.tsx (Mantine Pagination)
+│   └── TagsList.tsx (Mantine Badge, Group)
+└── forms/
+    ├── LoginForm.tsx (Mantine Form, PasswordInput)
+    ├── RegisterForm.tsx (Mantine Form, TextInput)
+    └── SettingsForm.tsx (Mantine Form, FileInput)
 ```
 
-### 6.3 상태 관리 (Zustand)
+### 6.3 UI 테마 및 스타일링 (Mantine)
+```typescript
+// theme/index.ts
+import { MantineProvider, createTheme } from '@mantine/core';
+
+const theme = createTheme({
+  primaryColor: 'green', // RealWorld 브랜드 컬러
+  colors: {
+    brand: [
+      '#f0f9ff', '#e0f2fe', '#bae6fd', '#7dd3fc',
+      '#38bdf8', '#0ea5e9', '#0284c7', '#0369a1',
+      '#075985', '#0c4a6e'
+    ]
+  },
+  components: {
+    Button: Button.extend({
+      defaultProps: {
+        size: 'md',
+        radius: 'md'
+      }
+    }),
+    Card: Card.extend({
+      defaultProps: {
+        shadow: 'sm',
+        radius: 'md',
+        withBorder: true
+      }
+    })
+  }
+});
+
+// App.tsx에서 MantineProvider 적용
+<MantineProvider theme={theme}>
+  <Notifications />
+  <Router />
+</MantineProvider>
+```
+
+### 6.4 상태 관리 (Zustand + TanStack Query)
 ```typescript
 // stores/authStore.ts
 interface AuthState {
@@ -251,14 +296,29 @@ interface AuthState {
   updateUser: (user: User) => void
 }
 
-// stores/articleStore.ts
-interface ArticleState {
-  articles: Article[]
-  currentArticle: Article | null
-  loading: boolean
-  setArticles: (articles: Article[]) => void
-  setCurrentArticle: (article: Article) => void
-}
+// Mantine Notifications와 연동
+import { notifications } from '@mantine/notifications';
+
+const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  token: null,
+  login: (user, token) => {
+    set({ user, token });
+    notifications.show({
+      title: '로그인 성공',
+      message: `환영합니다, ${user.username}님!`,
+      color: 'green'
+    });
+  },
+  logout: () => {
+    set({ user: null, token: null });
+    notifications.show({
+      title: '로그아웃',
+      message: '안전하게 로그아웃되었습니다.',
+      color: 'blue'
+    });
+  }
+}));
 ```
 
 ## 7. 백엔드 설계

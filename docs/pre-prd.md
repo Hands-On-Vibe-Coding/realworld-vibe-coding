@@ -32,9 +32,13 @@ RealWorld 애플리케이션(https://realworld-docs.netlify.app/implementation-c
 
 ### Frontend 기술 스택 (확정)
 - **프레임워크**: React with Vite
-- **라우팅**: Tanstack Router
+- **라우팅**: Tanstack Router  
 - **상태관리**: Tanstack Query (서버 상태), Zustand (클라이언트 상태)
-- **스타일링**: Tailwind CSS
+- **UI 라이브러리**: Mantine UI (컴포넌트 라이브러리)
+- **스타일링**: Mantine의 CSS-in-JS + 커스텀 CSS
+- **아이콘**: Tabler Icons (Mantine 기본 아이콘 세트)
+- **폼 처리**: Mantine Form + Zod 유효성 검사
+- **알림**: Mantine Notifications
 - **언어**: TypeScript
 - **빌드 도구**: Vite
 
@@ -63,6 +67,9 @@ RealWorld 애플리케이션(https://realworld-docs.netlify.app/implementation-c
 - 테스트 커버리지 80% 이상
 - ESLint, Prettier 적용
 - 컴포넌트/모듈 단위 설계
+- Mantine UI 컴포넌트 기반 일관된 디자인 시스템
+- 접근성 (Accessibility) 준수 (Mantine 기본 지원)
+- 반응형 디자인 (Mantine Grid, Flex 시스템 활용)
 
 ### 백엔드 코드 품질
 - Go 사용 (타입 안정성)
@@ -73,8 +80,10 @@ RealWorld 애플리케이션(https://realworld-docs.netlify.app/implementation-c
 ### 성능 요구사항
 - 초기 로딩 시간 3초 이하
 - 페이지 전환 시간 1초 이하
-- 모바일 반응형 지원
+- 모바일 반응형 지원 (Mantine responsive breakpoints 활용)
 - SEO 최적화 고려
+- Mantine 번들 크기 최적화 (tree-shaking 적용)
+- 다크 테마 지원 (Mantine ColorScheme 활용)
 
 ### 배포 및 운영
 - **CI/CD**: GitHub Actions 파이프라인
