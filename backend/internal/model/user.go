@@ -30,3 +30,31 @@ type ProfileResponse struct {
 	Image     string `json:"image"`
 	Following bool   `json:"following"`
 }
+
+// CreateUserRequest represents the request body for user registration
+type CreateUserRequest struct {
+	User struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Username string `json:"username"`
+	} `json:"user"`
+}
+
+// UpdateUserRequest represents the request body for user update
+type UpdateUserRequest struct {
+	User struct {
+		Email    *string `json:"email,omitempty"`
+		Username *string `json:"username,omitempty"`
+		Password *string `json:"password,omitempty"`
+		Bio      *string `json:"bio,omitempty"`
+		Image    *string `json:"image,omitempty"`
+	} `json:"user"`
+}
+
+// LoginRequest represents the request body for user login
+type LoginRequest struct {
+	User struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	} `json:"user"`
+}
