@@ -1,0 +1,79 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Coding Standards and Quality Management
+
+## Code Quality Requirements
+
+### Test Coverage
+- **Target**: 80%+ test coverage for both frontend and backend
+- **Backend Testing**: Go standard testing + testify
+- **Frontend Testing**: Vitest + React Testing Library
+
+### Code Style
+- **Backend**: Go fmt, Go vet applied
+- **Frontend**: ESLint, Prettier applied
+- **TypeScript**: Strict type checking mode compliance
+
+## Development Guidelines
+
+### Feature Implementation Workflow
+When implementing features, follow these steps:
+
+1. **Review RealWorld Spec**: Verify requirements comply with RealWorld API spec
+2. **Follow Established Patterns**: Follow defined coding patterns once established
+3. **Implement Tests Alongside**: Write tests alongside feature code
+4. **Ensure Mobile Responsiveness**: Guarantee mobile responsive support
+5. **Validate Against RealWorld API Spec**: Verify API spec compliance
+6. **Pre-commit Checks**: Run linting and type checking before commits
+
+### Authentication Flow
+- JWT tokens stored in Zustand auth store
+- API client automatically includes authentication headers
+- Protected routes use authentication middleware
+
+## Code Organization
+
+### Backend (Go)
+- Follow Clean Architecture principles
+- Prioritize clear function names and simple structure
+- Use pure SQL over ORM (clear query control)
+- Structured logging (JSON format)
+
+### Frontend (React + TypeScript)
+- Component-based architecture
+- Proper separation of concerns
+- TypeScript strict mode compliance
+- Component/module unit design
+
+## Performance Requirements
+- **Initial Loading Time**: Under 3 seconds
+- **Page Transition Time**: Under 1 second
+- **Mobile Responsive**: Full support
+- **SEO Optimization**: Consideration included
+
+## Accessibility Requirements
+- **Target**: AA grade accessibility achievement
+- **Keyboard Navigation**: Full support
+- **Screen Reader**: Compatibility guaranteed
+- **Color Contrast**: WCAG guidelines compliance
+
+## Build and Deployment
+- **Build Time**: Under 30 seconds
+- **Bundle Size**: Optimized
+- **Docker**: Unified development environment
+- **CI/CD**: GitHub Actions pipeline
+
+## Documentation
+- **Real-time Documentation**: Document alongside code
+- **API Documentation**: Real-time updates
+- **User Guide**: High-quality documentation
+- **Developer Guide**: Clear guidelines
+
+## Security Considerations
+- **JWT Tokens**: Secure storage and transmission
+- **Input Validation**: Validate all user inputs
+- **SQL Injection Prevention**: Use parameterized queries
+- **CORS Settings**: Apply appropriate CORS policies

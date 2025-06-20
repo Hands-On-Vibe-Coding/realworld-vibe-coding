@@ -1,0 +1,72 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Development Workflow and Project Planning
+
+## Project Planning Workflow
+When asked to plan a project, follow these steps:
+
+1. **Read Design Documents**: First, read [docs/pre-prd.md](mdc:docs/pre-prd.md) and [docs/prd.md](mdc:docs/prd.md) to understand requirements
+2. **Create Implementation Plan**: Write implementation plan with 10-20 tasks in `plan.md` file, including task dependencies
+3. **Create GitHub Issues**: Create GitHub issues for each task with detailed descriptions, labels, and milestones
+
+## GitHub Issue Creation Process
+Use the `gh` command to create issues with the following structure:
+
+```bash
+gh issue create --title "TASK-{number}: {Title}" --body "$(cat <<'EOF'
+## Description
+Brief description of the task
+
+## Background
+Context and background information needed
+
+## Acceptance Criteria
+- [ ] Specific criteria 1
+- [ ] Specific criteria 2
+
+## Technical Details
+### Code Examples
+```{language}
+// Example code here
+```
+
+## Dependencies
+- #{issue-number}: {dependency description}
+
+## Estimated Time
+{time estimate}
+EOF
+)" --label "enhancement,task" --milestone "Sprint 1"
+```
+
+## GitHub Issue Management
+- **Labels**: Use consistent labels like `enhancement`, `bug`, `task`, `frontend`, `backend`, `documentation`
+- **Milestones**: Group issues into development phases (Sprint 1, Sprint 2, etc.)
+- **Dependencies**: Reference other issues using `#{issue-number}` format
+- **Assignees**: Assign issues when implementation begins
+- **Projects**: Use GitHub Projects for kanban-style tracking
+
+## Guidelines for Issue Creation
+- Use descriptive titles with task numbering: `TASK-{number}: {Title}`
+- Include comprehensive background and context in issue descriptions
+- Use markdown code blocks with language specification
+- Common languages: go, javascript, typescript, bash, sql, yaml
+- Add appropriate labels for categorization and filtering
+- Link related issues and dependencies
+- Include acceptance criteria as checkboxes for progress tracking
+
+## Development Commands
+Use development commands defined in [CLAUDE.md](mdc:CLAUDE.md):
+
+```bash
+make setup          # Initial development environment setup
+make dev            # Run both frontend and backend servers
+make dev-front      # Run frontend dev server only
+make dev-back       # Run backend dev server only
+make test           # Run all tests
+make lint           # Run linting
+make build          # Build
+```

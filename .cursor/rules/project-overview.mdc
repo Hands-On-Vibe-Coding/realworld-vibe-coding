@@ -1,0 +1,34 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RealWorld Vibe Coding Project Overview
+
+## Project Goal
+This project implements a RealWorld application using the Vibe Coding methodology to build a complete full-stack application.
+
+## Vibe Coding Methodology
+- **Rapid Prototyping**: Core functionality implementation first
+- **Iterative Improvement**: Gradual enhancement of features
+- **Real-time Feedback**: Continuous testing during development
+- **Documentation**: Real-time documentation alongside code
+- **Simplicity First**: Clear function names and simple structure over complex architecture patterns
+- **AI Collaboration Friendly**: Predictable and stable ecosystem utilization
+
+## Tech Stack
+- **Frontend**: React + Vite + TypeScript + Tanstack Router + Zustand + Tailwind CSS
+- **Backend**: Go + standard net/http + SQLite/PostgreSQL + JWT
+- **Development Tools**: Makefile, Docker, GitHub Actions
+- **Deployment**: AWS ECS + Fargate
+
+## Key Documents
+- [CLAUDE.md](mdc:CLAUDE.md) - Project guide and development commands
+- [docs/pre-prd.md](mdc:docs/pre-prd.md) - Pre-requirements definition document
+- [docs/prd.md](mdc:docs/prd.md) - Detailed product requirements document
+
+## Success Criteria
+- 100% RealWorld API spec compliance
+- 80%+ test coverage
+- Initial loading time under 3 seconds
+- Mobile responsive support

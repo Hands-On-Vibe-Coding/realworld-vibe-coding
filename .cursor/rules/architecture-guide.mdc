@@ -1,0 +1,135 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Architecture Guide and Code Structure
+
+## Project Structure
+```
+realworld-vibe-coding/
+├── backend/                 # Go Backend
+│   ├── cmd/server/         # Application entry point
+│   ├── internal/           # Internal packages
+│   │   ├── handler/        # HTTP handlers
+│   │   ├── service/        # Business logic
+│   │   ├── repository/     # Data access layer
+│   │   ├── middleware/     # HTTP middleware
+│   │   ├── model/          # Data models
+│   │   ├── config/         # Configuration management
+│   │   └── utils/          # Utility functions
+│   ├── migrations/         # Database migrations
+│   └── pkg/               # Public packages
+├── frontend/              # React Frontend
+│   ├── src/
+│   │   ├── pages/         # Page components
+│   │   ├── components/    # Reusable components
+│   │   ├── stores/        # Zustand stores
+│   │   └── lib/           # API client and utilities
+│   └── public/            # Static files
+├── docs/                  # Project documentation
+│   ├── pre-prd.md         # Pre-requirements definition
+│   ├── prd.md             # Product requirements document
+│   └── session-log.md     # Session log
+└── CLAUDE.md              # Project guide
+```
+
+## Backend Architecture (Go)
+### Clean Architecture Principles
+- **Handler Layer**: HTTP request/response processing
+- **Service Layer**: Business logic
+- **Repository Layer**: Data access
+- **Model Layer**: Data structure definitions
+
+### Core Packages
+- `cmd/server/main.go`: Application entry point
+- `internal/handler/`: User, article, comment, profile handlers
+- `internal/service/`: Business logic layer
+- `internal/repository/`: Data access layer
+- `internal/middleware/`: JWT, CORS, logging middleware
+- `internal/model/`: Data models
+- `internal/config/`: Configuration management
+- `internal/utils/`: Utility functions
+
+### Tech Stack
+- **Language**: Go 1.23+ with standard net/http and Gorilla Mux
+- **Database**: SQLite (development), PostgreSQL (production)
+- **Authentication**: JWT-based authentication
+- **Testing**: Go standard testing + testify
+
+## Frontend Architecture (React + TypeScript)
+### Component Structure
+```
+components/
+├── ui/                    # Basic UI components
+├── Layout/               # Layout components
+│   ├── Header.tsx
+│   ├── Footer.tsx
+│   └── Layout.tsx
+├── Article/              # Article-related components
+│   ├── ArticleList.tsx
+│   ├── ArticlePreview.tsx
+│   ├── ArticleDetail.tsx
+│   └── ArticleForm.tsx
+├── Comment/              # Comment-related components
+│   ├── CommentList.tsx
+│   ├── CommentForm.tsx
+│   └── CommentItem.tsx
+├── Profile/              # Profile-related components
+│   ├── ProfileInfo.tsx
+│   └── FollowButton.tsx
+└── Common/               # Common components
+    ├── Loading.tsx
+    ├── ErrorBoundary.tsx
+    └── Pagination.tsx
+```
+
+### State Management
+- **Server State**: Tanstack Query
+- **Client State**: Zustand (auth store)
+- **Form Management**: React Hook Form + Zod validation
+
+### Tech Stack
+- **Framework**: React 19 with Vite
+- **Language**: TypeScript (strict type checking)
+- **Router**: Tanstack Router (type-safe routing)
+- **Styling**: Tailwind CSS with forms and typography plugins
+
+## API Endpoints
+### Authentication
+- `POST /api/users` - User registration
+- `POST /api/users/login` - User login
+- `GET /api/user` - Get current user
+- `PUT /api/user` - Update user
+
+### Articles
+- `GET /api/articles` - List articles
+- `GET /api/articles/feed` - Get user feed
+- `GET /api/articles/{slug}` - Get article by slug
+- `POST /api/articles` - Create article
+- `PUT /api/articles/{slug}` - Update article
+- `DELETE /api/articles/{slug}` - Delete article
+- `POST /api/articles/{slug}/favorite` - Favorite article
+- `DELETE /api/articles/{slug}/favorite` - Unfavorite article
+
+### Comments
+- `GET /api/articles/{slug}/comments` - Get comments
+- `POST /api/articles/{slug}/comments` - Add comment
+- `DELETE /api/articles/{slug}/comments/{id}` - Delete comment
+
+### Profiles
+- `GET /api/profiles/{username}` - Get profile
+- `POST /api/profiles/{username}/follow` - Follow user
+- `DELETE /api/profiles/{username}/follow` - Unfollow user
+
+### Tags
+- `GET /api/tags` - Get tags
+
+## Database Schema
+### Core Entities and Relationships
+- Users (authentication and profiles)
+- Articles (slug-based URLs)
+- Comments (nested under articles)
+- Tags (many-to-many with articles)
+- Follows (user relationships)
+- Favorites (user-article relationships)

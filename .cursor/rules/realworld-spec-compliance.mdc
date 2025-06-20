@@ -1,0 +1,171 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RealWorld Spec Compliance Guide
+
+## RealWorld API Spec Overview
+This project implements an application that is 100% compliant with the RealWorld spec.
+
+## Core Feature Requirements
+
+### User Management
+- **Registration/Login/Logout**: JWT-based authentication
+- **Profile Management**: User information viewing and editing
+- **User Follow/Unfollow**: Social features
+
+### Article Management
+- **Article CRUD**: Create, edit, delete, view articles
+- **Article Lists**: Global feed, personal feed
+- **Article Interactions**: Like/unlike articles
+- **Tag System**: Tag-based filtering
+
+### Comment System
+- **Comment CRUD**: Create, delete, view comments
+- **Comment Lists**: Article-specific comment management
+
+## API Endpoint Specifications
+
+### Authentication API
+```
+POST /api/users/login
+POST /api/users
+GET /api/user
+PUT /api/user
+```
+
+### Profile API
+```
+GET /api/profiles/:username
+POST /api/profiles/:username/follow
+DELETE /api/profiles/:username/follow
+```
+
+### Article API
+```
+GET /api/articles
+GET /api/articles/feed
+GET /api/articles/:slug
+POST /api/articles
+PUT /api/articles/:slug
+DELETE /api/articles/:slug
+POST /api/articles/:slug/favorite
+DELETE /api/articles/:slug/favorite
+```
+
+### Comment API
+```
+GET /api/articles/:slug/comments
+POST /api/articles/:slug/comments
+DELETE /api/articles/:slug/comments/:id
+```
+
+### Tag API
+```
+GET /api/tags
+```
+
+## Data Model Specifications
+
+### User Model
+```typescript
+interface User {
+  email: string
+  token: string
+  username: string
+  bio: string | null
+  image: string | null
+}
+```
+
+### Article Model
+```typescript
+interface Article {
+  slug: string
+  title: string
+  description: string
+  body: string
+  tagList: string[]
+  createdAt: string
+  updatedAt: string
+  favorited: boolean
+  favoritesCount: number
+  author: Profile
+}
+```
+
+### Comment Model
+```typescript
+interface Comment {
+  id: number
+  createdAt: string
+  updatedAt: string
+  body: string
+  author: Profile
+}
+```
+
+### Profile Model
+```typescript
+interface Profile {
+  username: string
+  bio: string | null
+  image: string | null
+  following: boolean
+}
+```
+
+## Frontend Requirements
+
+### Page Structure
+- `/` - Homepage (global feed)
+- `/login` - Login
+- `/register` - Registration
+- `/settings` - Settings
+- `/profile/:username` - Profile
+- `/editor` - Article creation
+- `/editor/:slug` - Article editing
+- `/article/:slug` - Article detail
+
+### Feature Requirements
+- **SPA Implementation**: Single Page Application
+- **Mobile Responsive**: Complete mobile support
+- **Cross-browser Compatibility**: Support for all major browsers
+- **Real-time Feedback**: Immediate response to user interactions
+
+## Validation Criteria
+
+### Functional Validation
+- [ ] All RealWorld API endpoints implemented
+- [ ] All user stories implemented
+- [ ] Mobile responsive completion
+- [ ] Cross-browser compatibility
+
+### Technical Validation
+- [ ] 80%+ test coverage
+- [ ] Performance requirements achieved
+- [ ] AA grade accessibility achieved
+- [ ] SEO optimization
+
+## Implementation Priority
+
+### Phase 1: Basic CRUD (2 weeks)
+1. User registration/login
+2. Article CRUD
+3. Basic UI implementation
+
+### Phase 2: Authentication and Authorization (1 week)
+1. JWT authentication implementation
+2. Protected routes
+3. User profiles
+
+### Phase 3: Advanced Features (2 weeks)
+1. Comment system
+2. Like/follow functionality
+3. Tag system
+
+### Phase 4: Optimization and Deployment (1 week)
+1. Performance optimization
+2. Test writing
+3. Production deployment
