@@ -1,0 +1,60 @@
+FROM golang:1.21-alpine
+
+# Install development dependencies including Air for hot reload
+RUN apk add --no-cache git gcc musl-dev sqlite-dev curl
+RUN go install github.com/cosmtrek/air@latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Create data directory for SQLite
+RUN mkdir -p /data
+
+# Expose port
+EXPOSE 8080
+
+# Set environment variables
+ENV PORT=8080
+ENV DATABASE_URL=/data/realworld.db
+ENV JWT_SECRET=dev-secret-key
+ENV ENVIRONMENT=development
+ENV CGO_ENABLED=1
+
+# Create Air configuration
+RUN echo '[build]\n\
+  cmd = "go build -o ./tmp/main ./cmd/server"\n\
+  bin = "tmp/main"\n\
+  full_bin = "APP_ENV=dev APP_USER=air ./tmp/main"\n\
+  include_ext = ["go", "tpl", "tmpl", "html"]\n\
+  exclude_dir = ["assets", "tmp", "vendor", "frontend", "node_modules"]\n\
+  include_dir = []\n\
+  exclude_file = []\n\
+  exclude_regex = []\n\
+  exclude_unchanged = false\n\
+  follow_symlink = false\n\
+  log = "build-errors.log"\n\
+  delay = 1000\n\
+  stop_on_ied = false\n\
+  send_interrupt = false\n\
+  kill_delay = 0\n\
+\n\
+[color]\n\
+  main = "magenta"\n\
+  watcher = "cyan"\n\
+  build = "yellow"\n\
+  runner = "green"\n\
+\n\
+[misc]\n\
+  clean_on_exit = false' > .air.toml
+
+# Default command uses Air for hot reload
+CMD ["air", "-c", ".air.toml"]

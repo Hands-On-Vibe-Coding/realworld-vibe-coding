@@ -1,0 +1,72 @@
+# Docker Compose configuration for RealWorld application
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+      - backend_data:/data
+    environment:
+      - PORT=8080
+      - DATABASE_URL=/data/realworld.db
+      - JWT_SECRET=dev-secret-key-change-in-production
+      - ENVIRONMENT=development
+      - GO_ENV=development
+    networks:
+      - realworld-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+      - NODE_ENV=development
+    networks:
+      - realworld-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend-prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - realworld-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  backend_data:
+    driver: local
+
+networks:
+  realworld-network:
+    driver: bridge

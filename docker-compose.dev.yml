@@ -1,0 +1,50 @@
+# Docker Compose development configuration
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+      - backend_data:/data
+      - /app/realworld-backend  # Exclude binary from volume mount
+    environment:
+      - PORT=8080
+      - DATABASE_URL=/data/realworld.db
+      - JWT_SECRET=dev-secret-key-change-in-production
+      - ENVIRONMENT=development
+      - GO_ENV=development
+    networks:
+      - realworld-network
+    command: ["air", "-c", ".air.toml"]
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+      - NODE_ENV=development
+    networks:
+      - realworld-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+    driver: local
+
+networks:
+  realworld-network:
+    driver: bridge
