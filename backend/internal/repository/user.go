@@ -170,46 +170,46 @@ func (r *UserRepository) UsernameExists(username string) (bool, error) {
 // FollowUser creates a follow relationship
 func (r *UserRepository) FollowUser(followerID, followedID int) error {
 	query := `INSERT INTO follows (follower_id, followed_id) VALUES (?, ?)`
-	
+
 	_, err := r.db.Exec(query, followerID, followedID)
 	if err != nil {
 		return fmt.Errorf("failed to follow user: %w", err)
 	}
-	
+
 	return nil
 }
 
 // UnfollowUser removes a follow relationship
 func (r *UserRepository) UnfollowUser(followerID, followedID int) error {
 	query := `DELETE FROM follows WHERE follower_id = ? AND followed_id = ?`
-	
+
 	result, err := r.db.Exec(query, followerID, followedID)
 	if err != nil {
 		return fmt.Errorf("failed to unfollow user: %w", err)
 	}
-	
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("failed to get rows affected: %w", err)
 	}
-	
+
 	if rowsAffected == 0 {
 		return fmt.Errorf("follow relationship not found")
 	}
-	
+
 	return nil
 }
 
 // IsFollowing checks if a user is following another user
 func (r *UserRepository) IsFollowing(followerID, followedID int) (bool, error) {
 	query := `SELECT COUNT(*) FROM follows WHERE follower_id = ? AND followed_id = ?`
-	
+
 	var count int
 	err := r.db.QueryRow(query, followerID, followedID).Scan(&count)
 	if err != nil {
 		return false, fmt.Errorf("failed to check follow status: %w", err)
 	}
-	
+
 	return count > 0, nil
 }
 
@@ -219,14 +219,14 @@ func (r *UserRepository) GetProfileByUsername(username string, currentUserID *in
 	if err != nil {
 		return nil, err
 	}
-	
+
 	profile := &model.ProfileResponse{
-		Username: user.Username,
-		Bio:      user.Bio,
-		Image:    user.Image,
+		Username:  user.Username,
+		Bio:       user.Bio,
+		Image:     user.Image,
 		Following: false,
 	}
-	
+
 	// Check if current user is following this user
 	if currentUserID != nil && *currentUserID > 0 {
 		isFollowing, err := r.IsFollowing(*currentUserID, user.ID)
@@ -235,6 +235,6 @@ func (r *UserRepository) GetProfileByUsername(username string, currentUserID *in
 		}
 		profile.Following = isFollowing
 	}
-	
+
 	return profile, nil
 }

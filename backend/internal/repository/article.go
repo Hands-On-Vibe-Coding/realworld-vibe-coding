@@ -358,59 +358,58 @@ func (r *ArticleRepository) GetFeedArticles(limit, offset, userID int) ([]model.
 // FavoriteArticle adds an article to user's favorites
 func (r *ArticleRepository) FavoriteArticle(userID, articleID int) error {
 	query := `INSERT INTO favorites (user_id, article_id) VALUES (?, ?)`
-	
+
 	_, err := r.db.Exec(query, userID, articleID)
 	if err != nil {
 		return fmt.Errorf("failed to favorite article: %w", err)
 	}
-	
+
 	return nil
 }
 
 // UnfavoriteArticle removes an article from user's favorites
 func (r *ArticleRepository) UnfavoriteArticle(userID, articleID int) error {
 	query := `DELETE FROM favorites WHERE user_id = ? AND article_id = ?`
-	
+
 	result, err := r.db.Exec(query, userID, articleID)
 	if err != nil {
 		return fmt.Errorf("failed to unfavorite article: %w", err)
 	}
-	
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("failed to get rows affected: %w", err)
 	}
-	
+
 	if rowsAffected == 0 {
 		return fmt.Errorf("favorite not found")
 	}
-	
+
 	return nil
 }
 
 // IsFavorited checks if an article is favorited by a user
 func (r *ArticleRepository) IsFavorited(userID, articleID int) (bool, error) {
 	query := `SELECT COUNT(*) FROM favorites WHERE user_id = ? AND article_id = ?`
-	
+
 	var count int
 	err := r.db.QueryRow(query, userID, articleID).Scan(&count)
 	if err != nil {
 		return false, fmt.Errorf("failed to check favorite status: %w", err)
 	}
-	
+
 	return count > 0, nil
 }
 
 // GetFavoritesCount returns the number of favorites for an article
 func (r *ArticleRepository) GetFavoritesCount(articleID int) (int, error) {
 	query := `SELECT COUNT(*) FROM favorites WHERE article_id = ?`
-	
+
 	var count int
 	err := r.db.QueryRow(query, articleID).Scan(&count)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get favorites count: %w", err)
 	}
-	
+
 	return count, nil
 }
-

@@ -244,7 +244,7 @@ func (s *ArticleService) buildArticleResponse(article *model.Article, currentUse
 	// TODO: Implement following check
 	// For now, set to false
 	following := false
-	
+
 	// Check if current user has favorited this article
 	favorited := false
 	if currentUserID > 0 {
