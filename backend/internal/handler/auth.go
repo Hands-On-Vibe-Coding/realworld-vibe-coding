@@ -177,7 +177,7 @@ func ParseUserIDFromPath(path string) (int, error) {
 	if len(parts) == 0 {
 		return 0, fmt.Errorf("invalid path")
 	}
-	
+
 	idStr := parts[len(parts)-1]
 	return strconv.Atoi(idStr)
 }

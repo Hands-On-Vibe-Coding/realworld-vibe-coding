@@ -50,17 +50,22 @@ func main() {
 	userRepo := repository.NewUserRepository(database.DB)
 	articleRepo := repository.NewArticleRepository(database.DB)
 	tagRepo := repository.NewTagRepository(database.DB)
+	commentRepo := repository.NewCommentRepository(database.DB)
 
 	// Initialize services
 	userService := service.NewUserService(userRepo)
 	tagService := service.NewTagService(tagRepo)
 	articleService := service.NewArticleService(articleRepo, userRepo, tagService)
+	commentService := service.NewCommentService(commentRepo, userRepo)
+	profileService := service.NewProfileService(userRepo)
 
 	// Initialize handlers
 	authHandler := handler.NewAuthHandler(cfg.JWTSecret)
 	userHandler := handler.NewUserHandler(userService, cfg.JWTSecret)
 	articleHandler := handler.NewArticleHandler(articleService)
 	tagHandler := handler.NewTagHandler(tagService)
+	commentHandler := handler.NewCommentHandler(commentService)
+	profileHandler := handler.NewProfileHandler(profileService)
 
 	// Create JWT middleware
 	jwtMiddleware := middleware.JWTMiddleware(cfg.JWTSecret)
@@ -68,7 +73,7 @@ func main() {
 
 	// API routes
 	api := router.PathPrefix("/api").Subrouter()
-	
+
 	// Public endpoints
 	api.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -83,7 +88,7 @@ func main() {
 	// User registration and authentication
 	api.HandleFunc("/users", userHandler.Register).Methods("POST")
 	api.HandleFunc("/users/login", userHandler.Login).Methods("POST")
-	
+
 	// Protected user endpoints (require authentication)
 	userProtected := api.PathPrefix("/user").Subrouter()
 	userProtected.Use(jwtMiddleware)
@@ -98,7 +103,9 @@ func main() {
 	articleProtected.HandleFunc("/feed", articleHandler.GetArticlesFeed).Methods("GET")
 	articleProtected.HandleFunc("/{slug}", articleHandler.UpdateArticle).Methods("PUT")
 	articleProtected.HandleFunc("/{slug}", articleHandler.DeleteArticle).Methods("DELETE")
-	
+	articleProtected.HandleFunc("/{slug}/favorite", articleHandler.FavoriteArticle).Methods("POST")
+	articleProtected.HandleFunc("/{slug}/favorite", articleHandler.UnfavoriteArticle).Methods("DELETE")
+
 	// Public article endpoints (optional auth)
 	articlePublic := api.PathPrefix("/articles").Subrouter()
 	articlePublic.Use(optionalJwtMiddleware)
@@ -107,6 +114,30 @@ func main() {
 
 	// Tag endpoints (public)
 	api.HandleFunc("/tags", tagHandler.GetTags).Methods("GET")
+
+	// Comment endpoints
+	// Protected comment endpoints (require authentication)
+	commentProtected := api.PathPrefix("/articles/{slug}/comments").Subrouter()
+	commentProtected.Use(jwtMiddleware)
+	commentProtected.HandleFunc("", commentHandler.CreateComment).Methods("POST")
+	commentProtected.HandleFunc("/{id}", commentHandler.DeleteComment).Methods("DELETE")
+
+	// Public comment endpoints (optional auth)
+	commentPublic := api.PathPrefix("/articles/{slug}/comments").Subrouter()
+	commentPublic.Use(optionalJwtMiddleware)
+	commentPublic.HandleFunc("", commentHandler.GetComments).Methods("GET")
+
+	// Profile endpoints
+	// Protected profile endpoints (require authentication)
+	profileProtected := api.PathPrefix("/profiles/{username}").Subrouter()
+	profileProtected.Use(jwtMiddleware)
+	profileProtected.HandleFunc("/follow", profileHandler.FollowUser).Methods("POST")
+	profileProtected.HandleFunc("/follow", profileHandler.UnfollowUser).Methods("DELETE")
+
+	// Public profile endpoints (optional auth)
+	profilePublic := api.PathPrefix("/profiles/{username}").Subrouter()
+	profilePublic.Use(optionalJwtMiddleware)
+	profilePublic.HandleFunc("", profileHandler.GetProfile).Methods("GET")
 
 	// Protected auth test endpoints (require authentication)
 	protected := api.PathPrefix("/auth").Subrouter()
@@ -120,20 +151,20 @@ func main() {
 	optional.Use(optionalJwtMiddleware)
 	optional.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		claims, authenticated := middleware.GetUserFromContext(r)
 		response := map[string]interface{}{
-			"message": "This endpoint works with or without authentication",
+			"message":       "This endpoint works with or without authentication",
 			"authenticated": authenticated,
 		}
-		
+
 		if authenticated {
 			response["user"] = map[string]interface{}{
-				"id": claims.UserID,
+				"id":    claims.UserID,
 				"email": claims.Email,
 			}
 		}
-		
+
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(response)
 	}).Methods("GET")

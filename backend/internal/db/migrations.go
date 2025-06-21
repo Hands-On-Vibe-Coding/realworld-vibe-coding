@@ -76,7 +76,7 @@ func (m *MigrationManager) LoadMigrations(migrationsDir string) ([]Migration, er
 		}
 
 		filename := filepath.Base(path)
-		
+
 		// Extract migration ID from filename (e.g., "001_create_users_table.sql" -> 1)
 		parts := strings.Split(filename, "_")
 		if len(parts) < 2 {

@@ -189,6 +189,14 @@ This project follows "Vibe Coding" principles:
 - End-to-end tests with Playwright
 - Type safety with TypeScript strict mode
 
+### Git Hooks
+The project uses automated pre-commit hooks to ensure code quality:
+- **Linting and Formatting**: Automatically runs for staged files
+- **Testing**: Runs tests only for changed parts (frontend/backend)
+- **Go Quality Checks**: `go fmt` and `go vet` for backend code
+
+For detailed information, see [Git Hooks Documentation](./docs/git-hooks.md).
+
 ## Contributing
 
 1. Fork the repository

@@ -59,7 +59,7 @@ export function ArticlePage() {
         <ArticleHero article={article} isAuthor={isAuthor} />
         <ArticleContent article={article} />
         <ArticleActions article={article} isAuthor={isAuthor} />
-        <CommentsSection />
+        <CommentsSection article={article} />
       </Stack>
     </Container>
   );

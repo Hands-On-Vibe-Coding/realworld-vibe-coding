@@ -49,7 +49,7 @@ func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		default:
 			statusCode = http.StatusBadRequest
 		}
-		
+
 		errorResponse := map[string]interface{}{
 			"error": err.Error(),
 		}
@@ -195,7 +195,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		default:
 			statusCode = http.StatusBadRequest
 		}
-		
+
 		errorResponse := map[string]interface{}{
 			"error": err.Error(),
 		}
@@ -222,4 +222,3 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
-

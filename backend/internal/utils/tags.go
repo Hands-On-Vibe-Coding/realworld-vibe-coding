@@ -21,17 +21,17 @@ func NormalizeTags(tags []string) []string {
 	for _, tag := range tags {
 		// Trim whitespace and convert to lowercase
 		cleanTag := strings.TrimSpace(strings.ToLower(tag))
-		
+
 		// Skip empty tags
 		if cleanTag == "" {
 			continue
 		}
-		
+
 		// Skip if we've already seen this tag
 		if tagMap[cleanTag] {
 			continue
 		}
-		
+
 		// Add to our results
 		tagMap[cleanTag] = true
 		normalized = append(normalized, cleanTag)
@@ -43,27 +43,27 @@ func NormalizeTags(tags []string) []string {
 // ValidateTag checks if a tag is valid
 func ValidateTag(tag string) bool {
 	cleanTag := strings.TrimSpace(tag)
-	
+
 	// Empty tags are invalid
 	if cleanTag == "" {
 		return false
 	}
-	
+
 	// Tags longer than 50 characters are invalid
 	if len(cleanTag) > 50 {
 		return false
 	}
-	
+
 	// Tags should not contain special characters (allow alphanumeric, dash, underscore)
 	for _, char := range cleanTag {
-		if !((char >= 'a' && char <= 'z') || 
-			 (char >= 'A' && char <= 'Z') || 
-			 (char >= '0' && char <= '9') || 
-			 char == '-' || char == '_') {
+		if !((char >= 'a' && char <= 'z') ||
+			(char >= 'A' && char <= 'Z') ||
+			(char >= '0' && char <= '9') ||
+			char == '-' || char == '_') {
 			return false
 		}
 	}
-	
+
 	return true
 }
 
@@ -71,17 +71,17 @@ func ValidateTag(tag string) bool {
 func SanitizeTag(tag string) string {
 	// Trim and lowercase
 	cleanTag := strings.TrimSpace(strings.ToLower(tag))
-	
+
 	// Replace spaces with dashes
 	cleanTag = strings.ReplaceAll(cleanTag, " ", "-")
-	
+
 	// Remove multiple consecutive dashes
 	for strings.Contains(cleanTag, "--") {
 		cleanTag = strings.ReplaceAll(cleanTag, "--", "-")
 	}
-	
+
 	// Trim dashes from beginning and end
 	cleanTag = strings.Trim(cleanTag, "-")
-	
+
 	return cleanTag
 }

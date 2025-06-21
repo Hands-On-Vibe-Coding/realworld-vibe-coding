@@ -245,21 +245,21 @@ func (h *ArticleHandler) GetArticles(w http.ResponseWriter, r *http.Request) {
 
 	// Parse query parameters
 	params := service.ArticleListParams{}
-	
+
 	// Parse limit
 	if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
 		if limit, err := strconv.Atoi(limitStr); err == nil && limit > 0 {
 			params.Limit = limit
 		}
 	}
-	
+
 	// Parse offset
 	if offsetStr := r.URL.Query().Get("offset"); offsetStr != "" {
 		if offset, err := strconv.Atoi(offsetStr); err == nil && offset >= 0 {
 			params.Offset = offset
 		}
 	}
-	
+
 	// Parse filters
 	params.Tag = r.URL.Query().Get("tag")
 	params.Author = r.URL.Query().Get("author")
@@ -304,14 +304,14 @@ func (h *ArticleHandler) GetArticlesFeed(w http.ResponseWriter, r *http.Request)
 
 	// Parse query parameters
 	params := service.ArticleListParams{}
-	
+
 	// Parse limit
 	if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
 		if limit, err := strconv.Atoi(limitStr); err == nil && limit > 0 {
 			params.Limit = limit
 		}
 	}
-	
+
 	// Parse offset
 	if offsetStr := r.URL.Query().Get("offset"); offsetStr != "" {
 		if offset, err := strconv.Atoi(offsetStr); err == nil && offset >= 0 {
@@ -333,5 +333,87 @@ func (h *ArticleHandler) GetArticlesFeed(w http.ResponseWriter, r *http.Request)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+// FavoriteArticle handles favoriting an article
+func (h *ArticleHandler) FavoriteArticle(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, `{"error":"Method not allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Get user from JWT middleware context
+	claims, ok := middleware.GetUserFromContext(r)
+	if !ok {
+		http.Error(w, `{"error":"Authentication required"}`, http.StatusUnauthorized)
+		return
+	}
+
+	vars := mux.Vars(r)
+	slug := vars["slug"]
+
+	// Favorite the article
+	articleResponse, err := h.articleService.FavoriteArticle(slug, claims.UserID)
+	if err != nil {
+		var statusCode int
+		switch {
+		case err.Error() == "failed to get article: article not found":
+			statusCode = http.StatusNotFound
+		case err.Error() == "article already favorited":
+			statusCode = http.StatusConflict
+		default:
+			statusCode = http.StatusInternalServerError
+		}
+		http.Error(w, `{"error":"`+err.Error()+`"}`, statusCode)
+		return
+	}
+
+	response := map[string]interface{}{
+		"article": articleResponse,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// UnfavoriteArticle handles unfavoriting an article
+func (h *ArticleHandler) UnfavoriteArticle(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, `{"error":"Method not allowed"}`, http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Get user from JWT middleware context
+	claims, ok := middleware.GetUserFromContext(r)
+	if !ok {
+		http.Error(w, `{"error":"Authentication required"}`, http.StatusUnauthorized)
+		return
+	}
+
+	vars := mux.Vars(r)
+	slug := vars["slug"]
+
+	// Unfavorite the article
+	articleResponse, err := h.articleService.UnfavoriteArticle(slug, claims.UserID)
+	if err != nil {
+		var statusCode int
+		switch {
+		case err.Error() == "failed to get article: article not found":
+			statusCode = http.StatusNotFound
+		case err.Error() == "failed to unfavorite article: favorite not found":
+			statusCode = http.StatusNotFound
+		default:
+			statusCode = http.StatusInternalServerError
+		}
+		http.Error(w, `{"error":"`+err.Error()+`"}`, statusCode)
+		return
+	}
+
+	response := map[string]interface{}{
+		"article": articleResponse,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }

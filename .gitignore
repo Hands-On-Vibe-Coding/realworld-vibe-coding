@@ -1,28 +1,54 @@
 # Dependencies
 node_modules/
 */node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Build outputs
 dist/
 build/
-*.log
+out/
+.next/
+.nuxt/
+.nitro/
+.output/
+.vercel/
+.netlify/
 
 # Environment files
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*.local
+.env.development
+.env.production
+.env.staging
+.env.test
 
-# IDE
+# IDE & Editors
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
 
-# OS
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
 # Go specific
 *.exe
@@ -33,20 +59,134 @@ Thumbs.db
 *.test
 *.out
 go.work
+go.work.sum
+vendor/
+bin/
+pkg/
+
+# Frontend build artifacts
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/.turbo/
 
 # Backend build artifacts
 backend/server
 backend/realworld-backend
 backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+backend/coverage.out
+backend/coverage.html
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3
 
 # Logs
 *.log
 logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
 # Coverage reports
 coverage/
 *.lcov
+.nyc_output/
+lib-cov/
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
 
 # Temporary files
 tmp/
 temp/
+.tmp/
+.cache/
+
+# Storybook build outputs
+storybook-static
+
+# Test results
+junit.xml
+test-results/
+test-report.html
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# AWS
+.aws/
+
+# Kubernetes
+kubeconfig
+
+# Local development
+.local/
+.dev/

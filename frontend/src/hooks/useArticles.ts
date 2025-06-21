@@ -1,5 +1,6 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { useAuthStore } from '@/stores/auth';
 import type { ArticleParams, FeedParams, ArticlesResponse } from '@/types';
 
 // Query keys for articles
@@ -24,11 +25,14 @@ export function useArticles(params?: ArticleParams) {
 
 // Hook for getting user's personalized feed
 export function useFeed(params?: FeedParams) {
+  const { isAuthenticated } = useAuthStore();
+  
   return useQuery({
     queryKey: articleKeys.feed(params || {}),
     queryFn: () => api.getFeed(params),
     staleTime: 1000 * 60 * 2, // 2 minutes (more frequent updates for feed)
     retry: 2,
+    enabled: isAuthenticated, // Only fetch if user is authenticated
   });
 }
 
@@ -47,7 +51,7 @@ export function useArticle(slug: string | undefined) {
 export function useInfiniteArticles(baseParams: Omit<ArticleParams, 'offset'> = {}) {
   const pageSize = baseParams.limit || 20;
   
-  return useInfiniteQuery<ArticlesResponse, Error, ArticlesResponse[], string[], number>({
+  return useInfiniteQuery<ArticlesResponse, Error, ArticlesResponse[], ['articles', 'infinite', typeof baseParams], number>({
     queryKey: ['articles', 'infinite', baseParams],
     queryFn: async ({ pageParam }: { pageParam: number }) => {
       const params = { ...baseParams, offset: pageParam * pageSize, limit: pageSize };

@@ -194,9 +194,27 @@ export class ApiClient {
     });
   }
 
+  async deleteComment(slug: string, commentId: number): Promise<void> {
+    return this.request(`/articles/${slug}/comments/${commentId}`, {
+      method: 'DELETE',
+    });
+  }
+
   // Profile endpoints
   async getProfile(username: string): Promise<ProfileResponseWrapper> {
     return this.request(`/profiles/${username}`);
+  }
+
+  async followUser(username: string): Promise<ProfileResponseWrapper> {
+    return this.request(`/profiles/${username}/follow`, {
+      method: 'POST',
+    });
+  }
+
+  async unfollowUser(username: string): Promise<ProfileResponseWrapper> {
+    return this.request(`/profiles/${username}/follow`, {
+      method: 'DELETE',
+    });
   }
 
   // Tags endpoints

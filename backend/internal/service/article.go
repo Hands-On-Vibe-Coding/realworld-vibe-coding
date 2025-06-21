@@ -91,7 +91,7 @@ func (s *ArticleService) UpdateArticle(slug string, req model.UpdateArticleReque
 
 	// Build update map
 	updates := make(map[string]interface{})
-	
+
 	if req.Article.Title != nil {
 		if *req.Article.Title == "" {
 			return nil, fmt.Errorf("title cannot be empty")
@@ -100,14 +100,14 @@ func (s *ArticleService) UpdateArticle(slug string, req model.UpdateArticleReque
 		// Generate new slug if title changed
 		updates["slug"] = utils.GenerateSlug(*req.Article.Title)
 	}
-	
+
 	if req.Article.Description != nil {
 		if *req.Article.Description == "" {
 			return nil, fmt.Errorf("description cannot be empty")
 		}
 		updates["description"] = *req.Article.Description
 	}
-	
+
 	if req.Article.Body != nil {
 		if *req.Article.Body == "" {
 			return nil, fmt.Errorf("body cannot be empty")
@@ -241,10 +241,20 @@ func (s *ArticleService) buildArticleResponse(article *model.Article, currentUse
 		return nil, fmt.Errorf("failed to get article tags: %w", err)
 	}
 
-	// TODO: Implement following check and favorite check
+	// TODO: Implement following check
 	// For now, set to false
 	following := false
+	
+	// Check if current user has favorited this article
 	favorited := false
+	if currentUserID > 0 {
+		var err error
+		favorited, err = s.articleRepo.IsFavorited(currentUserID, article.ID)
+		if err != nil {
+			// Log error but don't fail the whole response
+			favorited = false
+		}
+	}
 
 	return &model.ArticleResponse{
 		Slug:           article.Slug,
@@ -263,4 +273,64 @@ func (s *ArticleService) buildArticleResponse(article *model.Article, currentUse
 			Following: following,
 		},
 	}, nil
+}
+
+// FavoriteArticle adds an article to user's favorites
+func (s *ArticleService) FavoriteArticle(slug string, userID int) (*model.ArticleResponse, error) {
+	// Get article by slug
+	article, err := s.articleRepo.GetBySlug(slug)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get article: %w", err)
+	}
+
+	// Check if already favorited
+	isFavorited, err := s.articleRepo.IsFavorited(userID, article.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check favorite status: %w", err)
+	}
+
+	if isFavorited {
+		return nil, fmt.Errorf("article already favorited")
+	}
+
+	// Add to favorites
+	err = s.articleRepo.FavoriteArticle(userID, article.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to favorite article: %w", err)
+	}
+
+	// Get updated favorites count
+	favoritesCount, err := s.articleRepo.GetFavoritesCount(article.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get favorites count: %w", err)
+	}
+	article.FavoritesCount = favoritesCount
+
+	// Build and return article response
+	return s.buildArticleResponse(article, userID)
+}
+
+// UnfavoriteArticle removes an article from user's favorites
+func (s *ArticleService) UnfavoriteArticle(slug string, userID int) (*model.ArticleResponse, error) {
+	// Get article by slug
+	article, err := s.articleRepo.GetBySlug(slug)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get article: %w", err)
+	}
+
+	// Remove from favorites
+	err = s.articleRepo.UnfavoriteArticle(userID, article.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unfavorite article: %w", err)
+	}
+
+	// Get updated favorites count
+	favoritesCount, err := s.articleRepo.GetFavoritesCount(article.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get favorites count: %w", err)
+	}
+	article.FavoritesCount = favoritesCount
+
+	// Build and return article response
+	return s.buildArticleResponse(article, userID)
 }

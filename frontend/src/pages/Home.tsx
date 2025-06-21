@@ -10,11 +10,11 @@ import {
   GridCol,
 } from '@mantine/core';
 import { useAuthStore } from '@/stores/authStore';
-import { ArticleList, TagsSidebar } from '@/components/Article';
+import { ArticleList, TagsSidebar, FeedArticleList } from '@/components/Article';
 
 export function HomePage() {
   const { isAuthenticated } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<string>('global');
+  const [activeTab, setActiveTab] = useState<string>(isAuthenticated ? 'feed' : 'global');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const handleTagSelect = (tag: string | null) => {
@@ -41,7 +41,7 @@ export function HomePage() {
         {/* Main Content */}
         <Grid>
           <GridCol span={{ base: 12, md: 9 }}>
-            <Tabs value={activeTab} onChange={setActiveTab} variant="pills">
+            <Tabs value={activeTab} onChange={(value) => setActiveTab(value || 'global')} variant="pills">
               <Tabs.List mb="md">
                 <Tabs.Tab value="global">
                   Global Feed
@@ -64,7 +64,7 @@ export function HomePage() {
 
               {isAuthenticated && (
                 <Tabs.Panel value="feed">
-                  <ArticleList type="feed" />
+                  <FeedArticleList />
                 </Tabs.Panel>
               )}
             </Tabs>

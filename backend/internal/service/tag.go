@@ -50,7 +50,7 @@ func (s *TagService) GetAllTags() ([]string, error) {
 func (s *TagService) CreateTagsForArticle(articleID int, tagNames []string) error {
 	// Normalize tags
 	normalizedTags := utils.NormalizeTags(tagNames)
-	
+
 	// Validate each tag
 	var validTags []string
 	for _, tag := range normalizedTags {
@@ -78,7 +78,7 @@ func (s *TagService) CreateTagsForArticle(articleID int, tagNames []string) erro
 func (s *TagService) UpdateTagsForArticle(articleID int, tagNames []string) error {
 	// Normalize tags
 	normalizedTags := utils.NormalizeTags(tagNames)
-	
+
 	// Validate each tag
 	var validTags []string
 	for _, tag := range normalizedTags {

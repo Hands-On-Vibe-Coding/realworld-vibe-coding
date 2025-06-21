@@ -64,7 +64,7 @@ func OptionalJWTMiddleware(secretKey string) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Get the Authorization header
 			authHeader := r.Header.Get("Authorization")
-			
+
 			// If no auth header, proceed without authentication
 			if authHeader == "" {
 				next.ServeHTTP(w, r)

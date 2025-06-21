@@ -115,7 +115,8 @@ export function useOptimisticArticleUpdate() {
       articleKeys.detail(slug),
       (old: unknown) => {
         if (old && typeof old === 'object' && 'article' in old) {
-          return { ...old, article: { ...old.article, ...updates } };
+          const oldTyped = old as { article: Record<string, unknown> };
+          return { ...old, article: { ...oldTyped.article, ...updates } };
         }
         return old;
       }

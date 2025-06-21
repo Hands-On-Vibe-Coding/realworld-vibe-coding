@@ -42,7 +42,7 @@ func NewDatabase(databaseURL string) (*Database, error) {
 func (d *Database) Migrate() error {
 	// Use absolute path for migrations directory
 	migrationsDir := "migrations"
-	
+
 	return d.migrationManager.RunMigrations(migrationsDir)
 }
 

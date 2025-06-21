@@ -21,7 +21,8 @@ import {
 } from '@tabler/icons-react';
 import { Link } from '@tanstack/react-router';
 import type { Article } from '@/types';
-import { useDeleteArticle } from '@/hooks';
+import { useDeleteArticle, useComments, useCreateComment, useDeleteComment } from '@/hooks';
+import { CommentList } from '@/components/Comment';
 
 interface ArticleHeroProps {
   article: Article;
@@ -237,35 +238,39 @@ export function ArticleActions({ article, isAuthor }: ArticleActionsProps) {
   );
 }
 
-export function CommentsSection() {
+interface CommentsSectionProps {
+  article: Article;
+}
+
+export function CommentsSection({ article }: CommentsSectionProps) {
+  const {
+    data: comments = [],
+    isLoading,
+    error,
+  } = useComments(article.slug);
+
+  const createCommentMutation = useCreateComment(article.slug);
+  const deleteCommentMutation = useDeleteComment(article.slug);
+
+  const handleCreateComment = (body: string) => {
+    createCommentMutation.mutate(body);
+  };
+
+  const handleDeleteComment = (commentId: number) => {
+    deleteCommentMutation.mutate(commentId);
+  };
+
   return (
     <Paper p="xl" withBorder>
-      <Title order={3} mb="md">
-        Comments
-      </Title>
-      
-      <Stack gap="md">
-        {/* Comments will be implemented in the comment system task */}
-        <Text c="dimmed" ta="center" py="xl">
-          Comments will be available soon. This section will show article comments and allow you to post new ones.
-        </Text>
-        
-        {/* Placeholder skeletons for future comments */}
-        <Stack gap="sm">
-          {Array.from({ length: 3 }, (_, index) => (
-            <Paper key={index} p="md" withBorder>
-              <Group gap="sm" mb="sm">
-                <Skeleton height={32} circle />
-                <Stack gap={0}>
-                  <Skeleton height={16} width={100} />
-                  <Skeleton height={12} width={80} />
-                </Stack>
-              </Group>
-              <Skeleton height={60} />
-            </Paper>
-          ))}
-        </Stack>
-      </Stack>
+      <CommentList
+        comments={comments}
+        onCreateComment={handleCreateComment}
+        onDeleteComment={handleDeleteComment}
+        isLoading={isLoading}
+        isCreating={createCommentMutation.isPending}
+        deletingCommentId={deleteCommentMutation.variables}
+        error={error?.message}
+      />
     </Paper>
   );
 }

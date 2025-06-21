@@ -12,20 +12,20 @@ import (
 func GenerateSlug(title string) string {
 	// Convert to lowercase
 	slug := strings.ToLower(title)
-	
+
 	// Replace spaces and special characters with hyphens
 	reg := regexp.MustCompile(`[^\p{L}\p{N}]+`)
 	slug = reg.ReplaceAllString(slug, "-")
-	
+
 	// Remove leading and trailing hyphens
 	slug = strings.Trim(slug, "-")
-	
+
 	// Add random suffix to ensure uniqueness
 	suffix := generateRandomString(6)
 	if slug == "" {
 		slug = "article"
 	}
-	
+
 	return fmt.Sprintf("%s-%s", slug, suffix)
 }
 
@@ -45,12 +45,12 @@ func IsValidSlug(slug string) bool {
 	if len(slug) == 0 {
 		return false
 	}
-	
+
 	for _, r := range slug {
 		if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-' {
 			return false
 		}
 	}
-	
+
 	return !strings.HasPrefix(slug, "-") && !strings.HasSuffix(slug, "-")
 }
