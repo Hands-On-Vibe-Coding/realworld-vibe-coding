@@ -3,6 +3,7 @@ import { Layout } from '@/components/Layout/Layout';
 import { HomePage } from '@/pages/Home';
 import { LoginPage } from '@/pages/Login';
 import { RegisterPage } from '@/pages/Register';
+import { ArticlePage } from '@/pages/Article';
 
 // Root route
 const rootRoute = createRootRoute({
@@ -29,11 +30,19 @@ const registerRoute = createRoute({
   component: RegisterPage,
 });
 
+// Article route
+const articleRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/article/$slug',
+  component: ArticlePage,
+});
+
 // Route tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
   registerRoute,
+  articleRoute,
 ]);
 
 // Router
