@@ -16,6 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 11. Context Check: "Begin every response with a random emoji (e.g., 🐙) to confirm context retention."
 12. Efficiency: "Optimize outputs to minimize token usage without sacrificing clarity."
 13. Before working on the project, read `README`, `README.md` or `README.org` file in the same directory to understand the background of the project.
+14. Documentation Language: "All documentation should be written in English to ensure accessibility for international developers and maintain consistency across the project."
 
 ## API and Configuration Best Practices
 1. Always verify API documentation and configuration details using Perplexity AI or another real-time search-enabled AI before generating code.

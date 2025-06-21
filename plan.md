@@ -120,13 +120,11 @@ Complete implementation plan for building a RealWorld application using Vibe Cod
 - **Description**: Profile view and follow button UI
 - **Dependencies**: TASK-08, TASK-18
 - **Deliverables**: src/pages/Profile.tsx, src/components/Profile/
-- **Estimated Time**: 8 hours
 
 #### TASK-22: Personal Feed Implementation
 - **Description**: Article feed from followed users
 - **Dependencies**: TASK-18, TASK-14
 - **Deliverables**: Personal feed API and UI
-- **Estimated Time**: 6 hours
 
 ### Phase 5: Testing and Quality Improvement (1 week)
 
@@ -134,19 +132,16 @@ Complete implementation plan for building a RealWorld application using Vibe Cod
 - **Description**: Achieve 80% test coverage using Go standard testing tools
 - **Dependencies**: TASK-01~TASK-22
 - **Deliverables**: *_test.go files, test coverage report
-- **Estimated Time**: 12 hours
 
 #### TASK-24: Frontend Test Implementation
 - **Description**: Component testing using Vitest + React Testing Library
 - **Dependencies**: TASK-02~TASK-22
 - **Deliverables**: *.test.tsx files, test coverage report
-- **Estimated Time**: 12 hours
 
 #### TASK-25: E2E Test Implementation
 - **Description**: Complete user flow testing using Playwright
 - **Dependencies**: TASK-23, TASK-24
 - **Deliverables**: e2e/ test directory, CI/CD integration
-- **Estimated Time**: 8 hours
 
 ### Phase 6: Deployment and Operations (1 week)
 
@@ -154,39 +149,36 @@ Complete implementation plan for building a RealWorld application using Vibe Cod
 - **Description**: Automated test and deployment pipeline
 - **Dependencies**: TASK-25
 - **Deliverables**: .github/workflows/, Docker image automation
-- **Estimated Time**: 8 hours
 
 #### TASK-27: AWS ECS Infrastructure Setup
 - **Description**: Infrastructure as code using AWS CDK
 - **Dependencies**: TASK-04
 - **Deliverables**: infrastructure/ directory, CDK stack
-- **Estimated Time**: 12 hours
 
 #### TASK-28: Production Deployment and Monitoring
 - **Description**: Production environment deployment and monitoring setup
 - **Dependencies**: TASK-26, TASK-27
 - **Deliverables**: Production deployment, CloudWatch dashboard
-- **Estimated Time**: 6 hours
 
 ## Milestone Summary
 
-### Sprint 1 (2 weeks): Basic Infrastructure + Authentication
+### Sprint 1: Basic Infrastructure + Authentication
 - TASK-01 ~ TASK-09
 - **Goal**: Complete user registration/login functionality
 
-### Sprint 2 (1.5 weeks): Article System
+### Sprint 2: Article System
 - TASK-10 ~ TASK-16  
 - **Goal**: Complete article CRUD functionality
 
-### Sprint 3 (1 week): Advanced Features
+### Sprint 3: Advanced Features
 - TASK-17 ~ TASK-22
 - **Goal**: Complete comment, profile, and favorite features
 
-### Sprint 4 (1 week): Quality Improvement
+### Sprint 4: Quality Improvement
 - TASK-23 ~ TASK-25
 - **Goal**: Achieve 80% test coverage
 
-### Sprint 5 (1 week): Deployment Preparation
+### Sprint 5: Deployment Preparation
 - TASK-26 ~ TASK-28
 - **Goal**: Complete production deployment
 
