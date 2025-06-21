@@ -43,6 +43,7 @@ This is a full-stack application with clear separation between frontend and back
 - **Language**: Go 1.23+ with standard net/http and Gorilla Mux
 - **Database**: SQLite (development), PostgreSQL (production)
 - **Authentication**: JWT-based authentication
+- **Deployment**: AWS ECS with Fargate for container orchestration
 - **Structure**: Clean architecture with internal packages
   - `cmd/server/main.go` - Application entry point
   - `internal/handler/` - HTTP handlers (user, article, comment, profile)
@@ -57,6 +58,7 @@ This is a full-stack application with clear separation between frontend and back
 - **Framework**: React 19 with Vite build tool
 - **Language**: TypeScript with strict type checking
 - **Router**: Tanstack Router for type-safe routing
+- **Deployment**: GitHub Pages with GitHub Actions CI/CD
 - **State Management**: 
   - Tanstack Query for server state
   - Zustand for client state (auth store)
@@ -67,6 +69,11 @@ This is a full-stack application with clear separation between frontend and back
   - `src/components/` - Reusable components (Article, Layout, Common)
   - `src/stores/` - Zustand stores
   - `src/lib/` - API client and utilities
+
+### Infrastructure
+- **Backend Infrastructure**: AWS CDK with ECS, RDS, VPC, and monitoring
+- **Frontend Infrastructure**: GitHub Pages with custom domain support
+- **CI/CD**: GitHub Actions for automated testing, building, and deployment
 
 ## Development Commands
 

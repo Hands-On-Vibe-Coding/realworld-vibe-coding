@@ -95,7 +95,8 @@ Implement a RealWorld application using Vibe Coding methodology to build a compl
 - Project Management: Makefile
 - Containerization: Docker
 - CI/CD: GitHub Actions
-- Deployment: AWS ECS + Fargate
+- Frontend Deployment: GitHub Pages
+- Backend Deployment: AWS ECS + Fargate
 - Infrastructure: AWS CDK (TypeScript)
 - Monitoring: CloudWatch + X-Ray
 ```
@@ -391,21 +392,35 @@ func LoggingMiddleware() http.Handler
 ## 9. Deployment and Operations
 
 ### 9.1 Deployment Environments
-- **Development Environment**: Local Docker environment
-- **Staging Environment**: AWS ECS test environment
-- **Production Environment**: AWS ECS production environment
+- **Development Environment**: Local development servers
+- **Frontend Production**: GitHub Pages with automated deployment
+- **Backend Staging**: AWS ECS test environment
+- **Backend Production**: AWS ECS production environment
 
-### 9.2 CI/CD 파이프라인
+### 9.2 CI/CD Pipeline
 ```yaml
-# .github/workflows/deploy.yml
-name: Deploy
+# Frontend Pipeline (.github/workflows/frontend-deploy.yml)
+name: Deploy Frontend to GitHub Pages
 on:
   push:
     branches: [main]
+    paths: ['frontend/**']
+jobs:
+  build:
+    - Run frontend tests
+    - Run linting and type checking
+    - Build for GitHub Pages
+    - Deploy to GitHub Pages
+
+# Backend Pipeline (.github/workflows/backend-deploy.yml)
+name: Deploy Backend to AWS
+on:
+  push:
+    branches: [main]
+    paths: ['backend/**']
 jobs:
   test:
     - Run backend tests
-    - Run frontend tests
     - Build Docker images
   deploy:
     - Push images to ECR

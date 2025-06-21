@@ -208,24 +208,54 @@ For detailed information, see [Git Hooks Documentation](./docs/git-hooks.md).
 
 ## Deployment
 
-### Environment Variables
+### Frontend Deployment (GitHub Pages)
 
-**Backend:**
+The frontend is automatically deployed to GitHub Pages using GitHub Actions:
+
+- **Development**: Deploys on every push to `main` branch
+- **URL**: https://dohyunjung.github.io/realworld-vibe-coding/
+- **Build Process**: Automated via `.github/workflows/frontend-deploy.yml`
+
+#### Frontend Environment Variables
 ```bash
+# Development
+VITE_API_BASE_URL=http://localhost:8080
+
+# Production (GitHub Pages)
+VITE_API_BASE_URL=https://your-backend-domain.com
+VITE_BASE_URL=/realworld-vibe-coding/
+```
+
+### Backend Deployment (AWS ECS)
+
+The backend can be deployed to AWS using the provided CDK infrastructure:
+
+#### Environment Variables
+```bash
+PORT=8080
+DATABASE_URL=postgresql://user:pass@host:5432/realworld
+JWT_SECRET=your-secret-key
+ENVIRONMENT=production
+```
+
+#### Deploy to AWS
+```bash
+cd infrastructure
+npm install
+npm run deploy:dev    # Development environment
+npm run deploy:prod   # Production environment
+```
+
+### Local Development
+```bash
+# Backend
 PORT=8080
 DATABASE_URL=realworld.db
 JWT_SECRET=your-secret-key
 ENVIRONMENT=development
-```
 
-**Frontend:**
-```bash
-VITE_API_URL=http://localhost:8080/api
-```
-
-### Production Deployment
-```bash
-make deploy
+# Frontend
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 ## License

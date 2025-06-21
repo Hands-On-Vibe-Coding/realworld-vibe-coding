@@ -24,4 +24,11 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
   },
+  // GitHub Pages configuration
+  base: process.env.VITE_BASE_URL || '/',
+  define: {
+    __API_BASE_URL__: JSON.stringify(
+      process.env.VITE_API_BASE_URL || 'http://localhost:8080'
+    ),
+  },
 })

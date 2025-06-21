@@ -17,9 +17,28 @@ import type {
 import { notifications } from '@mantine/notifications';
 
 export class ApiClient {
-  private baseURL = '/api';
+  private baseURL: string;
   private token: string | null = null;
   private onTokenExpired?: () => void;
+
+  constructor() {
+    // Set API base URL based on environment
+    if (typeof window !== 'undefined') {
+      // Browser environment
+      if (window.location.hostname === 'localhost') {
+        // Development environment
+        this.baseURL = 'http://localhost:8080/api';
+      } else {
+        // Production environment - use deployed backend
+        this.baseURL = process.env.VITE_API_BASE_URL 
+          ? `${process.env.VITE_API_BASE_URL}/api`
+          : '/api';
+      }
+    } else {
+      // Server-side rendering fallback
+      this.baseURL = '/api';
+    }
+  }
 
   setToken(token: string | null) {
     this.token = token;
