@@ -41,8 +41,7 @@
     ],
     "backend/**/*.go": [
       "cd backend && go fmt ./...",
-      "cd backend && go vet ./...",
-      "git add"
+      "cd backend && go vet ./..."
     ]
   }
 }

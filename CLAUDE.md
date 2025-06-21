@@ -183,7 +183,7 @@ When working on frontend development, use Playwright MCP to verify implementatio
 When asked to plan a project, follow these steps:
 
 1. **Read Design Documents**: First, read the design document and existing rules in memory
-2. **Create Implementation Plan**: Write the implementation plan with 10-20 tasks in `plan.md` file, including task dependencies
+2. **Create Implementation Plan**: Write the implementation plan with 10-20 tasks in `docs/plan.md` file, including task dependencies
 3. **Create GitHub Issues**: Create GitHub issues for each task with detailed descriptions, labels, and milestones
 
 #### GitHub Issue Creation Process
