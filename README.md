@@ -239,12 +239,25 @@ ENVIRONMENT=production
 ```
 
 #### Deploy to AWS
+
+**Prerequisites:**
+1. Set up GitHub repository secrets:
+   - `AWS_ROLE_ARN`: `arn:aws:iam::931016744724:role/GitHubActionsRole`
+   - `AWS_REGION`: `us-east-1`
+
+**Manual Infrastructure Deployment:**
 ```bash
 cd infrastructure
 npm install
 npm run deploy:dev    # Development environment
 npm run deploy:prod   # Production environment
 ```
+
+**Automated Backend Deployment:**
+- Pushes to `backend/**` automatically trigger deployment
+- GitHub Actions builds Docker image and pushes to ECR
+- ECS service is updated with new image
+- Health checks verify successful deployment
 
 ### Local Development
 ```bash

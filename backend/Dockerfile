@@ -1,63 +1,64 @@
-# Build stage  
-FROM golang:1.23-bullseye AS builder
+# Build stage
+FROM golang:1.21-alpine AS builder
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    sqlite3 \
-    libsqlite3-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Install git and build dependencies
+RUN apk add --no-cache git ca-certificates tzdata gcc musl-dev sqlite-dev
 
 # Set working directory
 WORKDIR /app
 
-# Copy go mod and sum files first for better caching
+# Copy go mod files
 COPY go.mod go.sum ./
 
-# Download dependencies (this layer will be cached if go.mod/go.sum don't change)
+# Download dependencies
 RUN go mod download
 
 # Copy source code
 COPY . .
 
-# Build the application with optimizations
-RUN CGO_ENABLED=1 go build -ldflags="-w -s" -o realworld-backend ./cmd/server
+# Build the application for production (CGO enabled for SQLite)
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build \
+    -ldflags='-w -s -extldflags "-static"' \
+    -a -installsuffix cgo \
+    -o server ./cmd/server/main.go
 
-# Runtime stage
-FROM debian:bullseye-slim
+# Final stage
+FROM alpine:latest
 
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    sqlite3 \
-    wget \
-    && rm -rf /var/lib/apt/lists/*
+# Install ca-certificates and sqlite for runtime
+RUN apk --no-cache add ca-certificates tzdata sqlite
 
-# Create app directory
-WORKDIR /root/
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
 
-# Copy the binary from builder stage
-COPY --from=builder /app/realworld-backend .
+# Set working directory
+WORKDIR /app
 
-# Copy migrations
+# Copy binary from builder stage
+COPY --from=builder /app/server .
+
+# Copy migrations directory
 COPY --from=builder /app/migrations ./migrations
 
-# Create data directory for SQLite
-RUN mkdir -p /data
+# Create data directory for database
+RUN mkdir -p /data && chown -R appuser:appgroup /app /data
+
+# Switch to non-root user
+USER appuser
 
 # Expose port
 EXPOSE 8080
 
-# Set environment variables
+# Environment variables (will be overridden by ECS task definition)
 ENV PORT=8080
 ENV DATABASE_URL=/data/realworld.db
-ENV JWT_SECRET=dev-secret-key
-ENV ENVIRONMENT=development
+ENV JWT_SECRET=change-me-in-production
+ENV ENVIRONMENT=production
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
 
 # Run the application
-CMD ["./realworld-backend"]
+CMD ["./server"]
