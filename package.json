@@ -40,8 +40,9 @@
       "cd frontend && npm run lint:fix"
     ],
     "backend/**/*.go": [
-      "cd backend && go fmt",
-      "cd backend && go vet"
+      "cd backend && go fmt ./...",
+      "cd backend && go vet ./...",
+      "git add"
     ]
   }
 }

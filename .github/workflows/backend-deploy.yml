@@ -66,9 +66,12 @@ jobs:
 
       - name: Check go formatting
         run: |
-          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
-            echo "Go code is not formatted. Please run 'go fmt ./...'"
-            gofmt -s -l .
+          # Run go fmt and check if any files were modified
+          go fmt ./...
+          if ! git diff --exit-code; then
+            echo "Go code was not formatted. Files have been auto-formatted:"
+            git diff --name-only
+            echo "Please commit the formatting changes."
             exit 1
           fi
 

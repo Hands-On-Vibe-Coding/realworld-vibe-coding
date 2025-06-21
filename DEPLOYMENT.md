@@ -44,7 +44,7 @@ aws configure
 Run the provided script to set up GitHub Actions authentication:
 
 ```bash
-./setup-oidc.sh
+./scripts/setup-oidc.sh
 ```
 
 This creates:
