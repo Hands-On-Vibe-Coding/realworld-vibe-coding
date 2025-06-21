@@ -208,58 +208,33 @@ For detailed information, see [Git Hooks Documentation](./docs/git-hooks.md).
 
 ## Deployment
 
-### Frontend Deployment (GitHub Pages)
+This application uses a hybrid deployment strategy with automated CI/CD pipelines:
 
-The frontend is automatically deployed to GitHub Pages using GitHub Actions:
+- **Frontend**: GitHub Pages with automated deployment
+- **Backend**: AWS ECS with Fargate containers
+- **Database**: AWS RDS PostgreSQL
+- **Infrastructure**: AWS CDK for infrastructure as code
 
-- **Development**: Deploys on every push to `main` branch
-- **URL**: https://dohyunjung.github.io/realworld-vibe-coding/
-- **Build Process**: Automated via `.github/workflows/frontend-deploy.yml`
+### Quick Start Deployment
 
-#### Frontend Environment Variables
-```bash
-# Development
-VITE_API_BASE_URL=http://localhost:8080
+1. **Frontend**: Automatically deploys to https://dohyunjung.github.io/realworld-vibe-coding/ on every push
+2. **Backend**: Requires AWS infrastructure setup and GitHub secrets configuration
 
-# Production (GitHub Pages)
-VITE_API_BASE_URL=https://your-backend-domain.com
-VITE_BASE_URL=/realworld-vibe-coding/
-```
+### Detailed Deployment Guide
 
-### Backend Deployment (AWS ECS)
+For comprehensive deployment instructions including:
 
-The backend can be deployed to AWS using the provided CDK infrastructure:
+- AWS infrastructure setup with CDK
+- GitHub Actions CI/CD configuration
+- Environment variables and secrets management
+- Monitoring and troubleshooting
+- Cost optimization strategies
+- Security considerations
 
-#### Environment Variables
-```bash
-PORT=8080
-DATABASE_URL=postgresql://user:pass@host:5432/realworld
-JWT_SECRET=your-secret-key
-ENVIRONMENT=production
-```
-
-#### Deploy to AWS
-
-**Prerequisites:**
-1. Set up GitHub repository secrets:
-   - `AWS_ROLE_ARN`: `arn:aws:iam::931016744724:role/GitHubActionsRole`
-   - `AWS_REGION`: `us-east-1`
-
-**Manual Infrastructure Deployment:**
-```bash
-cd infrastructure
-npm install
-npm run deploy:dev    # Development environment
-npm run deploy:prod   # Production environment
-```
-
-**Automated Backend Deployment:**
-- Pushes to `backend/**` automatically trigger deployment
-- GitHub Actions builds Docker image and pushes to ECR
-- ECS service is updated with new image
-- Health checks verify successful deployment
+**📖 See [Deployment Guide](docs/DEPLOYMENT.md) for complete instructions.**
 
 ### Local Development
+
 ```bash
 # Backend
 PORT=8080
