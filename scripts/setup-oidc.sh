@@ -6,7 +6,7 @@
 set -e
 
 # Configuration
-GITHUB_REPO="dohyunjung/realworld-vibe-coding"
+GITHUB_REPO="Hands-On-Vibe-Coding/realworld-vibe-coding"
 ROLE_NAME="GitHubActionsRole"
 POLICY_NAME="GitHubActionsDeployPolicy"
 ACCOUNT_ID="931016744724"

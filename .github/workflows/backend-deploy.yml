@@ -36,7 +36,6 @@ concurrency:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: realworld-backend
   ENVIRONMENT: ${{ github.event.inputs.environment || 'dev' }}
 
 jobs:
@@ -92,6 +91,29 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHubActions-BackendDeploy
 
+      - name: Set up Node.js for CDK
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: infrastructure/package-lock.json
+
+      - name: Install CDK dependencies
+        working-directory: ./infrastructure
+        run: npm ci
+
+      - name: Deploy infrastructure with CDK
+        working-directory: ./infrastructure
+        run: |
+          echo "📦 Deploying Network stack..."
+          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Network --require-approval never --context environment=${{ env.ENVIRONMENT }}
+          
+          echo "🗄️ Deploying Database stack..."
+          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Database --require-approval never --context environment=${{ env.ENVIRONMENT }}
+          
+          echo "🐳 Deploying ECS stack..."
+          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-ECS --require-approval never --context environment=${{ env.ENVIRONMENT }}
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -103,6 +125,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: realworld-backend-${{ env.ENVIRONMENT }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # Build Docker image
@@ -117,50 +140,63 @@ jobs:
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "registry=$ECR_REGISTRY" >> $GITHUB_OUTPUT
 
-      - name: Download current task definition
+      - name: Update ECS service
         run: |
-          aws ecs describe-task-definition \
-            --task-definition realworld-${{ env.ENVIRONMENT }}-task \
-            --query taskDefinition > task-definition.json
+          echo "🔄 Updating ECS service with new image..."
+          aws ecs update-service \
+            --cluster realworld-${{ env.ENVIRONMENT }} \
+            --service realworld-backend-${{ env.ENVIRONMENT }} \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
 
-      - name: Update task definition with new image
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: realworld-backend
-          image: ${{ steps.build-image.outputs.image }}
+      - name: Wait for ECS service deployment
+        run: |
+          echo "⏳ Waiting for service deployment to complete..."
+          aws ecs wait services-stable \
+            --cluster realworld-${{ env.ENVIRONMENT }} \
+            --services realworld-backend-${{ env.ENVIRONMENT }} \
+            --region ${{ env.AWS_REGION }}
 
-      - name: Deploy to Amazon ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: realworld-${{ env.ENVIRONMENT }}-service
-          cluster: realworld-${{ env.ENVIRONMENT }}-cluster
-          wait-for-service-stability: true
+      - name: Get Load Balancer DNS and set as GitHub variable
+        id: get-alb-dns
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get ALB DNS from CloudFormation stack output
+          ALB_DNS=$(aws cloudformation describe-stacks \
+            --stack-name RealWorld-${{ env.ENVIRONMENT }}-ECS \
+            --query 'Stacks[0].Outputs[?OutputKey==`LoadBalancerDNS`].OutputValue' \
+            --output text)
+          
+          API_ENDPOINT="http://$ALB_DNS"
+          
+          echo "alb-dns=$ALB_DNS" >> $GITHUB_OUTPUT
+          echo "api-endpoint=$API_ENDPOINT" >> $GITHUB_OUTPUT
+          
+          # Set repository variable for frontend to use
+          gh variable set VITE_API_BASE_URL --body "$API_ENDPOINT"
+          
+          echo "🌐 Backend URL: $API_ENDPOINT"
+          echo "🔗 Frontend will use this endpoint automatically"
 
       - name: Verify deployment
         run: |
+          API_ENDPOINT="${{ steps.get-alb-dns.outputs.api-endpoint }}"
+          
           echo "🚀 Deployment completed successfully!"
           echo "Environment: ${{ env.ENVIRONMENT }}"
           echo "Image: ${{ steps.build-image.outputs.image }}"
-          
-          # Get the load balancer URL
-          ALB_URL=$(aws elbv2 describe-load-balancers \
-            --names realworld-${{ env.ENVIRONMENT }}-alb \
-            --query 'LoadBalancers[0].DNSName' \
-            --output text)
-          
-          echo "🌐 Backend URL: http://$ALB_URL"
-          echo "🔍 Health check: http://$ALB_URL/health"
+          echo "🌐 Backend URL: $API_ENDPOINT"
+          echo "🔍 Health check: $API_ENDPOINT/health"
           
           # Wait a bit for the service to start up
           echo "⏳ Waiting for service to be ready..."
           sleep 30
           
           # Test health endpoint
-          if curl -f "http://$ALB_URL/health" --max-time 30; then
+          if curl -f "$API_ENDPOINT/health" --max-time 30; then
             echo "✅ Health check passed!"
+            echo "✅ GitHub variable VITE_API_BASE_URL set to: $API_ENDPOINT"
           else
             echo "❌ Health check failed!"
             exit 1
@@ -180,6 +216,8 @@ jobs:
 
       - name: Clean up old ECR images
         run: |
+          ECR_REPOSITORY=realworld-backend-${{ env.ENVIRONMENT }}
+          
           # Keep only the latest 5 images to save storage costs
           aws ecr list-images \
             --repository-name $ECR_REPOSITORY \

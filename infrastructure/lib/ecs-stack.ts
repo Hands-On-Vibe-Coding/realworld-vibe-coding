@@ -106,7 +106,10 @@ export class EcsStack extends cdk.Stack {
     const environment_vars = {
       NODE_ENV: environment === 'production' ? 'production' : 'development',
       PORT: '8080',
-      DATABASE_URL: `postgresql://postgres@${database.instanceEndpoint.hostname}:${database.instanceEndpoint.port}/realworld`,
+      DATABASE_HOST: database.instanceEndpoint.hostname,
+      DATABASE_PORT: database.instanceEndpoint.port.toString(),
+      DATABASE_NAME: 'realworld',
+      DATABASE_USER: 'postgres',
     }
 
     // Secrets for the backend container

@@ -63,6 +63,8 @@ jobs:
         env:
           # Set base path for GitHub Pages
           VITE_BASE_URL: ${{ format('/{0}/', github.event.repository.name) }}
+          # Use API endpoint from GitHub variables (set by backend deployment)
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || 'http://localhost:8080' }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
