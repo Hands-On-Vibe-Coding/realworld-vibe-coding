@@ -1,8 +1,8 @@
 # Build stage
 FROM golang:1.21-alpine AS builder
 
-# Install git and build dependencies
-RUN apk add --no-cache git ca-certificates tzdata gcc musl-dev sqlite-dev
+# Install git and build dependencies  
+RUN apk add --no-cache git ca-certificates tzdata gcc musl-dev sqlite-dev postgresql-dev
 
 # Set working directory
 WORKDIR /app
@@ -25,8 +25,8 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build \
 # Final stage
 FROM alpine:latest
 
-# Install ca-certificates and sqlite for runtime
-RUN apk --no-cache add ca-certificates tzdata sqlite
+# Install ca-certificates, curl, and database libraries for runtime
+RUN apk --no-cache add ca-certificates tzdata sqlite postgresql-client curl
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S appgroup && \
@@ -58,7 +58,7 @@ ENV ENVIRONMENT=production
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+    CMD curl -f http://localhost:8080/health || exit 1
 
 # Run the application
 CMD ["./server"]

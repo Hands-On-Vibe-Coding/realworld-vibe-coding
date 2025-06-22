@@ -3,7 +3,9 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -15,7 +17,18 @@ type Database struct {
 
 // NewDatabase creates a new database connection
 func NewDatabase(databaseURL string) (*Database, error) {
-	db, err := sql.Open("sqlite3", databaseURL)
+	var db *sql.DB
+	var err error
+	
+	// Determine database type based on URL
+	if strings.HasPrefix(databaseURL, "postgres://") || strings.HasPrefix(databaseURL, "postgresql://") {
+		// PostgreSQL connection
+		db, err = sql.Open("postgres", databaseURL)
+	} else {
+		// SQLite connection (default)
+		db, err = sql.Open("sqlite3", databaseURL)
+	}
+	
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %v", err)
 	}
@@ -25,9 +38,11 @@ func NewDatabase(databaseURL string) (*Database, error) {
 		return nil, fmt.Errorf("failed to ping database: %v", err)
 	}
 
-	// Enable foreign key constraints
-	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
-		return nil, fmt.Errorf("failed to enable foreign keys: %v", err)
+	// Enable foreign key constraints for SQLite
+	if !strings.HasPrefix(databaseURL, "postgres") {
+		if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
+			return nil, fmt.Errorf("failed to enable foreign keys: %v", err)
+		}
 	}
 
 	migrationManager := NewMigrationManager(db)
