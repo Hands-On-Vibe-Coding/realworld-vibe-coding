@@ -5,6 +5,8 @@
     "lib": [
       "es2020"
     ],
+    "outDir": "./",
+    "rootDir": "./",
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
