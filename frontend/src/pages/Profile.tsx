@@ -66,11 +66,11 @@ export function ProfilePage() {
           </Tabs.List>
           
           <Tabs.Panel value="articles" pt="md">
-            <ArticleList author={username} />
+            <ArticleList type="global" author={username} />
           </Tabs.Panel>
           
           <Tabs.Panel value="favorited" pt="md">
-            <ArticleList favorited={username} />
+            <ArticleList type="global" favorited={username} />
           </Tabs.Panel>
         </Tabs>
       </Stack>

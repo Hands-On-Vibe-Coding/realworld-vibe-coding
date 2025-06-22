@@ -32,7 +32,7 @@ export function TagsSidebar({ selectedTag, onTagSelect }: TagsSidebarProps) {
   };
 
   return (
-    <Paper p="md" withBorder>
+    <Paper p="md" withBorder data-testid="popular-tags">
       <Group mb="md" justify="space-between">
         <Group gap="xs">
           <IconTag size={16} />

@@ -1,9 +1,9 @@
-import { ReactElement } from 'react'
-import { render, RenderOptions } from '@testing-library/react'
+import type { ReactElement } from 'react'
+import { render, type RenderOptions } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
-import { createRouter, RouterProvider } from '@tanstack/react-router'
+import { createRouter, RouterProvider, createMemoryHistory } from '@tanstack/react-router'
 import { createRootRoute, createRoute } from '@tanstack/react-router'
 
 // Create a test query client with disabled retries and caching
@@ -37,20 +37,9 @@ const routeTree = rootRoute.addChildren([indexRoute])
 const createTestRouter = () =>
   createRouter({
     routeTree,
-    history: {
-      push: vi.fn(),
-      replace: vi.fn(),
-      go: vi.fn(),
-      back: vi.fn(),
-      forward: vi.fn(),
-      listen: vi.fn(() => () => {}),
-      location: {
-        pathname: '/',
-        search: '',
-        hash: '',
-        state: {},
-      },
-    } as unknown,
+    history: createMemoryHistory({
+      initialEntries: ['/'],
+    }),
   })
 
 interface AllTheProvidersProps {
@@ -76,6 +65,8 @@ function AllTheProviders({
   )
 
   if (withRouter) {
+    // Router의 루트 컴포넌트에서 content를 렌더링하도록 설정
+    const router = createTestRouter()
     return (
       <RouterProvider router={router}>
         {content}

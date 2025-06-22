@@ -68,7 +68,7 @@ export function FeedArticleList() {
             <Text c="dimmed" ta="center">
               Follow other users to see their articles in your personalized feed.
             </Text>
-            <Button component={Link} to="/" search={{ tab: 'global' }} variant="outline">
+            <Button component={Link} to="/" variant="outline">
               Explore Global Feed
             </Button>
           </Stack>

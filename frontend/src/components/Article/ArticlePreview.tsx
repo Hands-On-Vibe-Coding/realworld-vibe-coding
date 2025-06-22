@@ -66,6 +66,7 @@ export function ArticlePreview({ article, onFavoriteToggle }: ArticlePreviewProp
             color={article.favorited ? 'red' : 'gray'}
             onClick={handleFavoriteClick}
             size="sm"
+            aria-label={article.favorited ? 'Unfavorite article' : 'Favorite article'}
           >
             {article.favorited ? (
               <IconHeartFilled size={16} />

@@ -84,6 +84,7 @@ export function LoginPage() {
             placeholder="your@email.com"
             required
             error={form.formState.errors.email?.message}
+            data-testid="email-input"
             {...form.register('email')}
           />
 
@@ -93,6 +94,7 @@ export function LoginPage() {
             required
             mt="md"
             error={form.formState.errors.password?.message}
+            data-testid="password-input"
             {...form.register('password')}
           />
 
@@ -102,6 +104,7 @@ export function LoginPage() {
             type="submit"
             loading={isLoading}
             disabled={!form.formState.isValid}
+            data-testid="login-button"
           >
             Sign in
           </Button>

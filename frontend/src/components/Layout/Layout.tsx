@@ -10,8 +10,8 @@ export function Layout() {
       <AppShell.Header>
         <Container size="lg" h="100%">
           <Group justify="space-between" h="100%">
-            <Title order={2} c="green">
-              <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Title order={2} c="green" data-testid="brand-logo">
+              <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }} data-testid="home-link">
                 RealWorld
               </Link>
             </Title>
@@ -54,10 +54,10 @@ export function Layout() {
                   <Button variant="subtle" component={Link} to="/">
                     Home
                   </Button>
-                  <Button variant="subtle" component={Link} to="/login">
+                  <Button variant="subtle" component={Link} to="/login" data-testid="login-link">
                     Sign in
                   </Button>
-                  <Button component={Link} to="/register">
+                  <Button component={Link} to="/register" data-testid="register-link">
                     Sign up
                   </Button>
                 </>

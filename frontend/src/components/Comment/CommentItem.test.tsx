@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen } from '@testing-library/react'
 import { render } from '@/test/test-utils'
 import { CommentItem } from './CommentItem'
@@ -6,7 +6,7 @@ import { createTestComment } from '@/test/fixtures'
 
 // Mock the auth store
 const mockAuthStore = {
-  user: null,
+  user: null as any,
   isAuthenticated: false,
 }
 
@@ -171,6 +171,7 @@ describe('CommentItem', () => {
     )
 
     expect(screen.getByText('no-image-author')).toBeInTheDocument()
-    expect(screen.getByRole('img')).toBeInTheDocument()
+    // When no image is provided, Mantine Avatar shows a placeholder
+    expect(screen.getByTitle('no-image-author')).toBeInTheDocument()
   })
 })

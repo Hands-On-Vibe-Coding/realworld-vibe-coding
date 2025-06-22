@@ -1,9 +1,34 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { render } from '@/test/test-utils'
+import { render } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MantineProvider } from '@mantine/core'
 import { ArticlePreview } from './ArticlePreview'
 import { createTestArticle } from '@/test/fixtures'
+
+// Mock Tanstack Router Link
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+}))
+
+// Simple test wrapper without router
+const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  })
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider>
+        {children}
+      </MantineProvider>
+    </QueryClientProvider>
+  )
+}
 
 describe('ArticlePreview', () => {
   const mockOnFavoriteToggle = vi.fn()
@@ -27,7 +52,9 @@ describe('ArticlePreview', () => {
     })
 
     render(
-      <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      <TestWrapper>
+        <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      </TestWrapper>
     )
 
     expect(screen.getByText('Test Article Title')).toBeInTheDocument()
@@ -35,7 +62,7 @@ describe('ArticlePreview', () => {
     expect(screen.getByText('john-doe')).toBeInTheDocument()
     expect(screen.getByText('javascript')).toBeInTheDocument()
     expect(screen.getByText('react')).toBeInTheDocument()
-    expect(screen.getByText('5')).toBeInTheDocument()
+    expect(screen.getByText('5 likes')).toBeInTheDocument()
   })
 
   it('displays formatted creation date', () => {
@@ -44,7 +71,9 @@ describe('ArticlePreview', () => {
     })
 
     render(
-      <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      <TestWrapper>
+        <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      </TestWrapper>
     )
 
     // Date should be formatted (exact format may vary)
@@ -59,10 +88,12 @@ describe('ArticlePreview', () => {
     })
 
     render(
-      <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      <TestWrapper>
+        <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      </TestWrapper>
     )
 
-    const favoriteButton = screen.getByRole('button', { name: /favorite/i })
+    const favoriteButton = screen.getByRole('button', { name: /favorite article/i })
     expect(favoriteButton).toBeInTheDocument()
 
     await user.click(favoriteButton)
@@ -76,13 +107,15 @@ describe('ArticlePreview', () => {
     })
 
     render(
-      <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      <TestWrapper>
+        <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      </TestWrapper>
     )
 
     const favoriteButton = screen.getByRole('button')
-    expect(favoriteButton).toHaveClass('mantine-Button-root')
+    expect(favoriteButton).toHaveClass('mantine-ActionIcon-root')
     // Check that it shows favorited state (filled heart)
-    expect(screen.getByText('10')).toBeInTheDocument()
+    expect(screen.getByText('10 likes')).toBeInTheDocument()
   })
 
   it('displays author avatar with correct attributes', () => {
@@ -96,7 +129,9 @@ describe('ArticlePreview', () => {
     })
 
     render(
-      <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      <TestWrapper>
+        <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      </TestWrapper>
     )
 
     const avatar = screen.getByRole('img')
@@ -110,7 +145,9 @@ describe('ArticlePreview', () => {
     })
 
     render(
-      <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      <TestWrapper>
+        <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      </TestWrapper>
     )
 
     // Should not crash and still render other content
@@ -128,7 +165,9 @@ describe('ArticlePreview', () => {
     })
 
     render(
-      <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      <TestWrapper>
+        <ArticlePreview article={article} onFavoriteToggle={mockOnFavoriteToggle} />
+      </TestWrapper>
     )
 
     expect(screen.getByText('no-image-user')).toBeInTheDocument()

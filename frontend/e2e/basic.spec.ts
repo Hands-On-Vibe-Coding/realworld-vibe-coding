@@ -28,7 +28,7 @@ test.describe('Basic Application Tests', () => {
     await page.click('[data-testid="login-link"]')
     
     await expect(page).toHaveURL('/login')
-    await expect(page.getByText('Sign In')).toBeVisible()
+    await expect(page.getByText('Welcome back!')).toBeVisible()
     await expect(page.locator('[data-testid="email-input"]')).toBeVisible()
     await expect(page.locator('[data-testid="password-input"]')).toBeVisible()
     await expect(page.locator('[data-testid="login-button"]')).toBeVisible()
@@ -40,7 +40,7 @@ test.describe('Basic Application Tests', () => {
     await page.click('[data-testid="register-link"]')
     
     await expect(page).toHaveURL('/register')
-    await expect(page.getByText('Sign Up')).toBeVisible()
+    await expect(page.getByText('Join RealWorld')).toBeVisible()
     await expect(page.locator('[data-testid="username-input"]')).toBeVisible()
     await expect(page.locator('[data-testid="email-input"]')).toBeVisible()
     await expect(page.locator('[data-testid="password-input"]')).toBeVisible()
@@ -51,7 +51,7 @@ test.describe('Basic Application Tests', () => {
     await page.goto('/')
     
     // Global feed tab should be active
-    await expect(page.locator('[data-testid="global-feed-tab"]')).toHaveClass(/active/)
+    await expect(page.locator('[data-testid="global-feed-tab"]')).toHaveAttribute('data-active', 'true')
     
     // Articles section should be visible
     await expect(page.locator('[data-testid="articles-section"]')).toBeVisible()

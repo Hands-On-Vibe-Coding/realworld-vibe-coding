@@ -5,7 +5,7 @@ test.describe('Smoke Tests', () => {
     await page.goto('/')
     
     // Basic check that the app loads
-    await expect(page).toHaveTitle(/Vite \+ React \+ TS/)
+    await expect(page).toHaveTitle(/RealWorld/)
     
     // Check that React is rendering content
     await expect(page.locator('#root')).toBeVisible()

@@ -86,6 +86,7 @@ export function RegisterPage() {
             placeholder="Your username"
             required
             error={form.formState.errors.username?.message}
+            data-testid="username-input"
             {...form.register('username')}
           />
 
@@ -95,6 +96,7 @@ export function RegisterPage() {
             required
             mt="md"
             error={form.formState.errors.email?.message}
+            data-testid="email-input"
             {...form.register('email')}
           />
 
@@ -104,6 +106,7 @@ export function RegisterPage() {
             required
             mt="md"
             error={form.formState.errors.password?.message}
+            data-testid="password-input"
             {...form.register('password')}
           />
 
@@ -113,6 +116,7 @@ export function RegisterPage() {
             type="submit"
             loading={isLoading}
             disabled={!form.formState.isValid}
+            data-testid="register-button"
           >
             Sign up
           </Button>

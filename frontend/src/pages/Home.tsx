@@ -29,7 +29,7 @@ export function HomePage() {
     <Container size="xl">
       <Stack>
         {/* Hero Section */}
-        <Card p="xl" ta="center" bg="green.6" c="white" mb="xl">
+        <Card p="xl" ta="center" bg="green.6" c="white" mb="xl" data-testid="hero-section">
           <Title order={1} mb="md">
             RealWorld
           </Title>
@@ -43,7 +43,7 @@ export function HomePage() {
           <GridCol span={{ base: 12, md: 9 }}>
             <Tabs value={activeTab} onChange={(value) => setActiveTab(value || 'global')} variant="pills">
               <Tabs.List mb="md">
-                <Tabs.Tab value="global">
+                <Tabs.Tab value="global" data-testid="global-feed-tab">
                   Global Feed
                 </Tabs.Tab>
                 {isAuthenticated && (
@@ -58,7 +58,7 @@ export function HomePage() {
                 )}
               </Tabs.List>
 
-              <Tabs.Panel value="global">
+              <Tabs.Panel value="global" data-testid="articles-section">
                 <ArticleList type="global" tag={selectedTag} />
               </Tabs.Panel>
 
