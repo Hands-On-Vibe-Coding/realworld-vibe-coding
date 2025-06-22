@@ -109,43 +109,32 @@ jobs:
         working-directory: ./infrastructure
         run: |
           npm ci
-          npm install -g aws-cdk
-
-      - name: Compile TypeScript
-        working-directory: ./infrastructure
-        run: |
-          echo "🔨 Compiling TypeScript..."
-          npx tsc
-          echo "📁 Checking compiled files..."
-          ls -la bin/
-          if [ ! -f "bin/infrastructure.js" ]; then
-            echo "❌ infrastructure.js not found after compilation"
-            exit 1
-          fi
 
       - name: Bootstrap CDK
         working-directory: ./infrastructure
         env:
           CDK_DEFAULT_ACCOUNT: ${{ env.AWS_ACCOUNT_ID }}
           CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
+          NODE_PATH: ${{ github.workspace }}/infrastructure/node_modules
         run: |
           echo "🔧 Bootstrapping CDK..."
-          npx cdk bootstrap --context environment=${{ env.ENVIRONMENT }}
+          npm run bootstrap -- --context environment=${{ env.ENVIRONMENT }}
 
       - name: Deploy infrastructure with CDK
         working-directory: ./infrastructure
         env:
           CDK_DEFAULT_ACCOUNT: ${{ env.AWS_ACCOUNT_ID }}
           CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
+          NODE_PATH: ${{ github.workspace }}/infrastructure/node_modules
         run: |
           echo "📦 Deploying Network stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Network --require-approval never --context environment=${{ env.ENVIRONMENT }}
+          npm run cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Network -- --require-approval never --context environment=${{ env.ENVIRONMENT }}
           
           echo "🗄️ Deploying Database stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Database --require-approval never --context environment=${{ env.ENVIRONMENT }}
+          npm run cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Database -- --require-approval never --context environment=${{ env.ENVIRONMENT }}
           
           echo "🐳 Deploying ECS stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-ECS --require-approval never --context environment=${{ env.ENVIRONMENT }}
+          npm run cdk deploy RealWorld-${{ env.ENVIRONMENT }}-ECS -- --require-approval never --context environment=${{ env.ENVIRONMENT }}
 
       - name: Login to Amazon ECR
         id: login-ecr
