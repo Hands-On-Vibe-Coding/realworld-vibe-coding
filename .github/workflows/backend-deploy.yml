@@ -111,17 +111,6 @@ jobs:
           npm ci
           npm install -g aws-cdk
 
-      - name: Debug file structure
-        working-directory: ./infrastructure
-        run: |
-          echo "📁 Current directory structure:"
-          pwd
-          ls -la
-          echo "📁 bin directory:"
-          ls -la bin/
-          echo "📁 Working directory check:"
-          find . -name "infrastructure.ts" -type f
-
       - name: Bootstrap CDK
         working-directory: ./infrastructure
         env:
