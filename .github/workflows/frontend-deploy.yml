@@ -61,9 +61,8 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          # Set base path for GitHub Pages if using a custom domain
-          # Remove this if using a custom domain
-          VITE_BASE_URL: ${{ github.repository != github.repository_owner + '/' + github.repository_owner + '.github.io' && format('/{0}/', github.event.repository.name) || '/' }}
+          # Set base path for GitHub Pages
+          VITE_BASE_URL: ${{ format('/{0}/', github.event.repository.name) }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
