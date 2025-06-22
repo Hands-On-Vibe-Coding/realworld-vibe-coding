@@ -61,7 +61,7 @@ Desktop.ini
 go.work
 go.work.sum
 vendor/
-bin/
+backend/bin/
 pkg/
 
 # Frontend build artifacts
