@@ -65,11 +65,7 @@ function AllTheProviders({
   if (withRouter) {
     // Router의 루트 컴포넌트에서 content를 렌더링하도록 설정
     const testRouter = createTestRouter()
-    return (
-      <RouterProvider router={testRouter}>
-        {content}
-      </RouterProvider>
-    )
+    return <RouterProvider router={testRouter} />
   }
 
   return content

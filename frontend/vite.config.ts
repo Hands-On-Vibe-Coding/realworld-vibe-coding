@@ -24,20 +24,6 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
   },
-  // Test configuration
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
-    exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/e2e/**',
-      '**/*.e2e.*',
-      '**/*.spec.*',
-      '**/playwright.config.*'
-    ],
-  },
   // GitHub Pages configuration
   base: process.env.VITE_BASE_URL || '/',
   define: {
