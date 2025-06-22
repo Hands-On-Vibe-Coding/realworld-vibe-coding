@@ -91,6 +91,13 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHubActions-BackendDeploy
 
+      - name: Get AWS Account ID
+        id: aws-account
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "AWS_ACCOUNT_ID=$ACCOUNT_ID" >> $GITHUB_ENV
+          echo "account-id=$ACCOUNT_ID" >> $GITHUB_OUTPUT
+
       - name: Set up Node.js for CDK
         uses: actions/setup-node@v4
         with:
@@ -102,8 +109,20 @@ jobs:
         working-directory: ./infrastructure
         run: npm ci
 
+      - name: Bootstrap CDK
+        working-directory: ./infrastructure
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ env.AWS_ACCOUNT_ID }}
+          CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
+        run: |
+          echo "🔧 Bootstrapping CDK..."
+          npx cdk bootstrap --context environment=${{ env.ENVIRONMENT }}
+
       - name: Deploy infrastructure with CDK
         working-directory: ./infrastructure
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ env.AWS_ACCOUNT_ID }}
+          CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
         run: |
           echo "📦 Deploying Network stack..."
           npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Network --require-approval never --context environment=${{ env.ENVIRONMENT }}
