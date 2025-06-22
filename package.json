@@ -36,8 +36,9 @@
     "lint-staged": "^16.1.2"
   },
   "lint-staged": {
-    "frontend/src/**/*.{js,jsx,ts,tsx}": [
-      "cd frontend && npm run lint:fix"
+    "frontend/**/*.{js,jsx,ts,tsx}": [
+      "cd frontend && npm run lint:fix",
+      "cd frontend && npm run lint"
     ],
     "backend/**/*.go": [
       "cd backend && go fmt ./...",
