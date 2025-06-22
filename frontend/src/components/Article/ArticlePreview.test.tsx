@@ -9,7 +9,7 @@ import { createTestArticle } from '@/test/fixtures'
 
 // Mock Tanstack Router Link
 vi.mock('@tanstack/react-router', () => ({
-  Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+  Link: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
 // Simple test wrapper without router

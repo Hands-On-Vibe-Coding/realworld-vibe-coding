@@ -53,8 +53,6 @@ function AllTheProviders({
   queryClient = createTestQueryClient(),
   withRouter = false 
 }: AllTheProvidersProps) {
-  const router = createTestRouter()
-
   const content = (
     <QueryClientProvider client={queryClient}>
       <MantineProvider>
@@ -66,9 +64,9 @@ function AllTheProviders({
 
   if (withRouter) {
     // Router의 루트 컴포넌트에서 content를 렌더링하도록 설정
-    const router = createTestRouter()
+    const testRouter = createTestRouter()
     return (
-      <RouterProvider router={router}>
+      <RouterProvider router={testRouter}>
         {content}
       </RouterProvider>
     )

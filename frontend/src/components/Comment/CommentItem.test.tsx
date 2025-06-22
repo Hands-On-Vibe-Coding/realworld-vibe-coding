@@ -6,7 +6,7 @@ import { createTestComment } from '@/test/fixtures'
 
 // Mock the auth store
 const mockAuthStore = {
-  user: null as any,
+  user: null as { username: string } | null,
   isAuthenticated: false,
 }
 
