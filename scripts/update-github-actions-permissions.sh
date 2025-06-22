@@ -1,76 +1,22 @@
 #!/bin/bash
 
-# GitHub Actions OIDC Setup for AWS
-# This script creates the necessary IAM roles and policies for GitHub Actions to deploy to AWS
-# Includes permissions for CDK bootstrap and CloudFormation operations
+# Update GitHub Actions Role with CDK Bootstrap Permissions
+# This script updates the existing GitHubActionsRole with additional CloudFormation permissions
 
 set -e
 
 # Configuration
-GITHUB_REPO="Hands-On-Vibe-Coding/realworld-vibe-coding"
 ROLE_NAME="GitHubActionsRole"
 POLICY_NAME="GitHubActionsDeployPolicy"
 ACCOUNT_ID="931016744724"
 
-echo "🔐 Setting up AWS OIDC for GitHub Actions..."
-echo "Repository: $GITHUB_REPO"
+echo "🔄 Updating GitHub Actions Role permissions for CDK bootstrap..."
+echo "Role: $ROLE_NAME"
 echo "Account ID: $ACCOUNT_ID"
 
-# Create OIDC Identity Provider (if it doesn't exist)
-echo "📋 Creating OIDC Identity Provider..."
-if ! aws iam get-open-id-connect-provider --open-id-connect-provider-arn "arn:aws:iam::${ACCOUNT_ID}:oidc-provider/token.actions.githubusercontent.com" 2>/dev/null; then
-  aws iam create-open-id-connect-provider \
-    --url https://token.actions.githubusercontent.com \
-    --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1 \
-    --client-id-list sts.amazonaws.com
-  echo "✅ OIDC Provider created"
-else
-  echo "✅ OIDC Provider already exists"
-fi
-
-# Create trust policy for GitHub Actions
-echo "📝 Creating trust policy..."
-cat > trust-policy.json << EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Federated": "arn:aws:iam::${ACCOUNT_ID}:oidc-provider/token.actions.githubusercontent.com"
-      },
-      "Action": "sts:AssumeRoleWithWebIdentity",
-      "Condition": {
-        "StringEquals": {
-          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-        },
-        "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:${GITHUB_REPO}:*"
-        }
-      }
-    }
-  ]
-}
-EOF
-
-# Create IAM role for GitHub Actions
-echo "👤 Creating IAM role..."
-if aws iam get-role --role-name $ROLE_NAME 2>/dev/null; then
-  echo "⚠️  Role $ROLE_NAME already exists, updating trust policy..."
-  aws iam update-assume-role-policy \
-    --role-name $ROLE_NAME \
-    --policy-document file://trust-policy.json
-else
-  aws iam create-role \
-    --role-name $ROLE_NAME \
-    --assume-role-policy-document file://trust-policy.json \
-    --description "Role for GitHub Actions to deploy RealWorld application"
-  echo "✅ IAM role created"
-fi
-
-# Create deployment policy
-echo "📋 Creating deployment policy..."
-cat > deployment-policy.json << EOF
+# Create updated deployment policy with CDK permissions
+echo "📋 Creating updated deployment policy..."
+cat > deployment-policy-update.json << EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -206,30 +152,32 @@ cat > deployment-policy.json << EOF
 }
 EOF
 
-# Attach policy to role
+# Update the role policy
+echo "🔄 Updating role policy..."
 if aws iam get-role-policy --role-name $ROLE_NAME --policy-name $POLICY_NAME 2>/dev/null; then
-  echo "⚠️  Policy $POLICY_NAME already exists, updating..."
   aws iam put-role-policy \
     --role-name $ROLE_NAME \
     --policy-name $POLICY_NAME \
-    --policy-document file://deployment-policy.json
+    --policy-document file://deployment-policy-update.json
+  echo "✅ Policy updated successfully"
 else
-  aws iam put-role-policy \
-    --role-name $ROLE_NAME \
-    --policy-name $POLICY_NAME \
-    --policy-document file://deployment-policy.json
-  echo "✅ Deployment policy attached"
+  echo "❌ Role or policy not found. Please run setup-oidc.sh first."
+  exit 1
 fi
 
-# Clean up temporary files
-rm trust-policy.json deployment-policy.json
+# Clean up temporary file
+rm deployment-policy-update.json
 
-# Output the role ARN
-ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${ROLE_NAME}"
+# Verify the update
+echo "🔍 Verifying policy update..."
+aws iam get-role-policy --role-name $ROLE_NAME --policy-name $POLICY_NAME --query 'PolicyDocument.Statement[?contains(Action, `cloudformation:DescribeStacks`)].Action' --output table
+
 echo ""
-echo "🎉 Setup complete!"
-echo "📋 Add this to your GitHub repository secrets:"
-echo "   AWS_ROLE_ARN: $ROLE_ARN"
-echo "   AWS_REGION: us-east-1"
+echo "🎉 GitHub Actions Role permissions updated successfully!"
+echo "The role now has the following CDK bootstrap permissions:"
+echo "  - CloudFormation operations on CDKToolkit and RealWorld stacks"
+echo "  - S3 operations on CDK staging buckets"
+echo "  - SSM parameter operations for CDK bootstrap"
+echo "  - IAM role operations for CDK and RealWorld roles"
 echo ""
-echo "🔗 Role ARN: $ROLE_ARN"
+echo "You can now run CDK bootstrap and deploy commands in GitHub Actions."
