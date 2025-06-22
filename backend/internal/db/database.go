@@ -19,7 +19,7 @@ type Database struct {
 func NewDatabase(databaseURL string) (*Database, error) {
 	var db *sql.DB
 	var err error
-	
+
 	// Determine database type based on URL
 	if strings.HasPrefix(databaseURL, "postgres://") || strings.HasPrefix(databaseURL, "postgresql://") {
 		// PostgreSQL connection
@@ -28,7 +28,7 @@ func NewDatabase(databaseURL string) (*Database, error) {
 		// SQLite connection (default)
 		db, err = sql.Open("sqlite3", databaseURL)
 	}
-	
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %v", err)
 	}
