@@ -5,8 +5,6 @@
     "lib": [
       "es2020"
     ],
-    "outDir": "./",
-    "rootDir": "./",
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -23,7 +21,14 @@
     "strictPropertyInitialization": false,
     "typeRoots": [
       "./node_modules/@types"
-    ]
+    ],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "ts-node": {
+    "prefer-ts-exts": true,
+    "esm": false
   },
   "exclude": [
     "node_modules",
