@@ -38,6 +38,6 @@ test.describe('Smoke Tests', () => {
     expect(page.url()).toContain('/register')
     
     await page.goto('/')
-    expect(page.url()).toBe(page.url().replace(/\/[^\/]*$/, '/'))
+    expect(page.url()).toBe(page.url().replace(/\/[^/]*$/, '/'))
   })
 })

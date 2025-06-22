@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { render } from '@/test/test-utils'
 import { CommentItem } from './CommentItem'
 import { createTestComment } from '@/test/fixtures'

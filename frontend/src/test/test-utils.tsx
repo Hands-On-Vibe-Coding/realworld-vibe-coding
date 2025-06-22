@@ -50,7 +50,7 @@ const createTestRouter = () =>
         hash: '',
         state: {},
       },
-    } as any,
+    } as unknown,
   })
 
 interface AllTheProvidersProps {

@@ -9,7 +9,6 @@ import {
   Stack,
   Divider,
   TypographyStylesProvider,
-  Skeleton,
 } from '@mantine/core';
 import { 
   IconHeart, 
