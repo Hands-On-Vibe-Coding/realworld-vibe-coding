@@ -107,7 +107,21 @@ jobs:
 
       - name: Install CDK dependencies
         working-directory: ./infrastructure
-        run: npm ci
+        run: |
+          npm ci
+          npm install -g aws-cdk
+
+      - name: Compile TypeScript
+        working-directory: ./infrastructure
+        run: |
+          echo "🔨 Compiling TypeScript..."
+          npx tsc
+          echo "📁 Checking compiled files..."
+          ls -la bin/
+          if [ ! -f "bin/infrastructure.js" ]; then
+            echo "❌ infrastructure.js not found after compilation"
+            exit 1
+          fi
 
       - name: Bootstrap CDK
         working-directory: ./infrastructure
