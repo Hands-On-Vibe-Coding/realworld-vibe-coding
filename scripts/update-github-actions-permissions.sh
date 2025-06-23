@@ -60,6 +60,15 @@ cat > deployment-policy-update.json << EOF
     {
       "Effect": "Allow",
       "Action": [
+        "sts:AssumeRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::${ACCOUNT_ID}:role/cdk-*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents",
@@ -117,7 +126,9 @@ cat > deployment-policy-update.json << EOF
       ],
       "Resource": [
         "arn:aws:s3:::cdktoolkit-stagingbucket-*",
-        "arn:aws:s3:::cdktoolkit-stagingbucket-*/*"
+        "arn:aws:s3:::cdktoolkit-stagingbucket-*/*",
+        "arn:aws:s3:::cdk-hnb659fds-assets-*",
+        "arn:aws:s3:::cdk-hnb659fds-assets-*/*"
       ]
     },
     {
