@@ -90,6 +90,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHubActions-BackendDeploy
+          role-session-duration: 14400
 
       - name: Get AWS Account ID
         id: aws-account
@@ -238,6 +239,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHubActions-Cleanup
+          role-session-duration: 14400
 
       - name: Clean up old ECR images
         run: |
