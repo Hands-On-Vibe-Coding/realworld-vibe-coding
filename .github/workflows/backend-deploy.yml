@@ -125,15 +125,19 @@ jobs:
         env:
           CDK_DEFAULT_ACCOUNT: ${{ env.AWS_ACCOUNT_ID }}
           CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
         run: |
+          echo "🔄 Clearing CDK context to ensure clean deployment..."
+          rm -f cdk.context.json
+          
           echo "📦 Deploying Network stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Network --require-approval never --context environment=${{ env.ENVIRONMENT }}
+          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Network --require-approval never --context environment=${{ env.ENVIRONMENT }} --context @aws-cdk/core:target-partitions='["aws"]'
           
           echo "🗄️ Deploying Database stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Database --require-approval never --context environment=${{ env.ENVIRONMENT }}
+          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Database --require-approval never --context environment=${{ env.ENVIRONMENT }} --context @aws-cdk/core:target-partitions='["aws"]'
           
           echo "🐳 Deploying ECS stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-ECS --require-approval never --context environment=${{ env.ENVIRONMENT }}
+          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-ECS --require-approval never --context environment=${{ env.ENVIRONMENT }} --context @aws-cdk/core:target-partitions='["aws"]'
 
       - name: Login to Amazon ECR
         id: login-ecr
