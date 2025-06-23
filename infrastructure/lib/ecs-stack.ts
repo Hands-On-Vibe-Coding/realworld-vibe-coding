@@ -110,12 +110,13 @@ export class EcsStack extends cdk.Stack {
       DATABASE_PORT: database.instanceEndpoint.port.toString(),
       DATABASE_NAME: 'realworld',
       DATABASE_USER: 'postgres',
+      JWT_SECRET: 'temporary-jwt-secret-for-dev', // TODO: Move to proper secret management for production
+      ENVIRONMENT: environment,
     }
 
     // Secrets for the backend container
     const secrets = {
       DATABASE_PASSWORD: ecs.Secret.fromSecretsManager(databaseSecret, 'password'),
-      JWT_SECRET: ecs.Secret.fromSecretsManager(databaseSecret, 'jwt_secret'),
     }
 
     // Backend container
