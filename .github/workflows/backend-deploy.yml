@@ -169,9 +169,11 @@ jobs:
       - name: Update ECS service
         run: |
           echo "🔄 Updating ECS service with new image..."
+          # First, update the service with the new image and desired count
           aws ecs update-service \
             --cluster realworld-${{ env.ENVIRONMENT }} \
             --service realworld-backend-${{ env.ENVIRONMENT }} \
+            --desired-count 1 \
             --force-new-deployment \
             --region ${{ env.AWS_REGION }}
 

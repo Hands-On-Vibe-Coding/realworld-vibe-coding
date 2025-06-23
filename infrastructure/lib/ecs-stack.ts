@@ -146,7 +146,7 @@ export class EcsStack extends cdk.Stack {
       cluster: this.cluster,
       taskDefinition,
       serviceName: `realworld-backend-${environment}`,
-      desiredCount: isProd ? 2 : 1,
+      desiredCount: 0, // Start with 0 to prevent failures when no image exists
       minHealthyPercent: isProd ? 50 : 0,
       maxHealthyPercent: 200,
       assignPublicIp: false,
@@ -155,6 +155,7 @@ export class EcsStack extends cdk.Stack {
         subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
       },
       enableExecuteCommand: !isProd, // Enable for debugging in non-prod
+      healthCheckGracePeriod: cdk.Duration.seconds(300), // Increase from default 60s
     })
 
     // Auto Scaling for ECS service in production

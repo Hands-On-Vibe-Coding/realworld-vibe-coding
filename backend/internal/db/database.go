@@ -4,9 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-
-	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // Database wraps the database connection and provides helper methods
@@ -25,7 +22,7 @@ func NewDatabase(databaseURL string) (*Database, error) {
 		// PostgreSQL connection
 		db, err = sql.Open("postgres", databaseURL)
 	} else {
-		// SQLite connection (default)
+		// SQLite connection (default) - only available in dev/sqlite builds
 		db, err = sql.Open("sqlite3", databaseURL)
 	}
 

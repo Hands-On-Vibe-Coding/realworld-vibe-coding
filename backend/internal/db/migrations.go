@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // Migration represents a database migration
