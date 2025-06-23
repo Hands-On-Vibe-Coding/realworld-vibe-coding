@@ -35,7 +35,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: ap-northeast-2
   ENVIRONMENT: ${{ github.event.inputs.environment || 'dev' }}
 
 jobs:

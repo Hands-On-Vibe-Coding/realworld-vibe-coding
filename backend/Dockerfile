@@ -17,9 +17,8 @@ RUN go mod download
 COPY . .
 
 # Build the application for production (CGO enabled for SQLite)
-RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build \
-    -ldflags='-w -s -extldflags "-static"' \
-    -a -installsuffix cgo \
+RUN CGO_ENABLED=1 GOOS=linux go build \
+    -ldflags='-w -s' \
     -o server ./cmd/server/main.go
 
 # Final stage

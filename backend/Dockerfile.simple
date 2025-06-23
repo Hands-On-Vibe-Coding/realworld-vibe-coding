@@ -1,0 +1,50 @@
+# Simple Dockerfile without SQLite dependencies for production deployment
+FROM golang:1.21-alpine AS builder
+
+# Install basic dependencies
+RUN apk add --no-cache git ca-certificates postgresql-dev
+
+WORKDIR /app
+
+# Copy go files
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source
+COPY . .
+
+# Build without CGO for PostgreSQL-only deployment
+RUN CGO_ENABLED=0 go build -o server ./cmd/server/main.go
+
+# Runtime stage
+FROM alpine:latest
+
+# Install runtime dependencies
+RUN apk --no-cache add ca-certificates curl postgresql-client
+
+# Create user
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+WORKDIR /app
+
+# Copy binary
+COPY --from=builder /app/server .
+
+# Copy migrations
+COPY --from=builder /app/migrations ./migrations
+
+# Fix permissions
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 8080
+
+ENV PORT=8080
+ENV ENVIRONMENT=production
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+CMD ["./server"]
