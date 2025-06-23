@@ -154,13 +154,13 @@ jobs:
           ECR_REPOSITORY: realworld-backend-${{ env.ENVIRONMENT }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Build Docker image
+          # Build Docker image using PostgreSQL-only Dockerfile
           docker buildx build \
             --platform linux/amd64 \
             --push \
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:latest \
-            --file backend/Dockerfile \
+            --file backend/Dockerfile.simple \
             backend/
           
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
