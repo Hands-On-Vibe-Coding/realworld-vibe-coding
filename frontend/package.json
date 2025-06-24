@@ -5,6 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:fresh": "bash scripts/dev-start.sh",
+    "dev:quick": "bash scripts/quick-start.sh",
+    "dev:clean": "bash scripts/cleanup-and-start.sh",
+    "cleanup": "bash scripts/cleanup.sh",
+    "cleanup:status": "bash scripts/cleanup.sh --status",
+    "cleanup:verbose": "bash scripts/cleanup.sh --verbose",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

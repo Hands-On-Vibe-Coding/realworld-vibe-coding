@@ -26,8 +26,8 @@ export class ApiClient {
     if (typeof window !== 'undefined') {
       // Browser environment
       if (window.location.hostname === 'localhost') {
-        // Development environment
-        this.baseURL = 'http://localhost:8080/api';
+        // Development environment - use Vite proxy
+        this.baseURL = '/api';
       } else {
         // Production environment - use deployed backend
         this.baseURL = process.env.VITE_API_BASE_URL 
