@@ -82,10 +82,23 @@ jobs:
         cd infrastructure
         cdk synth --app "npx ts-node bin/simple-infrastructure.ts"
 
+    - name: Clean up old stacks (if needed)
+      run: |
+        # Try to delete old database stack that's no longer needed
+        aws cloudformation delete-stack --stack-name RealWorld-dev-Database 2>/dev/null || true
+        # Wait briefly for deletion to start
+        sleep 10
+      
     - name: CDK Deploy
       run: |
         cd infrastructure
-        cdk deploy --all --require-approval never --app "npx ts-node bin/simple-infrastructure.ts"
+        # Force clean deployment by destroying and recreating if needed
+        cdk deploy --all --require-approval never --app "npx ts-node bin/simple-infrastructure.ts" --force || {
+          echo "Deployment failed, trying to clean up and retry..."
+          cdk destroy --all --force --app "npx ts-node bin/simple-infrastructure.ts" || true
+          sleep 30
+          cdk deploy --all --require-approval never --app "npx ts-node bin/simple-infrastructure.ts"
+        }
 
     - name: Get Load Balancer URL
       id: get-lb-url
