@@ -25,7 +25,7 @@ export default defineConfig({
     sourcemap: true,
   },
   // GitHub Pages configuration
-  base: process.env.VITE_BASE_URL || '/',
+  base: process.env.VITE_BASE_URL || '/realworld-vibe-coding/',
   define: {
     __API_BASE_URL__: JSON.stringify(
       process.env.VITE_API_BASE_URL || 'http://localhost:8080'
