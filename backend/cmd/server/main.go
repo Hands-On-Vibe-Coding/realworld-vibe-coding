@@ -38,7 +38,7 @@ func main() {
 
 	// Create router
 	router := mux.NewRouter()
-	
+
 	// Apply CORS middleware
 	router.Use(middleware.CORS)
 
