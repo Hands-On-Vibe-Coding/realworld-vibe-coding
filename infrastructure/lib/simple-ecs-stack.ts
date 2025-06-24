@@ -5,6 +5,9 @@ import * as ecr from 'aws-cdk-lib/aws-ecr'
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2'
 import * as iam from 'aws-cdk-lib/aws-iam'
 import * as logs from 'aws-cdk-lib/aws-logs'
+import * as certificatemanager from 'aws-cdk-lib/aws-certificatemanager'
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
+import * as cloudfrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins'
 import { Construct } from 'constructs'
 
 export interface SimpleEcsStackProps extends cdk.StackProps {
@@ -17,6 +20,7 @@ export class SimpleEcsStack extends cdk.Stack {
   public readonly backendService: ecs.FargateService
   public readonly loadBalancer: elbv2.ApplicationLoadBalancer
   public readonly backendRepository: ecr.Repository
+  public readonly distribution: cloudfront.Distribution
 
   constructor(scope: Construct, id: string, props: SimpleEcsStackProps) {
     super(scope, id, props)
@@ -189,6 +193,24 @@ export class SimpleEcsStack extends cdk.Stack {
     // Attach target group to service
     this.backendService.attachToApplicationTargetGroup(targetGroup)
 
+    // CloudFront Distribution for HTTPS
+    this.distribution = new cloudfront.Distribution(this, 'BackendDistribution', {
+      defaultBehavior: {
+        origin: new cloudfrontOrigins.LoadBalancerV2Origin(this.loadBalancer, {
+          protocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY,
+          httpPort: 80,
+        }),
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+        cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED, // Disable caching for API
+        originRequestPolicy: cloudfront.OriginRequestPolicy.CORS_S3_ORIGIN,
+        responseHeadersPolicy: cloudfront.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
+      },
+      priceClass: cloudfront.PriceClass.PRICE_CLASS_100, // Use only North America and Europe for cost savings
+      comment: `RealWorld Backend CloudFront Distribution - ${environment}`,
+    })
+
     // Outputs
     new cdk.CfnOutput(this, 'LoadBalancerDNS', {
       value: this.loadBalancer.loadBalancerDnsName,
@@ -218,6 +240,18 @@ export class SimpleEcsStack extends cdk.Stack {
       value: `http://${this.loadBalancer.loadBalancerDnsName}`,
       exportName: `${environment}-BackendURL`,
       description: 'Backend application URL',
+    })
+
+    new cdk.CfnOutput(this, 'BackendHTTPSURL', {
+      value: `https://${this.distribution.distributionDomainName}`,
+      exportName: `${environment}-BackendHTTPSURL`,
+      description: 'Backend HTTPS URL via CloudFront',
+    })
+
+    new cdk.CfnOutput(this, 'CloudFrontDomain', {
+      value: this.distribution.distributionDomainName,
+      exportName: `${environment}-CloudFrontDomain`,
+      description: 'CloudFront distribution domain name',
     })
   }
 }

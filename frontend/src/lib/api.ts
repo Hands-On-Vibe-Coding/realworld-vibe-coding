@@ -29,10 +29,10 @@ export class ApiClient {
         // Development environment - use Vite proxy
         this.baseURL = '/api';
       } else {
-        // Production environment - use deployed backend
+        // Production environment - use deployed backend with HTTPS
         this.baseURL = import.meta.env.VITE_API_BASE_URL 
           ? `${import.meta.env.VITE_API_BASE_URL}/api`
-          : 'http://realworld-alb-prod-27814340.ap-northeast-2.elb.amazonaws.com/api';
+          : 'https://dw0j76dcssyxq.cloudfront.net/api';
       }
     } else {
       // Server-side rendering fallback
