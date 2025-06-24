@@ -156,6 +156,38 @@ db-reset: ## Reset database (remove SQLite file)
 	@rm -f $(BACKEND_DIR)/realworld.db
 	@docker volume rm realworld-vibe-coding_backend_data 2>/dev/null || true
 
+## Educational Deployment (SQLite-based)
+deploy: ## Deploy to AWS (educational setup)
+	@echo "Deploying educational RealWorld application..."
+	@cd infrastructure && npm run deploy
+
+deploy-check: ## Check deployment status
+	@echo "Checking deployment status..."
+	@aws ecs describe-services --cluster realworld-dev --services realworld-backend-dev --query 'services[0].{Status:status,Running:runningCount,Desired:desiredCount}' --output table
+
+deploy-logs: ## Show deployment logs
+	@echo "Showing ECS logs..."
+	@aws logs tail /ecs/realworld-backend-dev --follow
+
+deploy-url: ## Get deployed application URL
+	@echo "Getting application URL..."
+	@aws cloudformation describe-stacks --stack-name RealWorld-dev-ECS --query 'Stacks[0].Outputs[?OutputKey==`BackendURL`].OutputValue' --output text
+
+deploy-stop: ## Stop ECS service (cost saving)
+	@echo "Stopping ECS service..."
+	@aws ecs update-service --cluster realworld-dev --service realworld-backend-dev --desired-count 0
+
+deploy-start: ## Start ECS service
+	@echo "Starting ECS service..."
+	@aws ecs update-service --cluster realworld-dev --service realworld-backend-dev --desired-count 1
+
+docker-test: ## Build and test Docker image locally
+	@echo "Building and testing Docker image locally..."
+	@cd $(BACKEND_DIR) && docker build -t realworld-backend-test .
+	@docker run --rm -p 8090:8080 -e DATABASE_URL=/data/realworld.db -e JWT_SECRET=test-secret realworld-backend-test &
+	@echo "Docker container started on port 8090"
+	@echo "Test with: curl http://localhost:8090/health"
+
 ## Cleanup
 clean: ## Clean build artifacts
 	@echo "Cleaning build artifacts..."

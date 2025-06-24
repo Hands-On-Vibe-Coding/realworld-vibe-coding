@@ -1,15 +1,30 @@
 # Deployment Guide
 
-This document provides detailed instructions for deploying the RealWorld application.
+This document provides detailed instructions for deploying the RealWorld application in an educational environment optimized for cost and simplicity.
 
 ## Architecture Overview
 
-The application uses a hybrid deployment strategy:
+The application uses a simplified deployment strategy designed for education:
 
 - **Frontend**: GitHub Pages (Static Site)
-- **Backend**: AWS ECS with Fargate (Containerized API)
-- **Database**: AWS RDS PostgreSQL
+- **Backend**: AWS ECS with Fargate Spot (Containerized API)
+- **Database**: SQLite (In-container, file-based)
 - **Infrastructure**: AWS CDK (TypeScript)
+- **Estimated Cost**: $5-10/month
+
+## Key Benefits
+
+### Cost Optimization
+- **Fargate Spot**: ~70% savings compared to regular Fargate
+- **No RDS**: Eliminates database server costs
+- **Minimal Resources**: 0.25 vCPU, 512MB RAM
+- **Short Log Retention**: 1 week CloudWatch logs
+
+### Educational Focus
+- **Simple Architecture**: Easy to understand and debug
+- **Rapid Deployment**: Minutes not hours
+- **Self-Contained**: SQLite eliminates external dependencies
+- **Reset-Friendly**: Container restarts provide clean state
 
 ## Prerequisites
 
@@ -48,273 +63,246 @@ Run the provided script to set up GitHub Actions authentication:
 ```
 
 This creates:
-- OIDC Identity Provider
-- IAM Role for GitHub Actions
-- Required policies for ECR, ECS, and other AWS services
+- IAM OIDC provider for GitHub Actions
+- Role with appropriate permissions for ECS and ECR
+- Trust policy for secure authentication
 
-### 2. Infrastructure Deployment
-
-Deploy the AWS infrastructure stacks in order:
+### 2. Bootstrap CDK (First Time Only)
 
 ```bash
 cd infrastructure
-
-# Install dependencies
 npm install
-
-# Bootstrap CDK (one-time setup)
-npx cdk bootstrap
-
-# Deploy all stacks for development
-npm run deploy:dev
-
-# Or deploy for production
-npm run deploy:prod
+cdk bootstrap
 ```
 
-The deployment creates:
-- **NetworkStack**: VPC, subnets, security groups
-- **DatabaseStack**: RDS PostgreSQL instance
-- **ECSStack**: ECS cluster, ALB, task definitions
-- **MonitoringStack**: CloudWatch dashboards and alarms
+## Deployment Process
 
-## Deployment Workflows
+### Automatic Deployment
 
-### Frontend Deployment (Automatic)
-
-The frontend deploys automatically to GitHub Pages when:
-
-- Code is pushed to `main` branch
-- Changes are made to `frontend/**` directory
-- Workflow file `.github/workflows/frontend-deploy.yml` is modified
-
-**Process:**
-1. Install dependencies
-2. Run tests and linting
-3. Build for production with correct base path
-4. Deploy to GitHub Pages
-
-**URL**: https://dohyunjung.github.io/realworld-vibe-coding/
-
-### Backend Deployment (Automatic)
-
-The backend deploys automatically to AWS ECS when:
-
-- Code is pushed to `main` branch
-- Changes are made to `backend/**` directory
-- Infrastructure changes are made
-- Workflow file `.github/workflows/backend-deploy.yml` is modified
-
-**Process:**
-1. Run Go tests and code quality checks
-2. Build Docker image for linux/amd64
-3. Push image to Amazon ECR
-4. Update ECS task definition
-5. Deploy to ECS service
-6. Verify health checks
-7. Clean up old ECR images
-
-## Manual Deployment
-
-### Backend Manual Build and Push
+Push to the `main` branch automatically triggers deployment:
 
 ```bash
-# Login to ECR
-aws ecr get-login-password --region us-east-1 | \
-  docker login --username AWS --password-stdin \
-  931016744724.dkr.ecr.us-east-1.amazonaws.com
-
-# Build image
-docker build -t realworld-backend ./backend
-
-# Tag for ECR
-docker tag realworld-backend:latest \
-  931016744724.dkr.ecr.us-east-1.amazonaws.com/realworld-backend:latest
-
-# Push to ECR
-docker push 931016744724.dkr.ecr.us-east-1.amazonaws.com/realworld-backend:latest
-
-# Update ECS service
-aws ecs update-service \
-  --cluster realworld-dev-cluster \
-  --service realworld-dev-service \
-  --force-new-deployment
-```
-
-### Frontend Manual Build and Deploy
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Build for GitHub Pages
-VITE_BASE_URL=/realworld-vibe-coding/ npm run build
-
-# Deploy (committed to main branch will auto-deploy)
-git add dist/
-git commit -m "feat: manual frontend deployment"
+git add .
+git commit -m "Deploy changes"
 git push origin main
 ```
 
-## Environment Configuration
+The deployment process:
 
-### Development Environment
+1. **Build Frontend**: Creates optimized React build
+2. **Build Backend**: Compiles Go binary with SQLite
+3. **Deploy Infrastructure**: Creates/updates AWS resources
+4. **Push Docker Image**: Builds and pushes to ECR
+5. **Update Service**: Deploys new container with health checks
 
-**Frontend:**
+### Manual Deployment
+
+For manual control or troubleshooting:
+
 ```bash
-VITE_API_BASE_URL=http://localhost:8080
-VITE_BASE_URL=/
+# 1. Deploy infrastructure
+cd infrastructure
+npm run deploy
+
+# 2. Build and test locally (optional)
+cd ../backend
+docker build -t realworld-backend .
+docker run -p 8080:8080 realworld-backend
+
+# 3. Push to ECR (normally done by GitHub Actions)
+# This step is typically automated
 ```
 
-**Backend:**
-```bash
-PORT=8080
-DATABASE_URL=realworld.db
-JWT_SECRET=dev-secret-key
-ENVIRONMENT=development
-```
+## Infrastructure Components
 
-### Production Environment
+### Network Stack
+- **VPC**: Isolated network environment
+- **Subnets**: Public and private subnets across AZs
+- **Internet Gateway**: Public internet access
+- **NAT Gateway**: Outbound internet for private subnets
 
-**Frontend:**
-```bash
-VITE_API_BASE_URL=http://realworld-dev-alb-123456789.us-east-1.elb.amazonaws.com
-VITE_BASE_URL=/realworld-vibe-coding/
-```
+### ECS Stack (Simplified)
+- **ECS Cluster**: Container orchestration
+- **Fargate Tasks**: 0.25 vCPU, 512MB RAM
+- **Spot Instances**: 70% cost reduction
+- **Auto Scaling**: Disabled for cost (educational use)
 
-**Backend (via ECS Task Definition):**
-```bash
-PORT=8080
-DATABASE_URL=postgresql://username:password@rds-endpoint:5432/realworld
-JWT_SECRET=<from-secrets-manager>
-ENVIRONMENT=production
+### Load Balancer
+- **Application Load Balancer**: HTTP traffic distribution
+- **Health Checks**: `/health` endpoint monitoring
+- **Target Groups**: Container service integration
+
+### Container Configuration
+- **Base Image**: Debian (SQLite compatible)
+- **Database**: SQLite file at `/data/realworld.db`
+- **Environment**: Production-ready Go binary
+- **Logging**: CloudWatch with 1-week retention
+
+## Database Management
+
+### SQLite Benefits for Education
+- **No Setup**: Works immediately without configuration
+- **File-Based**: Simple backup and inspection
+- **Zero Cost**: No database server charges
+- **Reset-Friendly**: Container restart = fresh database
+
+### Data Persistence
+- **Development**: Data persists during container lifecycle
+- **Reset**: Stopping/starting service resets data
+- **Migrations**: Automatic on startup
+- **Backup**: Not implemented (educational use)
+
+### Migration Process
+```sql
+-- Migrations run automatically on startup
+-- Located in backend/migrations/
+-- SQLite-compatible syntax
+-- Example: 001_create_users_table.sql
 ```
 
 ## Monitoring and Debugging
 
 ### CloudWatch Logs
-
 ```bash
-# View ECS task logs
-aws logs tail /aws/ecs/realworld-dev --follow
+# View logs via AWS CLI
+aws logs describe-log-groups --log-group-name-prefix "/ecs/realworld"
 
-# View specific log group
-aws logs describe-log-groups --log-group-name-prefix "/aws/ecs/realworld"
+# Stream logs in real-time
+aws logs tail /ecs/realworld-backend-dev --follow
 ```
 
 ### Health Checks
+- **Endpoint**: `GET /health`
+- **Response**: `{"status":"ok","service":"realworld-backend"}`
+- **Frequency**: Every 30 seconds
+- **Failure Threshold**: 3 consecutive failures
 
-**Frontend:** https://dohyunjung.github.io/realworld-vibe-coding/
+### ECS Service Management
+```bash
+# Check service status
+aws ecs describe-services --cluster realworld-dev --services realworld-backend-dev
 
-**Backend:** http://ALB_DNS_NAME/health
+# Force new deployment
+aws ecs update-service --cluster realworld-dev --service realworld-backend-dev --force-new-deployment
 
-### Common Issues
-
-1. **ECS Tasks Not Starting**
-   - Check if ECR images exist
-   - Verify task definition configuration
-   - Review CloudWatch logs
-
-2. **Database Connection Issues**
-   - Ensure security groups allow ECS → RDS communication
-   - Verify database credentials in Secrets Manager
-   - Check VPC and subnet configuration
-
-3. **Frontend API Calls Failing**
-   - Verify CORS configuration in backend
-   - Check VITE_API_BASE_URL environment variable
-   - Ensure ALB security group allows HTTP traffic
+# Scale service (educational use: 0 or 1)
+aws ecs update-service --cluster realworld-dev --service realworld-backend-dev --desired-count 1
+```
 
 ## Cost Management
 
-### Development Environment
+### Current Costs (Monthly Estimates)
+- **Fargate Spot**: $3-5 (0.25 vCPU, 512MB)
+- **Application Load Balancer**: $2-3
+- **Data Transfer**: $0-1
+- **CloudWatch Logs**: $0-1
+- **Total**: $5-10/month
 
-- ECS: 2 tasks × t3.micro equivalent
-- RDS: db.t3.micro instance
-- ALB: Standard load balancer
-- **Estimated Cost**: ~$50-70/month
+### Cost Optimization Tips
+1. **Stop When Not Needed**: Set desired count to 0
+2. **Use Spot**: Already configured for maximum savings
+3. **Monitor Usage**: Check AWS Cost Explorer regularly
+4. **Clean Up**: Remove unused resources promptly
 
-### Production Environment
+## Troubleshooting
 
-- ECS: 2-4 tasks × t3.small equivalent
-- RDS: db.t3.small with Multi-AZ
-- ALB: Standard load balancer with higher traffic
-- **Estimated Cost**: ~$120-150/month
+### Common Issues
 
-### Cost Optimization
+#### 1. Container Won't Start
+```bash
+# Check logs for startup errors
+aws logs tail /ecs/realworld-backend-dev --follow
 
-1. **Auto-scaling**: ECS tasks scale based on CPU/memory
-2. **Image Cleanup**: Old ECR images automatically deleted
-3. **Development Shutdown**: Use `npx cdk destroy` for dev environment when not needed
+# Common causes:
+# - SQLite permissions
+# - Missing environment variables
+# - Port binding conflicts
+```
+
+#### 2. Health Check Failures
+```bash
+# Test health endpoint directly
+curl http://your-alb-url/health
+
+# Check ECS service events
+aws ecs describe-services --cluster realworld-dev --services realworld-backend-dev
+```
+
+#### 3. Database Migration Errors
+```bash
+# Migrations run automatically, check logs for:
+# - SQL syntax errors
+# - File permission issues
+# - SQLite version compatibility
+```
+
+#### 4. Deployment Stuck
+```bash
+# Check GitHub Actions logs
+# Common issues:
+# - AWS permissions
+# - ECR authentication
+# - CDK deployment errors
+```
+
+### Recovery Procedures
+
+#### Reset Everything
+```bash
+# Destroy and recreate infrastructure
+cd infrastructure
+npm run destroy
+npm run deploy
+```
+
+#### Database Reset
+```bash
+# Force new deployment (resets SQLite)
+aws ecs update-service --cluster realworld-dev --service realworld-backend-dev --force-new-deployment
+```
 
 ## Security Considerations
 
-1. **IAM Roles**: Minimal permissions using OIDC
-2. **VPC Security**: All resources in private subnets
-3. **Database**: Encryption at rest, credentials in Secrets Manager
-4. **Container Security**: Non-root user, minimal Alpine image
-5. **HTTPS**: CloudFront/ALB handle SSL termination
+### Educational Environment
+- **JWT Secret**: Hardcoded for simplicity (change in production)
+- **Database**: No encryption (SQLite in container)
+- **Network**: Basic security groups
+- **Logging**: Limited sensitive data filtering
 
-## Rollback Procedures
+### Production Recommendations
+- Use AWS Secrets Manager for JWT secret
+- Implement database encryption
+- Add WAF protection
+- Enable detailed CloudWatch monitoring
+- Implement backup strategies
 
-### Backend Rollback
+## Frontend Deployment
 
-```bash
-# List recent task definitions
-aws ecs list-task-definitions --family-prefix realworld-dev-task
+The frontend is automatically deployed to GitHub Pages when changes are pushed to the main branch.
 
-# Update service to previous task definition
-aws ecs update-service \
-  --cluster realworld-dev-cluster \
-  --service realworld-dev-service \
-  --task-definition realworld-dev-task:PREVIOUS_REVISION
-```
+### Configuration
+- **Build Command**: `npm run build`
+- **Deploy**: GitHub Actions automatically updates GitHub Pages
+- **API Integration**: Uses ALB URL from backend deployment
 
-### Frontend Rollback
+### Custom Domain (Optional)
+To use a custom domain:
+1. Configure CNAME in your DNS provider
+2. Update GitHub Pages settings
+3. Update CORS settings in backend
 
-```bash
-# Revert to previous commit
-git revert HEAD
-git push origin main
+## Conclusion
 
-# GitHub Actions will automatically redeploy
-```
+This deployment strategy prioritizes educational value over production robustness. It provides:
 
-## Troubleshooting Commands
+- **Cost-effective** learning environment
+- **Simple** architecture for easy understanding
+- **Rapid** deployment and iteration
+- **Reset-friendly** for experimentation
 
-```bash
-# Check ECS service status
-aws ecs describe-services \
-  --cluster realworld-dev-cluster \
-  --services realworld-dev-service
-
-# List running tasks
-aws ecs list-tasks \
-  --cluster realworld-dev-cluster \
-  --service-name realworld-dev-service
-
-# Describe task details
-aws ecs describe-tasks \
-  --cluster realworld-dev-cluster \
-  --tasks TASK_ID
-
-# Check ALB target health
-aws elbv2 describe-target-health \
-  --target-group-arn TARGET_GROUP_ARN
-
-# View database status
-aws rds describe-db-instances \
-  --db-instance-identifier realworld-dev
-```
-
-## Support
-
-For deployment issues:
-
-1. Check GitHub Actions logs
-2. Review CloudWatch logs
-3. Verify AWS resource status
-4. Consult this documentation
-5. Check the infrastructure README for detailed troubleshooting
+For production use, consider upgrading to:
+- Managed PostgreSQL (RDS)
+- Multiple availability zones
+- Comprehensive monitoring
+- Backup and disaster recovery
+- Enhanced security measures

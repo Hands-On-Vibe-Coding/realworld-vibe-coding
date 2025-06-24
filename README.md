@@ -3,7 +3,7 @@
 **🌐 Language / 言語 / 언어**
 - [한국어](README.ko.md) | [日本語](README.jp.md) | **English**
 
-> A full-stack RealWorld application built with Go backend and React frontend using Vibe Coding methodology.
+> A full-stack RealWorld application built with Go backend and React frontend using Vibe Coding methodology. Optimized for educational use with SQLite database and cost-efficient Fargate Spot deployment.
 
 ## Overview
 
@@ -16,9 +16,10 @@ This project is built using the recommended technology stack from Armin Ronacher
 ### Backend
 - **Language**: Go 1.21+ 
 - **Framework**: Standard net/http with Gorilla Mux
-- **Database**: SQLite (development) / PostgreSQL (production)
+- **Database**: SQLite (optimized for education and simplicity)
 - **Authentication**: JWT-based authentication
 - **Architecture**: Clean architecture with dependency injection
+- **Deployment**: AWS ECS Fargate Spot for cost optimization
 
 ### Frontend
 - **Framework**: React 19 with TypeScript
@@ -136,7 +137,7 @@ The application uses a relational database with the following entities:
 - **Follows**: User relationship management
 - **Favorites**: Article bookmarking
 
-Database migrations are automatically applied on server startup.
+Database migrations are automatically applied on server startup. SQLite provides a simple, file-based database perfect for educational environments.
 
 ## API Endpoints
 
@@ -199,6 +200,42 @@ The project uses automated pre-commit hooks to ensure code quality:
 - **Go Quality Checks**: `go fmt` and `go vet` for backend code
 
 For detailed information, see [Git Hooks Documentation](./docs/git-hooks.md).
+
+## Deployment
+
+This project is optimized for educational deployment with minimal cost and complexity.
+
+### Architecture
+- **Frontend**: GitHub Pages with automated CI/CD
+- **Backend**: AWS ECS Fargate Spot (70% cost savings)
+- **Database**: SQLite (in-container, no external database)
+- **Load Balancer**: Application Load Balancer
+- **Estimated Cost**: $5-10/month
+
+### AWS Infrastructure
+- **Compute**: 0.25 vCPU, 512MB RAM (minimal resources)
+- **Networking**: VPC with public/private subnets
+- **Storage**: Container-based SQLite (resets on restart)
+- **Monitoring**: Basic CloudWatch logs
+
+### Deployment Process
+1. **Automatic**: Push to `main` branch triggers deployment
+2. **Build**: Creates optimized Docker image with SQLite
+3. **Deploy**: Updates ECS service with new image
+4. **Health Check**: Verifies application startup
+
+### Manual Deployment
+```bash
+# Deploy infrastructure
+cd infrastructure
+npm run deploy
+
+# Build and push Docker image (done automatically)
+cd backend
+docker build -t realworld-backend .
+```
+
+For detailed deployment information, see [Deployment Documentation](./docs/DEPLOYMENT.md).
 
 ## Contributing
 

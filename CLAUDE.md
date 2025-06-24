@@ -33,7 +33,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a RealWorld application implementation using "바이브코딩" (Vibe Coding) methodology. The project implements a complete RealWorld spec-compliant application with Go backend and React frontend.
+This is a RealWorld application implementation using "바이브코딩" (Vibe Coding) methodology. The project implements a complete RealWorld spec-compliant application with Go backend and React frontend, optimized for educational use with SQLite database and cost-efficient deployment.
 
 ## Architecture
 
@@ -41,9 +41,9 @@ This is a full-stack application with clear separation between frontend and back
 
 ### Backend (Go)
 - **Language**: Go 1.23+ with standard net/http and Gorilla Mux
-- **Database**: SQLite (development), PostgreSQL (production)
+- **Database**: SQLite (optimized for education and simplicity)
 - **Authentication**: JWT-based authentication
-- **Deployment**: AWS ECS with Fargate for container orchestration
+- **Deployment**: AWS ECS with Fargate Spot for cost optimization
 - **Structure**: Clean architecture with internal packages
   - `cmd/server/main.go` - Application entry point
   - `internal/handler/` - HTTP handlers (user, article, comment, profile)
@@ -70,9 +70,11 @@ This is a full-stack application with clear separation between frontend and back
   - `src/stores/` - Zustand stores
   - `src/lib/` - API client and utilities
 
-### Infrastructure
-- **Backend Infrastructure**: AWS CDK with ECS, RDS, VPC, and monitoring
-- **Frontend Infrastructure**: GitHub Pages with custom domain support
+### Infrastructure (Educational)
+- **Backend Infrastructure**: Simplified AWS CDK with ECS Fargate Spot, VPC (no RDS)
+- **Database**: SQLite in-container for simplicity and cost reduction
+- **Frontend Infrastructure**: GitHub Pages with automated deployment
+- **Cost Optimization**: ~70% savings with Spot instances and minimal resources
 - **CI/CD**: GitHub Actions for automated testing, building, and deployment
 
 ## Development Commands
