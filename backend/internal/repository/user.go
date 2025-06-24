@@ -21,7 +21,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 func (r *UserRepository) GetByID(id int) (*model.User, error) {
 	query := `
 		SELECT id, email, username, password_hash, bio, image, created_at, updated_at
-		FROM users WHERE id = ?
+		FROM users WHERE id = $1
 	`
 
 	var user model.User
@@ -50,7 +50,7 @@ func (r *UserRepository) GetByID(id int) (*model.User, error) {
 func (r *UserRepository) GetByEmail(email string) (*model.User, error) {
 	query := `
 		SELECT id, email, username, password_hash, bio, image, created_at, updated_at
-		FROM users WHERE email = ?
+		FROM users WHERE email = $1
 	`
 
 	var user model.User
@@ -79,7 +79,7 @@ func (r *UserRepository) GetByEmail(email string) (*model.User, error) {
 func (r *UserRepository) GetByUsername(username string) (*model.User, error) {
 	query := `
 		SELECT id, email, username, password_hash, bio, image, created_at, updated_at
-		FROM users WHERE username = ?
+		FROM users WHERE username = $1
 	`
 
 	var user model.User
@@ -108,7 +108,7 @@ func (r *UserRepository) GetByUsername(username string) (*model.User, error) {
 func (r *UserRepository) Create(user *model.User) error {
 	query := `
 		INSERT INTO users (email, username, password_hash, bio, image)
-		VALUES (?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5)
 	`
 
 	result, err := r.db.Exec(query, user.Email, user.Username, user.PasswordHash, user.Bio, user.Image)
@@ -130,7 +130,7 @@ func (r *UserRepository) Update(user *model.User) error {
 	query := `
 		UPDATE users 
 		SET email = ?, username = ?, password_hash = ?, bio = ?, image = ?
-		WHERE id = ?
+		WHERE id = $1
 	`
 
 	_, err := r.db.Exec(query, user.Email, user.Username, user.PasswordHash, user.Bio, user.Image, user.ID)
@@ -143,7 +143,7 @@ func (r *UserRepository) Update(user *model.User) error {
 
 // EmailExists checks if an email is already taken
 func (r *UserRepository) EmailExists(email string) (bool, error) {
-	query := `SELECT COUNT(*) FROM users WHERE email = ?`
+	query := `SELECT COUNT(*) FROM users WHERE email = $1`
 
 	var count int
 	err := r.db.QueryRow(query, email).Scan(&count)
@@ -156,7 +156,7 @@ func (r *UserRepository) EmailExists(email string) (bool, error) {
 
 // UsernameExists checks if a username is already taken
 func (r *UserRepository) UsernameExists(username string) (bool, error) {
-	query := `SELECT COUNT(*) FROM users WHERE username = ?`
+	query := `SELECT COUNT(*) FROM users WHERE username = $1`
 
 	var count int
 	err := r.db.QueryRow(query, username).Scan(&count)
@@ -169,7 +169,7 @@ func (r *UserRepository) UsernameExists(username string) (bool, error) {
 
 // FollowUser creates a follow relationship
 func (r *UserRepository) FollowUser(followerID, followedID int) error {
-	query := `INSERT INTO follows (follower_id, followed_id) VALUES (?, ?)`
+	query := `INSERT INTO follows (follower_id, followed_id) VALUES ($1, $2)`
 
 	_, err := r.db.Exec(query, followerID, followedID)
 	if err != nil {
@@ -181,7 +181,7 @@ func (r *UserRepository) FollowUser(followerID, followedID int) error {
 
 // UnfollowUser removes a follow relationship
 func (r *UserRepository) UnfollowUser(followerID, followedID int) error {
-	query := `DELETE FROM follows WHERE follower_id = ? AND followed_id = ?`
+	query := `DELETE FROM follows WHERE follower_id = $1 AND followed_id = $2`
 
 	result, err := r.db.Exec(query, followerID, followedID)
 	if err != nil {
@@ -202,7 +202,7 @@ func (r *UserRepository) UnfollowUser(followerID, followedID int) error {
 
 // IsFollowing checks if a user is following another user
 func (r *UserRepository) IsFollowing(followerID, followedID int) (bool, error) {
-	query := `SELECT COUNT(*) FROM follows WHERE follower_id = ? AND followed_id = ?`
+	query := `SELECT COUNT(*) FROM follows WHERE follower_id = $1 AND followed_id = $2`
 
 	var count int
 	err := r.db.QueryRow(query, followerID, followedID).Scan(&count)

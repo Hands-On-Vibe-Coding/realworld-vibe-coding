@@ -19,7 +19,7 @@ func NewCommentRepository(db *sql.DB) *CommentRepository {
 func (r *CommentRepository) Create(comment *model.Comment) error {
 	query := `
 		INSERT INTO comments (body, author_id, article_id, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5)
 	`
 
 	now := time.Now()
@@ -49,7 +49,7 @@ func (r *CommentRepository) GetByArticleSlug(slug string) ([]*model.Comment, err
 		FROM comments c
 		JOIN articles a ON c.article_id = a.id
 		JOIN users u ON c.author_id = u.id
-		WHERE a.slug = ?
+		WHERE a.slug = $1
 		ORDER BY c.created_at DESC
 	`
 
@@ -91,7 +91,7 @@ func (r *CommentRepository) GetByID(id int) (*model.Comment, error) {
 			   u.username, u.email, u.bio, u.image
 		FROM comments c
 		JOIN users u ON c.author_id = u.id
-		WHERE c.id = ?
+		WHERE c.id = $1
 	`
 
 	comment := &model.Comment{
@@ -115,7 +115,7 @@ func (r *CommentRepository) GetByID(id int) (*model.Comment, error) {
 }
 
 func (r *CommentRepository) Delete(id int) error {
-	query := `DELETE FROM comments WHERE id = ?`
+	query := `DELETE FROM comments WHERE id = $1`
 
 	result, err := r.db.Exec(query, id)
 	if err != nil {
@@ -135,7 +135,7 @@ func (r *CommentRepository) Delete(id int) error {
 }
 
 func (r *CommentRepository) GetArticleIDBySlug(slug string) (int, error) {
-	query := `SELECT id FROM articles WHERE slug = ?`
+	query := `SELECT id FROM articles WHERE slug = $1`
 
 	var articleID int
 	err := r.db.QueryRow(query, slug).Scan(&articleID)
