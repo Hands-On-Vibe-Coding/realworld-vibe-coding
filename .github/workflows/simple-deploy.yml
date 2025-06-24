@@ -69,6 +69,9 @@ jobs:
     - name: Install CDK CLI
       run: npm install -g aws-cdk
 
+    - name: Install infrastructure dependencies
+      run: cd infrastructure && npm ci
+
     - name: CDK Bootstrap (if needed)
       run: |
         cd infrastructure
