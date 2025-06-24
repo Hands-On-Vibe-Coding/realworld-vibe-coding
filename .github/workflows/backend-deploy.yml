@@ -24,10 +24,11 @@ on:
         - dev
         - prod
 
-# Set permissions for OIDC token
+# Set permissions for OIDC token and GitHub API access
 permissions:
   id-token: write
   contents: read
+  actions: write
 
 # Allow only one concurrent deployment per environment
 concurrency:
@@ -201,8 +202,21 @@ jobs:
           echo "alb-dns=$ALB_DNS" >> $GITHUB_OUTPUT
           echo "api-endpoint=$API_ENDPOINT" >> $GITHUB_OUTPUT
           
-          # Set repository variable for frontend to use
-          gh variable set VITE_API_BASE_URL --body "$API_ENDPOINT"
+          # Set repository variable for frontend to use via GitHub API
+          curl -L \
+            -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables/VITE_API_BASE_URL" \
+            -d '{"name":"VITE_API_BASE_URL","value":"'"$API_ENDPOINT"'"}' || \
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables" \
+            -d '{"name":"VITE_API_BASE_URL","value":"'"$API_ENDPOINT"'"}'
           
           echo "🌐 Backend URL: $API_ENDPOINT"
           echo "🔗 Frontend will use this endpoint automatically"
