@@ -30,9 +30,9 @@ export class ApiClient {
         this.baseURL = '/api';
       } else {
         // Production environment - use deployed backend
-        this.baseURL = process.env.VITE_API_BASE_URL 
-          ? `${process.env.VITE_API_BASE_URL}/api`
-          : '/api';
+        this.baseURL = import.meta.env.VITE_API_BASE_URL 
+          ? `${import.meta.env.VITE_API_BASE_URL}/api`
+          : 'http://realworld-alb-prod-27814340.ap-northeast-2.elb.amazonaws.com/api';
       }
     } else {
       // Server-side rendering fallback
