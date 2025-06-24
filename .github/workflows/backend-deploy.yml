@@ -14,15 +14,6 @@ on:
       - '.github/workflows/backend-deploy.yml'
       - 'infrastructure/**'
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'dev'
-        type: choice
-        options:
-        - dev
-        - prod
 
 # Set permissions for OIDC token and GitHub API access
 permissions:
@@ -30,14 +21,13 @@ permissions:
   contents: read
   actions: write
 
-# Allow only one concurrent deployment per environment
+# Allow only one concurrent deployment
 concurrency:
-  group: backend-deploy-${{ github.event.inputs.environment || 'dev' }}
+  group: backend-deploy
   cancel-in-progress: false
 
 env:
   AWS_REGION: ap-northeast-2
-  ENVIRONMENT: ${{ github.event.inputs.environment || 'dev' }}
 
 jobs:
   test:
@@ -79,7 +69,6 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev' }}
     
     steps:
       - name: Checkout code
@@ -120,7 +109,7 @@ jobs:
           CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
         run: |
           echo "🔧 Bootstrapping CDK..."
-          npx cdk bootstrap --context environment=${{ env.ENVIRONMENT }}
+          npx cdk bootstrap
 
       - name: Deploy infrastructure with CDK
         working-directory: ./infrastructure
@@ -132,14 +121,8 @@ jobs:
           echo "🔄 Clearing CDK context to ensure clean deployment..."
           rm -f cdk.context.json
           
-          echo "📦 Deploying Network stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Network --require-approval never --context environment=${{ env.ENVIRONMENT }} --context @aws-cdk/core:target-partitions='["aws"]'
-          
-          echo "🗄️ Deploying Database stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-Database --require-approval never --context environment=${{ env.ENVIRONMENT }} --context @aws-cdk/core:target-partitions='["aws"]'
-          
-          echo "🐳 Deploying ECS stack..."
-          npx cdk deploy RealWorld-${{ env.ENVIRONMENT }}-ECS --require-approval never --context environment=${{ env.ENVIRONMENT }} --context @aws-cdk/core:target-partitions='["aws"]'
+          echo "🚀 Deploying RealWorld stack..."
+          npx cdk deploy RealWorld --require-approval never --context @aws-cdk/core:target-partitions='["aws"]'
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -152,7 +135,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: realworld-backend-${{ env.ENVIRONMENT }}
+          ECR_REPOSITORY: realworld-backend
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # Build Docker image using PostgreSQL-only Dockerfile
@@ -172,8 +155,8 @@ jobs:
           echo "🔄 Updating ECS service with new image..."
           # First, update the service with the new image and desired count
           aws ecs update-service \
-            --cluster realworld-${{ env.ENVIRONMENT }} \
-            --service realworld-backend-${{ env.ENVIRONMENT }} \
+            --cluster realworld \
+            --service realworld-backend \
             --desired-count 1 \
             --force-new-deployment \
             --region ${{ env.AWS_REGION }}
@@ -182,8 +165,8 @@ jobs:
         run: |
           echo "⏳ Waiting for service deployment to complete..."
           aws ecs wait services-stable \
-            --cluster realworld-${{ env.ENVIRONMENT }} \
-            --services realworld-backend-${{ env.ENVIRONMENT }} \
+            --cluster realworld \
+            --services realworld-backend \
             --region ${{ env.AWS_REGION }}
 
       - name: Get CloudFront HTTPS URL and set as GitHub variable
@@ -193,13 +176,13 @@ jobs:
         run: |
           # Get CloudFront HTTPS URL from CloudFormation stack output
           HTTPS_URL=$(aws cloudformation describe-stacks \
-            --stack-name RealWorld-${{ env.ENVIRONMENT }}-ECS \
+            --stack-name RealWorld \
             --query 'Stacks[0].Outputs[?OutputKey==`BackendHTTPSURL`].OutputValue' \
             --output text)
           
           # Also get ALB DNS for fallback/debugging
           ALB_DNS=$(aws cloudformation describe-stacks \
-            --stack-name RealWorld-${{ env.ENVIRONMENT }}-ECS \
+            --stack-name RealWorld \
             --query 'Stacks[0].Outputs[?OutputKey==`LoadBalancerDNS`].OutputValue' \
             --output text)
           
@@ -230,7 +213,6 @@ jobs:
           API_ENDPOINT="${{ steps.get-https-url.outputs.api-endpoint }}"
           
           echo "🚀 Deployment completed successfully!"
-          echo "Environment: ${{ env.ENVIRONMENT }}"
           echo "Image: ${{ steps.build-image.outputs.image }}"
           echo "🌐 Backend URL: $API_ENDPOINT"
           echo "🔍 Health check: $API_ENDPOINT/health"
@@ -263,7 +245,7 @@ jobs:
 
       - name: Clean up old ECR images
         run: |
-          ECR_REPOSITORY=realworld-backend-${{ env.ENVIRONMENT }}
+          ECR_REPOSITORY=realworld-backend
           
           # Keep only the latest 5 images to save storage costs
           aws ecr list-images \

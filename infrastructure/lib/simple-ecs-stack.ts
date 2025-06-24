@@ -11,7 +11,6 @@ import * as cloudfrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins'
 import { Construct } from 'constructs'
 
 export interface SimpleEcsStackProps extends cdk.StackProps {
-  environment: string
   vpc: ec2.Vpc
 }
 
@@ -25,7 +24,7 @@ export class SimpleEcsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: SimpleEcsStackProps) {
     super(scope, id, props)
 
-    const { environment, vpc } = props
+    const { vpc } = props
 
     // Security Group for ALB (Allow HTTP/HTTPS from anywhere)
     const albSecurityGroup = new ec2.SecurityGroup(this, 'ALBSecurityGroup', {
@@ -61,7 +60,7 @@ export class SimpleEcsStack extends cdk.Stack {
 
     // ECR Repository for backend container images
     this.backendRepository = new ecr.Repository(this, 'BackendRepository', {
-      repositoryName: `realworld-backend-${environment}`,
+      repositoryName: 'realworld-backend',
       imageScanOnPush: true,
       imageTagMutability: ecr.TagMutability.MUTABLE,
       lifecycleRules: [
@@ -75,7 +74,7 @@ export class SimpleEcsStack extends cdk.Stack {
 
     // ECS Cluster
     this.cluster = new ecs.Cluster(this, 'Cluster', {
-      clusterName: `realworld-${environment}`,
+      clusterName: 'realworld',
       vpc,
       containerInsights: false, // Disable for cost savings
     })
@@ -84,7 +83,7 @@ export class SimpleEcsStack extends cdk.Stack {
 
     // CloudWatch Log Group for ECS
     const logGroup = new logs.LogGroup(this, 'ECSLogGroup', {
-      logGroupName: `/ecs/realworld-backend-${environment}`,
+      logGroupName: '/ecs/realworld-backend',
       retention: logs.RetentionDays.ONE_WEEK, // Short retention for cost savings
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     })
@@ -117,7 +116,7 @@ export class SimpleEcsStack extends cdk.Stack {
         PORT: '8080',
         DATABASE_URL: '/data/realworld.db', // SQLite file path
         JWT_SECRET: 'educational-jwt-secret-change-in-prod', // Simple secret for education
-        ENVIRONMENT: environment,
+        ENVIRONMENT: 'production',
       },
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: 'backend',
@@ -143,7 +142,7 @@ export class SimpleEcsStack extends cdk.Stack {
       vpc,
       internetFacing: true,
       securityGroup: albSecurityGroup,
-      loadBalancerName: `realworld-alb-${environment}`,
+      loadBalancerName: 'realworld-alb',
     })
 
     // Target Group
@@ -173,7 +172,7 @@ export class SimpleEcsStack extends cdk.Stack {
     this.backendService = new ecs.FargateService(this, 'BackendService', {
       cluster: this.cluster,
       taskDefinition,
-      serviceName: `realworld-backend-${environment}`,
+      serviceName: 'realworld-backend',
       desiredCount: 0, // Start with 0, will be updated by deployment
       minHealthyPercent: 0, // Allow complete replacement for cost savings
       maxHealthyPercent: 200,
@@ -208,49 +207,49 @@ export class SimpleEcsStack extends cdk.Stack {
         responseHeadersPolicy: cloudfront.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
       },
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100, // Use only North America and Europe for cost savings
-      comment: `RealWorld Backend CloudFront Distribution - ${environment}`,
+      comment: 'RealWorld Backend CloudFront Distribution',
     })
 
     // Outputs
     new cdk.CfnOutput(this, 'LoadBalancerDNS', {
       value: this.loadBalancer.loadBalancerDnsName,
-      exportName: `${environment}-LoadBalancerDNS`,
+      exportName: 'LoadBalancerDNS',
       description: 'Application Load Balancer DNS name',
     })
 
     new cdk.CfnOutput(this, 'BackendRepositoryURI', {
       value: this.backendRepository.repositoryUri,
-      exportName: `${environment}-BackendRepositoryURI`,
+      exportName: 'BackendRepositoryURI',
       description: 'ECR repository URI for backend images',
     })
 
     new cdk.CfnOutput(this, 'ClusterName', {
       value: this.cluster.clusterName,
-      exportName: `${environment}-ClusterName`,
+      exportName: 'ClusterName',
       description: 'ECS cluster name',
     })
 
     new cdk.CfnOutput(this, 'ServiceName', {
       value: this.backendService.serviceName,
-      exportName: `${environment}-ServiceName`,
+      exportName: 'ServiceName',
       description: 'ECS service name',
     })
 
     new cdk.CfnOutput(this, 'BackendURL', {
       value: `http://${this.loadBalancer.loadBalancerDnsName}`,
-      exportName: `${environment}-BackendURL`,
+      exportName: 'BackendURL',
       description: 'Backend application URL',
     })
 
     new cdk.CfnOutput(this, 'BackendHTTPSURL', {
       value: `https://${this.distribution.distributionDomainName}`,
-      exportName: `${environment}-BackendHTTPSURL`,
+      exportName: 'BackendHTTPSURL',
       description: 'Backend HTTPS URL via CloudFront',
     })
 
     new cdk.CfnOutput(this, 'CloudFrontDomain', {
       value: this.distribution.distributionDomainName,
-      exportName: `${environment}-CloudFrontDomain`,
+      exportName: 'CloudFrontDomain',
       description: 'CloudFront distribution domain name',
     })
   }

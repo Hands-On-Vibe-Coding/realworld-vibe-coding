@@ -1,5 +1,5 @@
 {
-  "app": "node -r ts-node/register bin/infrastructure.ts",
+  "app": "node -r ts-node/register bin/simple-app.ts",
   "watch": {
     "include": [
       "**"
