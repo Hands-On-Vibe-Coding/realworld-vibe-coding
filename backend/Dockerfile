@@ -1,8 +1,13 @@
 # Build stage
-FROM golang:1.21-alpine AS builder
+FROM golang:1.21-bullseye AS builder
 
-# Install git and build dependencies  
-RUN apk add --no-cache git ca-certificates tzdata gcc musl-dev sqlite-dev postgresql-dev
+# Install build dependencies for SQLite  
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libc6-dev \
+    libsqlite3-dev \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -22,14 +27,18 @@ RUN CGO_ENABLED=1 GOOS=linux go build \
     -o server ./cmd/server/main.go
 
 # Final stage
-FROM alpine:latest
+FROM debian:bullseye-slim
 
-# Install ca-certificates, curl, and database libraries for runtime
-RUN apk --no-cache add ca-certificates tzdata sqlite postgresql-client curl
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup -m appuser
 
 # Set working directory
 WORKDIR /app

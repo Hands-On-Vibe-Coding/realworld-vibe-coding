@@ -31,9 +31,9 @@ func NewMigrationManager(db *sql.DB) *MigrationManager {
 func (m *MigrationManager) CreateMigrationsTable() error {
 	query := `
 	CREATE TABLE IF NOT EXISTS migrations (
-		id SERIAL PRIMARY KEY,
-		filename VARCHAR(255) NOT NULL,
-		applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		id INTEGER PRIMARY KEY,
+		filename TEXT NOT NULL,
+		applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 	`
 	_, err := m.db.Exec(query)
@@ -127,7 +127,7 @@ func (m *MigrationManager) ApplyMigration(migration Migration) error {
 	}
 
 	// Record migration as applied
-	if _, err := tx.Exec("INSERT INTO migrations (id, filename) VALUES ($1, $2)", migration.ID, migration.Filename); err != nil {
+	if _, err := tx.Exec("INSERT INTO migrations (id, filename) VALUES (?, ?)", migration.ID, migration.Filename); err != nil {
 		return fmt.Errorf("failed to record migration %s: %v", migration.Filename, err)
 	}
 

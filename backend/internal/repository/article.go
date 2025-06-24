@@ -23,7 +23,7 @@ func NewArticleRepository(db *sql.DB) *ArticleRepository {
 func (r *ArticleRepository) Create(article *model.Article) error {
 	query := `
 		INSERT INTO articles (slug, title, description, body, author_id, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`
 
 	now := time.Now()
@@ -52,7 +52,7 @@ func (r *ArticleRepository) GetBySlug(slug string) (*model.Article, error) {
 	query := `
 		SELECT id, slug, title, description, body, author_id, created_at, updated_at
 		FROM articles 
-		WHERE slug = $1
+		WHERE slug = ?
 	`
 
 	article := &model.Article{}
@@ -82,19 +82,16 @@ func (r *ArticleRepository) Update(slug string, updates map[string]interface{}) 
 
 	// Build dynamic update query
 	setParts := make([]string, 0, len(updates))
-	args := make([]interface{}, 0, len(updates)+1)
+	args := make([]interface{}, 0, len(updates)+2)
 
-	paramCount := 1
 	for field, value := range updates {
-		setParts = append(setParts, fmt.Sprintf("%s = $%d", field, paramCount))
+		setParts = append(setParts, fmt.Sprintf("%s = ?", field))
 		args = append(args, value)
-		paramCount++
 	}
 
 	// Always update the updated_at field
-	setParts = append(setParts, fmt.Sprintf("updated_at = $%d", paramCount))
+	setParts = append(setParts, "updated_at = ?")
 	args = append(args, time.Now())
-	paramCount++
 
 	// Add slug as the last parameter for WHERE clause
 	args = append(args, slug)
@@ -102,8 +99,8 @@ func (r *ArticleRepository) Update(slug string, updates map[string]interface{}) 
 	query := fmt.Sprintf(`
 		UPDATE articles 
 		SET %s
-		WHERE slug = $%d
-	`, strings.Join(setParts, ", "), paramCount)
+		WHERE slug = ?
+	`, strings.Join(setParts, ", "))
 
 	_, err := r.db.Exec(query, args...)
 	if err != nil {
@@ -115,7 +112,7 @@ func (r *ArticleRepository) Update(slug string, updates map[string]interface{}) 
 
 // Delete deletes an article by slug
 func (r *ArticleRepository) Delete(slug string) error {
-	query := `DELETE FROM articles WHERE slug = $1`
+	query := `DELETE FROM articles WHERE slug = ?`
 
 	result, err := r.db.Exec(query, slug)
 	if err != nil {
@@ -140,7 +137,7 @@ func (r *ArticleRepository) GetArticleTags(articleID int) ([]string, error) {
 		SELECT t.name 
 		FROM tags t
 		INNER JOIN article_tags at ON t.id = at.tag_id
-		WHERE at.article_id = $1
+		WHERE at.article_id = ?
 		ORDER BY t.name
 	`
 
@@ -176,7 +173,7 @@ func (r *ArticleRepository) SetArticleTags(articleID int, tagNames []string) err
 	defer tx.Rollback()
 
 	// Delete existing article tags
-	_, err = tx.Exec("DELETE FROM article_tags WHERE article_id = $1", articleID)
+	_, err = tx.Exec("DELETE FROM article_tags WHERE article_id = ?", articleID)
 	if err != nil {
 		return fmt.Errorf("failed to delete existing tags: %w", err)
 	}
@@ -185,10 +182,10 @@ func (r *ArticleRepository) SetArticleTags(articleID int, tagNames []string) err
 	for _, tagName := range tagNames {
 		// Get or create tag
 		var tagID int
-		err = tx.QueryRow("SELECT id FROM tags WHERE name = $1", tagName).Scan(&tagID)
+		err = tx.QueryRow("SELECT id FROM tags WHERE name = ?", tagName).Scan(&tagID)
 		if err == sql.ErrNoRows {
 			// Create new tag
-			result, err := tx.Exec("INSERT INTO tags (name) VALUES ($1)", tagName)
+			result, err := tx.Exec("INSERT INTO tags (name) VALUES (?)", tagName)
 			if err != nil {
 				return fmt.Errorf("failed to create tag %s: %w", tagName, err)
 			}
@@ -202,7 +199,7 @@ func (r *ArticleRepository) SetArticleTags(articleID int, tagNames []string) err
 		}
 
 		// Link article to tag
-		_, err = tx.Exec("INSERT INTO article_tags (article_id, tag_id) VALUES ($1, $2)", articleID, tagID)
+		_, err = tx.Exec("INSERT INTO article_tags (article_id, tag_id) VALUES (?, ?)", articleID, tagID)
 		if err != nil {
 			return fmt.Errorf("failed to link article to tag %s: %w", tagName, err)
 		}
@@ -214,7 +211,7 @@ func (r *ArticleRepository) SetArticleTags(articleID int, tagNames []string) err
 // CheckArticleExists checks if an article exists by slug
 func (r *ArticleRepository) CheckArticleExists(slug string) (bool, error) {
 	var count int
-	query := `SELECT COUNT(*) FROM articles WHERE slug = $1`
+	query := `SELECT COUNT(*) FROM articles WHERE slug = ?`
 	err := r.db.QueryRow(query, slug).Scan(&count)
 	if err != nil {
 		return false, fmt.Errorf("failed to check article existence: %w", err)
@@ -236,24 +233,20 @@ func (r *ArticleRepository) GetArticles(limit, offset int, tag, author, favorite
 	// Build WHERE conditions
 	conditions := []string{}
 	args := []interface{}{}
-	paramCount := 1
 
 	if tag != "" {
-		conditions = append(conditions, fmt.Sprintf("t.name = $%d", paramCount))
+		conditions = append(conditions, "t.name = ?")
 		args = append(args, tag)
-		paramCount++
 	}
 
 	if author != "" {
-		conditions = append(conditions, fmt.Sprintf("u.username = $%d", paramCount))
+		conditions = append(conditions, "u.username = ?")
 		args = append(args, author)
-		paramCount++
 	}
 
 	if favorited != "" {
-		conditions = append(conditions, fmt.Sprintf("f.user_id = (SELECT id FROM users WHERE username = $%d)", paramCount))
+		conditions = append(conditions, "f.user_id = (SELECT id FROM users WHERE username = ?)")
 		args = append(args, favorited)
-		paramCount++
 	}
 
 	whereClause := ""
@@ -273,10 +266,10 @@ func (r *ArticleRepository) GetArticles(limit, offset int, tag, author, favorite
 	articlesQuery := `
 		SELECT DISTINCT a.id, a.slug, a.title, a.description, a.body, a.author_id, a.created_at, a.updated_at, 
 		       COALESCE((SELECT COUNT(*) FROM favorites f WHERE f.article_id = a.id), 0) as favorites_count
-	` + baseQuery + " " + whereClause + fmt.Sprintf(`
+	` + baseQuery + " " + whereClause + `
 		ORDER BY a.created_at DESC
-		LIMIT $%d OFFSET $%d
-	`, paramCount, paramCount+1)
+		LIMIT ? OFFSET ?
+	`
 
 	args = append(args, limit, offset)
 	rows, err := r.db.Query(articlesQuery, args...)
@@ -312,7 +305,7 @@ func (r *ArticleRepository) GetFeedArticles(limit, offset, userID int) ([]model.
 	baseQuery := `
 		FROM articles a
 		INNER JOIN follows f ON a.author_id = f.followed_id
-		WHERE f.follower_id = $1
+		WHERE f.follower_id = ?
 	`
 
 	args := []interface{}{userID}
@@ -329,10 +322,10 @@ func (r *ArticleRepository) GetFeedArticles(limit, offset, userID int) ([]model.
 	articlesQuery := `
 		SELECT a.id, a.slug, a.title, a.description, a.body, a.author_id, a.created_at, a.updated_at, 
 		       COALESCE((SELECT COUNT(*) FROM favorites f WHERE f.article_id = a.id), 0) as favorites_count
-	` + baseQuery + fmt.Sprintf(`
+	` + baseQuery + `
 		ORDER BY a.created_at DESC
-		LIMIT $%d OFFSET $%d
-	`, 2, 3)
+		LIMIT ? OFFSET ?
+	`
 
 	args = append(args, limit, offset)
 	rows, err := r.db.Query(articlesQuery, args...)
@@ -364,7 +357,7 @@ func (r *ArticleRepository) GetFeedArticles(limit, offset, userID int) ([]model.
 
 // FavoriteArticle adds an article to user's favorites
 func (r *ArticleRepository) FavoriteArticle(userID, articleID int) error {
-	query := `INSERT INTO favorites (user_id, article_id) VALUES ($1, $2)`
+	query := `INSERT INTO favorites (user_id, article_id) VALUES (?, ?)`
 
 	_, err := r.db.Exec(query, userID, articleID)
 	if err != nil {
@@ -376,7 +369,7 @@ func (r *ArticleRepository) FavoriteArticle(userID, articleID int) error {
 
 // UnfavoriteArticle removes an article from user's favorites
 func (r *ArticleRepository) UnfavoriteArticle(userID, articleID int) error {
-	query := `DELETE FROM favorites WHERE user_id = $1 AND article_id = $2`
+	query := `DELETE FROM favorites WHERE user_id = ? AND article_id = ?`
 
 	result, err := r.db.Exec(query, userID, articleID)
 	if err != nil {
@@ -397,7 +390,7 @@ func (r *ArticleRepository) UnfavoriteArticle(userID, articleID int) error {
 
 // IsFavorited checks if an article is favorited by a user
 func (r *ArticleRepository) IsFavorited(userID, articleID int) (bool, error) {
-	query := `SELECT COUNT(*) FROM favorites WHERE user_id = $1 AND article_id = $2`
+	query := `SELECT COUNT(*) FROM favorites WHERE user_id = ? AND article_id = ?`
 
 	var count int
 	err := r.db.QueryRow(query, userID, articleID).Scan(&count)
@@ -410,7 +403,7 @@ func (r *ArticleRepository) IsFavorited(userID, articleID int) (bool, error) {
 
 // GetFavoritesCount returns the number of favorites for an article
 func (r *ArticleRepository) GetFavoritesCount(articleID int) (int, error) {
-	query := `SELECT COUNT(*) FROM favorites WHERE article_id = $1`
+	query := `SELECT COUNT(*) FROM favorites WHERE article_id = ?`
 
 	var count int
 	err := r.db.QueryRow(query, articleID).Scan(&count)

@@ -99,7 +99,7 @@ func (r *TagRepository) CreateTagsForArticle(articleID int, tagNames []string) e
 
 		// Link article to tag (ignore if already exists)
 		_, err = tx.Exec(
-			"INSERT OR IGNORE INTO article_tags (article_id, tag_id) VALUES ($1, $2)",
+			"INSERT OR IGNORE INTO article_tags (article_id, tag_id) VALUES (?, ?)",
 			articleID, tagID,
 		)
 		if err != nil {
@@ -119,7 +119,7 @@ func (r *TagRepository) UpdateTagsForArticle(articleID int, tagNames []string) e
 	defer tx.Rollback()
 
 	// Delete existing article tags
-	_, err = tx.Exec("DELETE FROM article_tags WHERE article_id = $1", articleID)
+	_, err = tx.Exec("DELETE FROM article_tags WHERE article_id = ?", articleID)
 	if err != nil {
 		return fmt.Errorf("failed to delete existing tags: %w", err)
 	}
@@ -134,7 +134,7 @@ func (r *TagRepository) UpdateTagsForArticle(articleID int, tagNames []string) e
 
 		// Link article to tag
 		_, err = tx.Exec(
-			"INSERT INTO article_tags (article_id, tag_id) VALUES ($1, $2)",
+			"INSERT INTO article_tags (article_id, tag_id) VALUES (?, ?)",
 			articleID, tagID,
 		)
 		if err != nil {
@@ -151,7 +151,7 @@ func (r *TagRepository) GetTagsForArticle(articleID int) ([]string, error) {
 		SELECT t.name 
 		FROM tags t
 		INNER JOIN article_tags at ON t.id = at.tag_id
-		WHERE at.article_id = $1
+		WHERE at.article_id = ?
 		ORDER BY t.name ASC
 	`
 
@@ -183,7 +183,7 @@ func (r *TagRepository) GetArticleCountByTag(tagName string) (int, error) {
 		SELECT COUNT(at.article_id)
 		FROM tags t
 		INNER JOIN article_tags at ON t.id = at.tag_id
-		WHERE t.name = $1
+		WHERE t.name = ?
 	`
 
 	var count int
@@ -214,7 +214,7 @@ func (r *TagRepository) DeleteUnusedTags() error {
 
 // TagExists checks if a tag exists by name
 func (r *TagRepository) TagExists(tagName string) (bool, error) {
-	query := `SELECT COUNT(*) FROM tags WHERE name = $1`
+	query := `SELECT COUNT(*) FROM tags WHERE name = ?`
 
 	var count int
 	err := r.db.QueryRow(query, tagName).Scan(&count)
@@ -229,7 +229,7 @@ func (r *TagRepository) TagExists(tagName string) (bool, error) {
 func (r *TagRepository) getOrCreateTag(tx *sql.Tx, tagName string) (int, error) {
 	// Try to get existing tag
 	var tagID int
-	err := tx.QueryRow("SELECT id FROM tags WHERE name = $1", tagName).Scan(&tagID)
+	err := tx.QueryRow("SELECT id FROM tags WHERE name = ?", tagName).Scan(&tagID)
 	if err == nil {
 		return tagID, nil
 	}
@@ -239,7 +239,7 @@ func (r *TagRepository) getOrCreateTag(tx *sql.Tx, tagName string) (int, error) 
 	}
 
 	// Create new tag
-	result, err := tx.Exec("INSERT INTO tags (name) VALUES ($1)", tagName)
+	result, err := tx.Exec("INSERT INTO tags (name) VALUES (?)", tagName)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create tag: %w", err)
 	}
