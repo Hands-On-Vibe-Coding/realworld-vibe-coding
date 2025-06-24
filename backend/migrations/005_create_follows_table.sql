@@ -2,10 +2,10 @@
 -- Migration: 005_create_follows_table.sql
 
 CREATE TABLE IF NOT EXISTS follows (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     follower_id INTEGER NOT NULL,
     followed_id INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (followed_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(follower_id, followed_id),

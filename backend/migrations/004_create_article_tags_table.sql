@@ -2,10 +2,10 @@
 -- Migration: 004_create_article_tags_table.sql
 
 CREATE TABLE IF NOT EXISTS article_tags (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     article_id INTEGER NOT NULL,
     tag_id INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
     UNIQUE(article_id, tag_id)
