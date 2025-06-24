@@ -1,8 +1,14 @@
+#!/bin/sh
+set -e  # Exit immediately if any command fails
+
 echo "🔍 Running pre-commit checks..."
 
 # Run lint-staged for linting and formatting
 echo "📝 Running linting and formatting..."
-npx lint-staged
+if ! npx lint-staged; then
+  echo "❌ Linting failed!"
+  exit 1
+fi
 
 # Check if there are any staged files that need testing
 if git diff --cached --name-only | grep -E "(frontend/.*\.(ts|tsx|js|jsx)|backend/.*\.go)$" > /dev/null; then
@@ -11,13 +17,19 @@ if git diff --cached --name-only | grep -E "(frontend/.*\.(ts|tsx|js|jsx)|backen
   # Run frontend tests if frontend files changed
   if git diff --cached --name-only | grep "frontend/" > /dev/null; then
     echo "🔍 Running frontend tests..."
-    npm run test:frontend
+    if ! npm run test:frontend; then
+      echo "❌ Frontend tests failed!"
+      exit 1
+    fi
   fi
   
   # Run backend tests if backend files changed
   if git diff --cached --name-only | grep "backend/" > /dev/null; then
     echo "🔍 Running backend tests..."
-    npm run test:backend
+    if ! npm run test:backend; then
+      echo "❌ Backend tests failed!"
+      exit 1
+    fi
   fi
 else
   echo "ℹ️  No code changes detected, skipping tests."
