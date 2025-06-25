@@ -26,6 +26,7 @@ export function LoginPage() {
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -103,7 +104,6 @@ export function LoginPage() {
             mt="xl"
             type="submit"
             loading={isLoading}
-            disabled={!form.formState.isValid}
             data-testid="login-button"
           >
             Sign in

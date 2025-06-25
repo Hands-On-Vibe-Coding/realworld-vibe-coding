@@ -26,6 +26,7 @@ export function RegisterPage() {
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange',
     defaultValues: {
       username: '',
       email: '',
@@ -115,7 +116,6 @@ export function RegisterPage() {
             mt="xl"
             type="submit"
             loading={isLoading}
-            disabled={!form.formState.isValid}
             data-testid="register-button"
           >
             Sign up
