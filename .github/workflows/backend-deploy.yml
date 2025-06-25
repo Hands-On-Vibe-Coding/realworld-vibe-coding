@@ -138,13 +138,13 @@ jobs:
           ECR_REPOSITORY: realworld-backend
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Build Docker image using PostgreSQL-only Dockerfile
+          # Build Docker image with SQLite support using regular Dockerfile
           docker buildx build \
             --platform linux/amd64 \
             --push \
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:latest \
-            --file backend/Dockerfile.simple \
+            --file backend/Dockerfile \
             backend/
           
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
