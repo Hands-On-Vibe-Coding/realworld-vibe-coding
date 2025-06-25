@@ -7,7 +7,27 @@
 
 ## 概要
 
-このプロジェクトは[RealWorld](https://github.com/gothinkster/realworld)アプリケーション仕様を実装しています - 現代的なWeb技術の実世界での使用法を示すMedium.comクローンです。迅速なプロトタイピング、反復的改善、リアルタイムドキュメンテーションに焦点を当てて構築されています。
+このプロジェクトは[RealWorld](https://github.com/gothinkster/realworld)アプリケーション仕様を実装しています - 現代的なWeb技術の実世界での使用法を示すMedium.comクローンです。**これはArmin Ronacherの["Agentic Coding Recommendations"](https://lucumr.pocoo.org/2025/6/12/agentic-coding/)方法論に従うVibe Coding学習プロジェクトです。**
+
+### プロジェクト開発の軌跡
+
+このプロジェクトは完全な**Vibe Coding**実装プロセスを示しています：
+
+1. **📋 [ルールとガイドライン](CLAUDE.md)作成** - Armin Ronacherの推奨事項に基づくプロジェクトルールとコーディング標準の確立
+2. **📝 [Pre-PRD](/docs/pre-prd.md)開発** - 初期要件収集と技術スタック評価
+3. **📊 [PRD（製品要件文書）](/docs/prd.md)** - 詳細な仕様と機能計画
+4. **🗺️ [プロジェクト計画](/docs/plan.md)** - タスク分解と実装ロードマップ
+5. **⚡ [迅速な実装](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/issues?q=is%3Aissue)** - Vibe Coding原則を使用したコア機能開発
+
+### 適用されたVibe Coding原則
+
+Armin Ronacherの方法論に従って、このプロジェクトは以下を重視しています：
+
+- **複雑さより簡潔さ**: 実証済みで信頼できる技術の使用
+- **AI フレンドリーな開発**: 明確なドキュメンテーションと構造化されたコードパターン
+- **迅速なプロトタイピング**: 即座のフィードバックによる迅速な反復
+- **教育的焦点**: 学習に適したコスト最適化デプロイメント
+- **リアルタイムドキュメンテーション**: コードと共に進化する生きたドキュメント
 
 ## 技術スタック
 

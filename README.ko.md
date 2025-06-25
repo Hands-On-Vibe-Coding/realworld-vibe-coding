@@ -7,7 +7,27 @@
 
 ## 개요
 
-이 프로젝트는 [RealWorld](https://github.com/gothinkster/realworld) 애플리케이션 사양을 구현합니다 - 현대적인 웹 기술의 실제 사용법을 보여주는 Medium.com 클론입니다. 빠른 프로토타이핑, 반복적 개선, 실시간 문서화에 중점을 두고 구축되었습니다.
+이 프로젝트는 [RealWorld](https://github.com/gothinkster/realworld) 애플리케이션 사양을 구현합니다 - 현대 웹 기술의 실제 사용법을 보여주는 Medium.com 클론입니다. **이는 Armin Ronacher의 ["Agentic Coding Recommendations"](https://lucumr.pocoo.org/2025/6/12/agentic-coding/) 방법론을 따르는 바이브 코딩 학습 프로젝트입니다.**
+
+### 프로젝트 개발 여정
+
+이 프로젝트는 완전한 **바이브 코딩** 구현 과정을 보여줍니다:
+
+1. **📋 [규칙 및 가이드라인](CLAUDE.md) 생성** - Armin Ronacher의 권장사항을 기반으로 한 프로젝트 규칙과 코딩 표준 수립
+2. **📝 [Pre-PRD](/docs/pre-prd.md) 개발** - 초기 요구사항 수집 및 기술 스택 평가
+3. **📊 [PRD (제품 요구사항 문서)](/docs/prd.md)** - 상세한 사양 및 기능 계획
+4. **🗺️ [프로젝트 계획](/docs/plan.md)** - 작업 분해 및 구현 로드맵
+5. **⚡ [신속한 구현](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/issues?q=is%3Aissue)** - 바이브 코딩 원칙을 사용한 핵심 기능 개발
+
+### 적용된 바이브 코딩 원칙
+
+Armin Ronacher의 방법론에 따라 이 프로젝트는 다음을 강조합니다:
+
+- **복잡함보다 단순함**: 검증되고 신뢰할 수 있는 기술 사용
+- **AI 친화적 개발**: 명확한 문서화와 구조화된 코드 패턴
+- **신속한 프로토타이핑**: 즉각적인 피드백을 통한 빠른 반복
+- **교육적 초점**: 학습에 적합한 비용 최적화 배포
+- **실시간 문서화**: 코드와 함께 발전하는 살아있는 문서
 
 ## 기술 스택
 
