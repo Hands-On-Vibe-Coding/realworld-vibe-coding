@@ -34,24 +34,37 @@ export function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    console.log('🔐 Login form submitted:', { email: data.email, timestamp: new Date().toISOString() });
     setError(null);
     setIsLoading(true);
 
     try {
+      console.log('📡 Calling API login with:', { email: data.email });
       const response = await api.login({
         user: {
           email: data.email,
           password: data.password,
         },
       });
+      
+      console.log('✅ Login API response received:', { 
+        username: response.user.username, 
+        email: response.user.email,
+        hasToken: !!response.user.token 
+      });
 
+      console.log('💾 Storing login data in auth store...');
       login(response.user, response.user.token);
+      
+      console.log('🧭 Navigating to home page...');
       navigate({ to: '/' });
     } catch (err) {
+      console.error('❌ Login failed:', err);
       const message = err instanceof Error ? err.message : 'Login failed';
       setError(message);
     } finally {
       setIsLoading(false);
+      console.log('🔄 Login process completed');
     }
   };
 
@@ -68,7 +81,16 @@ export function LoginPage() {
       </Text>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={(e) => {
+          console.log('📝 Form submit event triggered');
+          console.log('📊 Form state:', {
+            isValid: form.formState.isValid,
+            isDirty: form.formState.isDirty,
+            errors: form.formState.errors,
+            values: form.getValues()
+          });
+          return form.handleSubmit(onSubmit)(e);
+        }}>
           {error && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
@@ -105,6 +127,10 @@ export function LoginPage() {
             type="submit"
             loading={isLoading}
             data-testid="login-button"
+            onClick={() => {
+              console.log('🖱️ Login button clicked');
+              console.log('⏰ Current loading state:', isLoading);
+            }}
           >
             Sign in
           </Button>

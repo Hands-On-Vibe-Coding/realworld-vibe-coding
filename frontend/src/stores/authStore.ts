@@ -34,19 +34,28 @@ export const useAuthStore = create<AuthState>()(
         isLoading: false,
 
         login: (user: UserResponse, token: string) => {
+          console.log('🔐 AuthStore login called:', { 
+            username: user.username, 
+            email: user.email,
+            tokenLength: token.length 
+          });
+          
           api.setToken(token);
+          console.log('🔑 Token set in API client');
           
           set({
             user,
             token,
             isAuthenticated: true,
           });
+          console.log('💾 Auth state updated in store');
           
           notifications.show({
             title: 'Welcome back!',
             message: `Hello ${user.username}! You have successfully logged in.`,
             color: 'green',
           });
+          console.log('🎉 Login success notification shown');
         },
 
         logout: () => {
@@ -116,8 +125,15 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
+        console.log('🔄 Auth store rehydrating from localStorage:', {
+          hasToken: !!state?.token,
+          hasUser: !!state?.user,
+          isAuthenticated: state?.isAuthenticated
+        });
+        
         if (state?.token) {
           api.setToken(state.token);
+          console.log('🔑 Token restored to API client');
         }
       },
     }

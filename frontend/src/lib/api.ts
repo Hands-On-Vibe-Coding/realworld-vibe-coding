@@ -22,21 +22,32 @@ export class ApiClient {
   private onTokenExpired?: () => void;
 
   constructor() {
+    console.log('🔧 API Client initializing...');
+    console.log('🌍 Environment info:', {
+      isDev: import.meta.env.DEV,
+      mode: import.meta.env.MODE,
+      hostname: typeof window !== 'undefined' ? window.location.hostname : 'SSR',
+      env_api_url: import.meta.env.VITE_API_BASE_URL
+    });
+
     // Set API base URL based on environment
     if (typeof window !== 'undefined') {
       // Browser environment
       if (window.location.hostname === 'localhost') {
         // Development environment - use Vite proxy
         this.baseURL = '/api';
+        console.log('🏠 Using localhost development proxy:', this.baseURL);
       } else {
         // Production environment - use deployed backend with HTTPS
         this.baseURL = import.meta.env.VITE_API_BASE_URL 
           ? `${import.meta.env.VITE_API_BASE_URL}/api`
           : 'https://d2tf8154vacbrr.cloudfront.net/api';
+        console.log('🚀 Using production API URL:', this.baseURL);
       }
     } else {
       // Server-side rendering fallback
       this.baseURL = '/api';
+      console.log('⚡ Using SSR fallback API URL:', this.baseURL);
     }
   }
 
@@ -62,8 +73,11 @@ export class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    console.log('📤 API Request starting:', { endpoint, method: options.method || 'GET' });
+    
     // Check token expiration before making request
     if (this.token && this.isTokenExpired(this.token)) {
+      console.warn('🔒 Token expired before request');
       notifications.show({
         title: 'Session Expired',
         message: 'Your session has expired. Please log in again.',
@@ -74,6 +88,7 @@ export class ApiClient {
     }
 
     const url = `${this.baseURL}${endpoint}`;
+    console.log('🌐 Request URL:', url);
     
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -85,6 +100,7 @@ export class ApiClient {
 
     if (this.token) {
       headers.Authorization = `Bearer ${this.token}`;
+      console.log('🔐 Request with authentication token');
     }
 
     const config: RequestInit = {
@@ -92,11 +108,24 @@ export class ApiClient {
       headers,
     };
 
+    console.log('📋 Request config:', { 
+      url, 
+      method: config.method, 
+      hasAuth: !!this.token,
+      bodySize: config.body ? config.body.toString().length : 0
+    });
+
     try {
       const response = await fetch(url, config);
+      console.log('📥 Response received:', { 
+        status: response.status, 
+        statusText: response.statusText,
+        ok: response.ok 
+      });
 
       // Handle 401 Unauthorized (token expired or invalid)
       if (response.status === 401 && this.token) {
+        console.warn('🚫 Authentication failed (401)');
         notifications.show({
           title: 'Authentication Failed',
           message: 'Your session is invalid. Please log in again.',
@@ -108,6 +137,7 @@ export class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error('❌ API Error response:', errorData);
         
         // Show user-friendly error notifications
         notifications.show({
@@ -119,10 +149,15 @@ export class ApiClient {
         throw new Error(errorData.error || errorData.message || `HTTP ${response.status}`);
       }
 
-      return response.json();
+      const responseData = await response.json();
+      console.log('✅ API Request successful:', { endpoint, dataKeys: Object.keys(responseData) });
+      return responseData;
     } catch (error) {
+      console.error('💥 API Request failed:', { endpoint, error });
+      
       // Only show notification if it's a network error (not already handled above)
       if (error instanceof TypeError) {
+        console.error('🌐 Network connectivity error');
         notifications.show({
           title: 'Network Error',
           message: 'Unable to connect to the server. Please check your connection.',
