@@ -99,23 +99,35 @@ func main() {
 	userProtected.HandleFunc("", userHandler.UpdateUser).Methods("PUT", "OPTIONS")
 
 	// Article endpoints
-	// Feed endpoint (requires authentication) - must be before other article routes
-	api.Handle("/articles/feed", jwtMiddleware(http.HandlerFunc(articleHandler.GetArticlesFeed))).Methods("GET", "OPTIONS")
+	// Feed endpoint (requires authentication) - specific route first
+	api.HandleFunc("/articles/feed", func(w http.ResponseWriter, r *http.Request) {
+		jwtMiddleware(http.HandlerFunc(articleHandler.GetArticlesFeed)).ServeHTTP(w, r)
+	}).Methods("GET", "OPTIONS")
+
+	// Public article endpoints (optional auth) - general routes
+	api.HandleFunc("/articles", func(w http.ResponseWriter, r *http.Request) {
+		optionalJwtMiddleware(http.HandlerFunc(articleHandler.GetArticles)).ServeHTTP(w, r)
+	}).Methods("GET", "OPTIONS")
+	api.HandleFunc("/articles/{slug}", func(w http.ResponseWriter, r *http.Request) {
+		optionalJwtMiddleware(http.HandlerFunc(articleHandler.GetArticle)).ServeHTTP(w, r)
+	}).Methods("GET", "OPTIONS")
 
 	// Article creation and modification (requires authentication)
-	articleProtected := api.PathPrefix("/articles").Subrouter()
-	articleProtected.Use(jwtMiddleware)
-	articleProtected.HandleFunc("", articleHandler.CreateArticle).Methods("POST", "OPTIONS")
-	articleProtected.HandleFunc("/{slug}", articleHandler.UpdateArticle).Methods("PUT", "OPTIONS")
-	articleProtected.HandleFunc("/{slug}", articleHandler.DeleteArticle).Methods("DELETE", "OPTIONS")
-	articleProtected.HandleFunc("/{slug}/favorite", articleHandler.FavoriteArticle).Methods("POST", "OPTIONS")
-	articleProtected.HandleFunc("/{slug}/favorite", articleHandler.UnfavoriteArticle).Methods("DELETE", "OPTIONS")
-
-	// Public article endpoints (optional auth)
-	articlePublic := api.PathPrefix("/articles").Subrouter()
-	articlePublic.Use(optionalJwtMiddleware)
-	articlePublic.HandleFunc("", articleHandler.GetArticles).Methods("GET", "OPTIONS")
-	articlePublic.HandleFunc("/{slug}", articleHandler.GetArticle).Methods("GET", "OPTIONS")
+	api.HandleFunc("/articles", func(w http.ResponseWriter, r *http.Request) {
+		jwtMiddleware(http.HandlerFunc(articleHandler.CreateArticle)).ServeHTTP(w, r)
+	}).Methods("POST", "OPTIONS")
+	api.HandleFunc("/articles/{slug}", func(w http.ResponseWriter, r *http.Request) {
+		jwtMiddleware(http.HandlerFunc(articleHandler.UpdateArticle)).ServeHTTP(w, r)
+	}).Methods("PUT", "OPTIONS")
+	api.HandleFunc("/articles/{slug}", func(w http.ResponseWriter, r *http.Request) {
+		jwtMiddleware(http.HandlerFunc(articleHandler.DeleteArticle)).ServeHTTP(w, r)
+	}).Methods("DELETE", "OPTIONS")
+	api.HandleFunc("/articles/{slug}/favorite", func(w http.ResponseWriter, r *http.Request) {
+		jwtMiddleware(http.HandlerFunc(articleHandler.FavoriteArticle)).ServeHTTP(w, r)
+	}).Methods("POST", "OPTIONS")
+	api.HandleFunc("/articles/{slug}/favorite", func(w http.ResponseWriter, r *http.Request) {
+		jwtMiddleware(http.HandlerFunc(articleHandler.UnfavoriteArticle)).ServeHTTP(w, r)
+	}).Methods("DELETE", "OPTIONS")
 
 	// Tag endpoints (public)
 	api.HandleFunc("/tags", tagHandler.GetTags).Methods("GET", "OPTIONS")
