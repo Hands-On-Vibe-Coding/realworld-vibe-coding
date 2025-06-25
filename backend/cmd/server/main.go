@@ -99,15 +99,17 @@ func main() {
 	userProtected.HandleFunc("", userHandler.UpdateUser).Methods("PUT", "OPTIONS")
 
 	// Article endpoints
-	// Article creation (requires authentication)
+	// Feed endpoint (requires authentication) - must be before other article routes
+	api.Handle("/articles/feed", jwtMiddleware(http.HandlerFunc(articleHandler.GetArticlesFeed))).Methods("GET", "OPTIONS")
+
+	// Article creation and modification (requires authentication)
 	articleProtected := api.PathPrefix("/articles").Subrouter()
 	articleProtected.Use(jwtMiddleware)
-	articleProtected.HandleFunc("", articleHandler.CreateArticle).Methods("POST")
-	articleProtected.HandleFunc("/feed", articleHandler.GetArticlesFeed).Methods("GET")
-	articleProtected.HandleFunc("/{slug}", articleHandler.UpdateArticle).Methods("PUT")
-	articleProtected.HandleFunc("/{slug}", articleHandler.DeleteArticle).Methods("DELETE")
-	articleProtected.HandleFunc("/{slug}/favorite", articleHandler.FavoriteArticle).Methods("POST")
-	articleProtected.HandleFunc("/{slug}/favorite", articleHandler.UnfavoriteArticle).Methods("DELETE")
+	articleProtected.HandleFunc("", articleHandler.CreateArticle).Methods("POST", "OPTIONS")
+	articleProtected.HandleFunc("/{slug}", articleHandler.UpdateArticle).Methods("PUT", "OPTIONS")
+	articleProtected.HandleFunc("/{slug}", articleHandler.DeleteArticle).Methods("DELETE", "OPTIONS")
+	articleProtected.HandleFunc("/{slug}/favorite", articleHandler.FavoriteArticle).Methods("POST", "OPTIONS")
+	articleProtected.HandleFunc("/{slug}/favorite", articleHandler.UnfavoriteArticle).Methods("DELETE", "OPTIONS")
 
 	// Public article endpoints (optional auth)
 	articlePublic := api.PathPrefix("/articles").Subrouter()
