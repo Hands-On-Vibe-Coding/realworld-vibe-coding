@@ -1,5 +1,8 @@
 # RealWorld Application - Vibe Coding Implementation
 
+[![Backend Deploy](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/actions/workflows/backend-deploy.yml/badge.svg)](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/actions/workflows/backend-deploy.yml)
+[![Frontend Deploy](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/actions/workflows/frontend-deploy.yml/badge.svg)](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/actions/workflows/frontend-deploy.yml)
+
 **🌐 Language / 言語 / 언어**
 - [한국어](README.ko.md) | [日本語](README.jp.md) | **English**
 
@@ -318,5 +321,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - The Go community for excellent standard library and ecosystem
 
 ---
+
+## Development Tools
+
+This project was developed using:
+- **Claude Code**: AI-powered development tool for rapid prototyping and implementation
+- **Claude Sonnet 4**: Advanced language model for code generation and technical guidance
 
 Built with ❤️ using 바이브코딩 methodology

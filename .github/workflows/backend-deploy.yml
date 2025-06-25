@@ -26,6 +26,11 @@ concurrency:
   group: backend-deploy
   cancel-in-progress: false
 
+# GitHub Deployments tracking
+environment:
+  name: backend
+  url: https://${{ vars.VITE_API_BASE_URL || 'api.example.com' }}
+
 env:
   AWS_REGION: ap-northeast-2
 
@@ -69,6 +74,9 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    environment:
+      name: backend
+      url: ${{ steps.get-https-url.outputs.api-endpoint }}
     
     steps:
       - name: Checkout code

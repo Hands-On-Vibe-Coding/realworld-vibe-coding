@@ -1,5 +1,7 @@
 # RealWorld Frontend (React + TypeScript)
 
+[![Frontend Deploy](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/actions/workflows/frontend-deploy.yml/badge.svg)](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/actions/workflows/frontend-deploy.yml)
+
 A modern, responsive frontend implementation of the [RealWorld specification](https://realworld-docs.netlify.app/docs/specs/frontend-specs) built with React 19, TypeScript, and modern tooling, following best practices for maintainability and performance.
 
 ## 🎯 Live Demo
@@ -532,6 +534,14 @@ npm run preview
 ## 📄 License
 
 This project is part of the RealWorld implementation showcase and follows educational use guidelines.
+
+---
+
+## 🛠️ Development Tools
+
+This frontend was developed using:
+- **Claude Code**: AI-powered development tool for rapid prototyping and implementation
+- **Claude Sonnet 4**: Advanced language model for code generation and technical guidance
 
 ---
 

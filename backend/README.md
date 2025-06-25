@@ -1,5 +1,7 @@
 # RealWorld Backend (Go)
 
+[![Backend Deploy](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/actions/workflows/backend-deploy.yml/badge.svg)](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/actions/workflows/backend-deploy.yml)
+
 A robust, production-ready backend implementation of the [RealWorld specification](https://realworld-docs.netlify.app/docs/specs/backend-specs) built with Go, following clean architecture principles and optimized for educational use.
 
 ## 🏗️ Architecture Overview
@@ -427,6 +429,14 @@ The backend is deployed on AWS using:
 ## 📄 License
 
 This project is part of the RealWorld implementation showcase and follows educational use guidelines.
+
+---
+
+## 🛠️ Development Tools
+
+This backend was developed using:
+- **Claude Code**: AI-powered development tool for rapid prototyping and implementation
+- **Claude Sonnet 4**: Advanced language model for code generation and technical guidance
 
 ---
 
