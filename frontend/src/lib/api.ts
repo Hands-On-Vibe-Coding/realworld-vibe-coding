@@ -32,7 +32,7 @@ export class ApiClient {
         // Production environment - use deployed backend with HTTPS
         this.baseURL = import.meta.env.VITE_API_BASE_URL 
           ? `${import.meta.env.VITE_API_BASE_URL}/api`
-          : 'https://dw0j76dcssyxq.cloudfront.net/api';
+          : 'https://d2tf8154vacbrr.cloudfront.net/api';
       }
     } else {
       // Server-side rendering fallback
