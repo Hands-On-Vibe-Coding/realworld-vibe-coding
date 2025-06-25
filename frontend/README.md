@@ -65,18 +65,18 @@ graph TB
     API_CLIENT --> BACKEND_API
     API_CLIENT --> AUTH
     
-    classDef ui fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
-    classDef react fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
-    classDef state fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
-    classDef data fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
-    classDef style fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
-    classDef backend fill:#f1f8e9,stroke:#689f38,stroke-width:2px,color:#000
+    classDef ui fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:#ffffff
+    classDef react fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#ffffff
+    classDef state fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#ffffff
+    classDef data fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#ffffff
+    classDef styling fill:#e91e63,stroke:#c2185b,stroke-width:2px,color:#ffffff
+    classDef backend fill:#8bc34a,stroke:#689f38,stroke-width:2px,color:#ffffff
     
     class BROWSER,PWA ui
     class ROUTER,PAGES,COMPONENTS react
     class QUERY,ZUSTAND,FORMS state
     class API_CLIENT,VALIDATION,TYPES data
-    class TAILWIND,MANTINE,RESPONSIVE style
+    class TAILWIND,MANTINE,RESPONSIVE styling
     class BACKEND_API,AUTH backend
 ```
 
@@ -290,11 +290,11 @@ graph TD
     COMMENT_ITEM --> BUTTON
     FOLLOW_BUTTON --> INPUT
     
-    classDef page fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px,color:#000
-    classDef layout fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px,color:#000
-    classDef feature fill:#e8f5e8,stroke:#4caf50,stroke-width:2px,color:#000
-    classDef component fill:#fff3e0,stroke:#ff9800,stroke-width:2px,color:#000
-    classDef ui fill:#fce4ec,stroke:#e91e63,stroke-width:2px,color:#000
+    classDef page fill:#3f51b5,stroke:#303f9f,stroke-width:2px,color:#ffffff
+    classDef layout fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#ffffff
+    classDef feature fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#ffffff
+    classDef component fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#ffffff
+    classDef ui fill:#e91e63,stroke:#c2185b,stroke-width:2px,color:#ffffff
     
     class HOME,ARTICLE,PROFILE page
     class LAYOUT,HEADER,FOOTER layout

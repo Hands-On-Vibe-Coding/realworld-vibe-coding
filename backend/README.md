@@ -52,12 +52,12 @@ graph TB
     REPOS --> MODELS
     REPOS --> SQLITE
     
-    classDef client fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef infra fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
-    classDef app fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px,color:#000
-    classDef business fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
-    classDef data fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
-    classDef database fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000
+    classDef client fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:#ffffff
+    classDef infra fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px,color:#ffffff
+    classDef app fill:#4caf50,stroke:#388e3c,stroke-width:2px,color:#ffffff
+    classDef business fill:#ff9800,stroke:#f57c00,stroke-width:2px,color:#ffffff
+    classDef data fill:#e91e63,stroke:#c2185b,stroke-width:2px,color:#ffffff
+    classDef database fill:#8bc34a,stroke:#689f38,stroke-width:2px,color:#ffffff
     
     class WEB,API_CLIENT client
     class CF,ALB,ECS infra
