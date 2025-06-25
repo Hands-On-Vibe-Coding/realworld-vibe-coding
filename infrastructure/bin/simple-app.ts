@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
 import * as cdk from 'aws-cdk-lib'
-import * as ec2 from 'aws-cdk-lib/aws-ec2'
-import { SimpleEcsStack } from '../lib/simple-ecs-stack'
+import { RealWorldStack } from '../lib/realworld-stack'
 
 const app = new cdk.App()
 
@@ -12,29 +11,10 @@ const env = {
   region: process.env.CDK_DEFAULT_REGION || 'ap-northeast-2',
 }
 
-// Create VPC
-const vpc = new ec2.Vpc(app, 'RealWorldVPC', {
-  maxAzs: 2,
-  natGateways: 1, // Cost optimization - single NAT gateway
-  subnetConfiguration: [
-    {
-      cidrMask: 24,
-      name: 'public',
-      subnetType: ec2.SubnetType.PUBLIC,
-    },
-    {
-      cidrMask: 24,
-      name: 'private-app',
-      subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-    },
-  ],
-})
-
-// ECS Stack with all required components
-const ecsStack = new SimpleEcsStack(app, 'RealWorld', {
+// Single stack with all components
+const realWorldStack = new RealWorldStack(app, 'RealWorld', {
   env,
-  vpc,
-  description: 'RealWorld application infrastructure with ECS, ALB, and CloudFront',
+  description: 'RealWorld application infrastructure with VPC, ECS, ALB, and CloudFront',
 })
 
 // Add tags

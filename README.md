@@ -7,7 +7,27 @@
 
 ## Overview
 
-This project implements the [RealWorld](https://github.com/gothinkster/realworld) application specification - a Medium.com clone that demonstrates real-world usage of modern web technologies. Built with a focus on rapid prototyping, iterative improvement, and real-time documentation.
+This project implements the [RealWorld](https://github.com/gothinkster/realworld) application specification - a Medium.com clone that demonstrates real-world usage of modern web technologies. **This is a Vibe Coding learning project** that follows Armin Ronacher's ["Agentic Coding Recommendations"](https://lucumr.pocoo.org/2025/6/12/agentic-coding/) methodology.
+
+### Project Development Journey
+
+This project demonstrates a complete **Vibe Coding** implementation process:
+
+1. **📋 [Rules & Guidelines](CLAUDE.md) Creation** - Established project rules and coding standards based on Armin Ronacher's recommendations
+2. **📝 [Pre-PRD](/docs/pre-prd.md) Development** - Initial requirement gathering and technology stack evaluation
+3. **📊 [PRD (Product Requirements Document)](/docs/prd.md)** - Detailed specification and feature planning
+4. **🗺️ [Project Planning](/docs/plan.md)** - Task breakdown and implementation roadmap
+5. **⚡ [Rapid Implementation](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/issues?q=is%3Aissue)** - Core functionality development using Vibe Coding principles
+
+### Vibe Coding Principles Applied
+
+Following Armin Ronacher's methodology, this project emphasizes:
+
+- **Simplicity over Complexity**: Using proven, reliable technologies
+- **AI-Friendly Development**: Clear documentation and structured code patterns
+- **Rapid Prototyping**: Quick iterations with immediate feedback
+- **Educational Focus**: Cost-optimized deployment suitable for learning
+- **Real-time Documentation**: Living documentation that evolves with code
 
 ## Tech Stack
 
