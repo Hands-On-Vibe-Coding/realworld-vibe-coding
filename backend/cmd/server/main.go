@@ -89,14 +89,14 @@ func main() {
 
 	// RealWorld API endpoints
 	// User registration and authentication
-	api.HandleFunc("/users", userHandler.Register).Methods("POST")
-	api.HandleFunc("/users/login", userHandler.Login).Methods("POST")
+	api.HandleFunc("/users", userHandler.Register).Methods("POST", "OPTIONS")
+	api.HandleFunc("/users/login", userHandler.Login).Methods("POST", "OPTIONS")
 
 	// Protected user endpoints (require authentication)
 	userProtected := api.PathPrefix("/user").Subrouter()
 	userProtected.Use(jwtMiddleware)
-	userProtected.HandleFunc("", userHandler.GetCurrentUser).Methods("GET")
-	userProtected.HandleFunc("", userHandler.UpdateUser).Methods("PUT")
+	userProtected.HandleFunc("", userHandler.GetCurrentUser).Methods("GET", "OPTIONS")
+	userProtected.HandleFunc("", userHandler.UpdateUser).Methods("PUT", "OPTIONS")
 
 	// Article endpoints
 	// Article creation (requires authentication)
@@ -112,11 +112,11 @@ func main() {
 	// Public article endpoints (optional auth)
 	articlePublic := api.PathPrefix("/articles").Subrouter()
 	articlePublic.Use(optionalJwtMiddleware)
-	articlePublic.HandleFunc("", articleHandler.GetArticles).Methods("GET")
-	articlePublic.HandleFunc("/{slug}", articleHandler.GetArticle).Methods("GET")
+	articlePublic.HandleFunc("", articleHandler.GetArticles).Methods("GET", "OPTIONS")
+	articlePublic.HandleFunc("/{slug}", articleHandler.GetArticle).Methods("GET", "OPTIONS")
 
 	// Tag endpoints (public)
-	api.HandleFunc("/tags", tagHandler.GetTags).Methods("GET")
+	api.HandleFunc("/tags", tagHandler.GetTags).Methods("GET", "OPTIONS")
 
 	// Comment endpoints
 	// Protected comment endpoints (require authentication)
