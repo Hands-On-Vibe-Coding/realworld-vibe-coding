@@ -9,6 +9,7 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  tokenReady: boolean;
   
   // Actions
   login: (user: UserResponse, token: string) => void;
@@ -32,30 +33,23 @@ export const useAuthStore = create<AuthState>()(
         token: null,
         isAuthenticated: false,
         isLoading: false,
+        tokenReady: false,
 
         login: (user: UserResponse, token: string) => {
-          console.log('🔐 AuthStore login called:', { 
-            username: user.username, 
-            email: user.email,
-            tokenLength: token.length 
-          });
-          
           api.setToken(token);
-          console.log('🔑 Token set in API client');
           
           set({
             user,
             token,
             isAuthenticated: true,
+            tokenReady: true,
           });
-          console.log('💾 Auth state updated in store');
           
           notifications.show({
             title: 'Welcome back!',
             message: `Hello ${user.username}! You have successfully logged in.`,
             color: 'green',
           });
-          console.log('🎉 Login success notification shown');
         },
 
         logout: () => {
@@ -65,6 +59,7 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             token: null,
             isAuthenticated: false,
+            tokenReady: false,
           });
           
           notifications.show({
@@ -89,6 +84,7 @@ export const useAuthStore = create<AuthState>()(
           set({
             token,
             isAuthenticated: !!token,
+            tokenReady: !!token,
           });
         },
 
@@ -106,6 +102,7 @@ export const useAuthStore = create<AuthState>()(
             set({
               user: response.user,
               isAuthenticated: true,
+              tokenReady: true,
             });
           } catch (error) {
             // If token is invalid, clear auth state
@@ -125,15 +122,9 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        console.log('🔄 Auth store rehydrating from localStorage:', {
-          hasToken: !!state?.token,
-          hasUser: !!state?.user,
-          isAuthenticated: state?.isAuthenticated
-        });
-        
         if (state?.token) {
           api.setToken(state.token);
-          console.log('🔑 Token restored to API client');
+          state.tokenReady = true;
         }
       },
     }

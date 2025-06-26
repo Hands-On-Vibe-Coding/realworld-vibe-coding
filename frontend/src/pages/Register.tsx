@@ -48,7 +48,10 @@ export function RegisterPage() {
       });
 
       login(response.user, response.user.token);
-      navigate({ to: '/' });
+      // Small delay to ensure auth state is fully synchronized
+      setTimeout(() => {
+        navigate({ to: '/' });
+      }, 100);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Registration failed';
       setError(message);

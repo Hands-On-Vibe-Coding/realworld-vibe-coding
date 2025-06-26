@@ -73,7 +73,7 @@ const routeTree = rootRoute.addChildren([
 // Router
 export const router = createRouter({ 
   routeTree,
-  basepath: import.meta.env.DEV ? '/' : '/realworld-vibe-coding'
+  basepath: import.meta.env.DEV ? '/' : '/realworld-vibe-coding/'
 });
 
 // Register router type

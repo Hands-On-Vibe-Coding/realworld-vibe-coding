@@ -1,6 +1,6 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores/authStore';
 import type { ArticleParams, FeedParams, ArticlesResponse } from '@/types';
 
 // Query keys for articles
@@ -25,14 +25,14 @@ export function useArticles(params?: ArticleParams) {
 
 // Hook for getting user's personalized feed
 export function useFeed(params?: FeedParams) {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, tokenReady } = useAuthStore();
   
   return useQuery({
     queryKey: articleKeys.feed(params || {}),
     queryFn: () => api.getFeed(params),
     staleTime: 1000 * 60 * 2, // 2 minutes (more frequent updates for feed)
     retry: 2,
-    enabled: isAuthenticated, // Only fetch if user is authenticated
+    enabled: isAuthenticated && tokenReady, // Only fetch if user is authenticated and token is ready
   });
 }
 
