@@ -32,6 +32,56 @@ Following Armin Ronacher's methodology, this project emphasizes:
 - **Educational Focus**: Cost-optimized deployment suitable for learning
 - **Real-time Documentation**: Living documentation that evolves with code
 
+## 🧪 Vibe Coding Tools Comparison Experiment
+
+This repository serves as a comprehensive comparison study of various "Vibe Coding" tools by implementing the same RealWorld application specification using different AI-powered development tools. The goal is to provide objective, data-driven insights into the capabilities, strengths, and limitations of each tool.
+
+### 📊 Implementation Results
+
+| Tool | Status | Branch | Completion | Dev Time | Code Quality | Experience |
+|------|--------|--------|------------|----------|--------------|------------|
+| **Claude Sonnet 4** | ✅ Complete | [`main`](/) | 100% | 7 days | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Claude 3.5 Sonnet | 🔄 Planned | `claude-3.5-sonnet` | - | - | - | - |
+| Cursor + Claude | 🔄 Planned | `cursor-claude` | - | - | - | - |
+| Cursor + GPT-4 | 🔄 Planned | `cursor-gpt4` | - | - | - | - |
+| GitHub Copilot | 🔄 Planned | `github-copilot` | - | - | - | - |
+| Windsurf | 🔄 Planned | `windsurf` | - | - | - | - |
+| Codeium | 🔄 Planned | `codeium` | - | - | - | - |
+
+### 🎯 Baseline Implementation (Claude Sonnet 4)
+
+The current `main` branch represents our baseline implementation completed with **Claude Code + Claude Sonnet 4**:
+
+- **🕒 Development Period**: June 20-27, 2025 (7 days)
+- **📋 Feature Completeness**: 100% RealWorld API compliance (22/22 endpoints)
+- **🧪 Test Coverage**: 44 passing tests
+- **🚀 Deployment**: Live on [GitHub Pages](https://hands-on-vibe-coding.github.io/realworld-vibe-coding/) + AWS ECS
+- **📊 Code Metrics**: 79 files, ~4000 lines of production code
+
+### 📋 Experiment Details
+
+**Methodology**: Each tool implements the identical RealWorld specification starting from the [`v1.0.0-foundation`](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/releases/tag/v1.0.0-foundation) tag, which contains only project documentation and planning.
+
+**Evaluation Criteria**:
+- **Functional Completeness** (40%): RealWorld API compliance
+- **Development Productivity** (25%): Time-to-implementation
+- **Code Quality** (20%): Test coverage, architecture, maintainability  
+- **Developer Experience** (10%): Tool usability and learning curve
+- **Deployment Success** (5%): Build and deployment reliability
+
+**📖 Documentation**: 
+- [📋 Experiment Plan](docs/vibe-coding-experiment-plan.md)
+- [📊 Implementation Logs](docs/implementations/)
+- [🔬 Comparison Analysis](docs/comparison-report.md) *(Coming Soon)*
+
+### 🔗 Quick Links
+
+- **🌐 Live Demo**: [RealWorld App](https://hands-on-vibe-coding.github.io/realworld-vibe-coding/)
+- **📚 API Documentation**: [RealWorld API Spec](https://realworld-docs.netlify.app/docs/specs/backend-specs/introduction)
+- **🏷️ Tags**: [`v1.0.0-foundation`](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/releases/tag/v1.0.0-foundation) | [`v1.0.0-claude-sonnet4`](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/releases/tag/v1.0.0-claude-sonnet4)
+
+---
+
 ## Tech Stack
 
 This project is built using the recommended technology stack from Armin Ronacher's blog post ["Agentic Coding Recommendations"](https://lucumr.pocoo.org/2025/6/12/agentic-coding/), which emphasizes simplicity, reliability, and AI-friendly development patterns.

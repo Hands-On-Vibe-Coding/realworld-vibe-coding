@@ -1,0 +1,121 @@
+{
+  "implementation": {
+    "tool_name": "",
+    "version": "",
+    "implementer": "",
+    "start_date": "YYYY-MM-DD",
+    "end_date": "YYYY-MM-DD",
+    "branch": ""
+  },
+  "time_metrics": {
+    "total_hours": 0,
+    "breakdown": {
+      "environment_setup": 0,
+      "backend_development": 0,
+      "frontend_development": 0,
+      "testing": 0,
+      "debugging": 0,
+      "deployment": 0
+    },
+    "daily_hours": {
+      "day_1": 0,
+      "day_2": 0,
+      "day_3": 0,
+      "day_4": 0,
+      "day_5": 0,
+      "day_6": 0,
+      "day_7": 0
+    }
+  },
+  "code_metrics": {
+    "backend": {
+      "total_lines": 0,
+      "source_lines": 0,
+      "test_lines": 0,
+      "files_count": 0,
+      "functions_count": 0,
+      "complexity_average": 0
+    },
+    "frontend": {
+      "total_lines": 0,
+      "source_lines": 0,
+      "test_lines": 0,
+      "components_count": 0,
+      "hooks_count": 0,
+      "complexity_average": 0
+    }
+  },
+  "quality_metrics": {
+    "test_coverage": {
+      "backend_coverage": 0,
+      "frontend_coverage": 0,
+      "e2e_tests_count": 0,
+      "unit_tests_count": 0
+    },
+    "build_success": {
+      "total_builds": 0,
+      "successful_builds": 0,
+      "failed_builds": 0
+    },
+    "deployment": {
+      "deployment_attempts": 0,
+      "successful_deployments": 0,
+      "deployment_time_minutes": 0
+    }
+  },
+  "feature_completion": {
+    "realworld_api_endpoints": {
+      "total": 22,
+      "implemented": 0,
+      "completion_rate": 0
+    },
+    "frontend_pages": {
+      "total": 8,
+      "implemented": 0,
+      "completion_rate": 0
+    },
+    "features": {
+      "user_authentication": false,
+      "article_crud": false,
+      "article_listing": false,
+      "comments": false,
+      "user_profiles": false,
+      "follow_system": false,
+      "favorites": false,
+      "tags": false,
+      "user_feed": false
+    }
+  },
+  "tool_experience": {
+    "ratings": {
+      "overall_satisfaction": 0,
+      "autocomplete_quality": 0,
+      "code_generation_speed": 0,
+      "error_detection": 0,
+      "debugging_support": 0,
+      "learning_curve": 0,
+      "documentation_quality": 0
+    },
+    "subjective_feedback": {
+      "strengths": [],
+      "weaknesses": [],
+      "would_recommend": false,
+      "suitable_project_types": []
+    }
+  },
+  "issues_encountered": [
+    {
+      "category": "",
+      "description": "",
+      "solution": "",
+      "time_spent_hours": 0,
+      "severity": ""
+    }
+  ],
+  "performance_metrics": {
+    "build_time_seconds": 0,
+    "test_execution_time_seconds": 0,
+    "bundle_size_kb": 0,
+    "initial_load_time_ms": 0
+  }
+}
