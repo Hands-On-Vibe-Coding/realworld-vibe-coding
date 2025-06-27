@@ -1,0 +1,17 @@
+# 수정된 repository-dispatch 예제
+- name: Repository Dispatch
+  uses: peter-evans/repository-dispatch@v2
+  with:
+    token: ${{ secrets.GITHUB_TOKEN }}
+    event-type: dev-deploy-success
+    client-payload: |
+      {
+        "branch": "main",
+        "commit_sha": "3ecab726ea12624f2762debf9bf3465d87726aef",
+        "commit_message": "docs: 라벨 관리 개선 사항 추가 (#40) - GitHub 라벨 자동 생성 및 관리 시스템 구축 내용 추가 - 배포 워크플로우 개선 사항에 라벨 관리 부분 포함 - 배포 파이프라인 완성도 향상 🤖 Generated with [Claude Code](https://claude.ai/code) Co-authored-by: Claude <noreply@anthropic.com>",
+        "actor": "serithemage",
+        "pr_number": "",
+        "dev_run_id": "15894724102",
+        "dev_run_url": "https://github.com/nextintelligence-ai/company-logo/actions/runs/15894724102"
+      }
+    repository: nextintelligence-ai/company-logo

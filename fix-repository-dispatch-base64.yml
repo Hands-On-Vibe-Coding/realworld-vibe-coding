@@ -1,0 +1,29 @@
+# Base64 인코딩을 사용한 repository-dispatch 예제
+- name: Prepare payload
+  id: payload
+  run: |
+    # 커밋 메시지를 Base64로 인코딩
+    COMMIT_MSG_B64=$(echo '${{ github.event.head_commit.message }}' | base64 -w 0)
+    
+    # JSON 페이로드 생성
+    cat > payload.json << EOF
+    {
+      "branch": "${{ github.ref_name }}",
+      "commit_sha": "${{ github.sha }}",
+      "commit_message_b64": "$COMMIT_MSG_B64",
+      "actor": "${{ github.actor }}",
+      "pr_number": "${{ github.event.pull_request.number || '' }}",
+      "dev_run_id": "${{ github.run_id }}",
+      "dev_run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+    }
+    EOF
+    
+    echo "payload=$(cat payload.json | jq -c .)" >> $GITHUB_OUTPUT
+
+- name: Repository Dispatch
+  uses: peter-evans/repository-dispatch@v2
+  with:
+    token: ${{ secrets.GITHUB_TOKEN }}
+    event-type: dev-deploy-success
+    repository: nextintelligence-ai/company-logo
+    client-payload: ${{ steps.payload.outputs.payload }}
