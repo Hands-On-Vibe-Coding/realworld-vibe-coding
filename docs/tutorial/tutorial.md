@@ -42,7 +42,7 @@ This tutorial references several project documents. For comprehensive understand
 
 **Key Prompt:**
 ```
-이 프로젝트는 Realworld 를 바이브코딩으로 구현하는것이 목표야. 아키텍처 요건정의부터 구현까지 모두 Claude에게 맡기려고 해. 우선 PRD를 작성하기 위한 요건을 정하기 위해서 필요한 준비 문서를 pre-prd.md를 먼저 만들어줘.
+The goal of this project is to implement RealWorld using Vibe Coding methodology. I want to entrust everything from architecture requirements definition to implementation to Claude. First, please create a pre-prd.md preparation document that is needed to define the requirements for writing a PRD.
 ```
 
 **Why This Approach:**
@@ -91,7 +91,7 @@ The project used specific criteria for technology choices:
 
 **Key Prompt:**
 ```
-git hook에서 프론트와 백엔드 각각의 변경이 있을경우 lint, unit test를 실행하도록 되어 있는지 확인 해줘
+Please check if git hooks are configured to run lint and unit tests when there are changes to frontend and backend respectively.
 ```
 
 **📖 Related Documentation:** [Git Hooks Setup Guide](../git-hooks.md)
@@ -156,7 +156,7 @@ The project used Playwright MCP for real-time frontend verification:
 
 **Key Prompt:**
 ```
-프론트엔드 개발을 할 때 Playwright MCP를 사용해서 구현 상태를 확인해줘
+When doing frontend development, please use Playwright MCP to verify the implementation status.
 ```
 
 **Verification Process:**
@@ -250,7 +250,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 **Key Prompt:**
 ```
-로그인 후 사용자 정보를 가져올 때 Authorization 헤더가 제대로 전송되지 않는 문제가 있어요. 이 문제를 해결해주세요.
+There's an issue where the Authorization header is not being sent properly when fetching user information after login. Please resolve this issue.
 ```
 
 **Solution:**
@@ -428,7 +428,7 @@ describe('ArticleList', () => {
 
 **Key Prompt:**
 ```
-교육용 프로젝트에 최적화된 인프라를 구성해주세요. 비용 효율성을 우선시하면서도 실제 운영 환경과 유사한 구조를 만들어주세요.
+Please set up infrastructure optimized for educational projects. Prioritize cost efficiency while creating a structure similar to actual production environments.
 ```
 
 **Infrastructure as Code:**
@@ -522,7 +522,7 @@ func (h *Handler) CreateArticle(w http.ResponseWriter, r *http.Request) {
 
 **Key Prompt:**
 ```
-프로젝트의 모든 문서를 영어로 작성해주세요. 국제적인 개발자들도 접근할 수 있도록 하고, 프로젝트 전체에서 일관성을 유지하기 위해서입니다.
+Please write all project documentation in English. This is to ensure accessibility for international developers and maintain consistency throughout the project.
 ```
 
 **Documentation Approach:**
