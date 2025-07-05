@@ -78,6 +78,7 @@ The current `main` branch represents our baseline implementation completed with 
 
 - **🌐 Live Demo**: [RealWorld App](https://hands-on-vibe-coding.github.io/realworld-vibe-coding/)
 - **📚 API Documentation**: [RealWorld API Spec](https://realworld-docs.netlify.app/docs/specs/backend-specs/introduction)
+- **📖 Tutorial**: [Comprehensive Tutorial](docs/tutorial/tutorial.md) | [한국어](docs/tutorial/tutorial-ko.md) | [日本語](docs/tutorial/tutorial-ja.md)
 - **🏷️ Tags**: [`v1.0.0-foundation`](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/releases/tag/v1.0.0-foundation) | [`v1.0.0-claude-sonnet4`](https://github.com/Hands-On-Vibe-Coding/realworld-vibe-coding/releases/tag/v1.0.0-claude-sonnet4)
 
 ---
